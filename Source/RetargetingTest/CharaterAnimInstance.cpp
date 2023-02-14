@@ -10,10 +10,8 @@ UCharaterAnimInstance::UCharaterAnimInstance(const FObjectInitializer& ObjectIni
 void UCharaterAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
-
+	
 	// character=Cast<ARetargetingTestCharacter>(GetOwningActor());
-	//
 	// bIsTrunLeft=character->GetIsTurnLeft();
 	// bIsTrunRight=character->GetIsTurnRight();
-	
 }
