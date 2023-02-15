@@ -8,6 +8,10 @@
 #include "RetargetingTestCharacter.generated.h"
 
 
+class UAttackComponent;
+class UStatComponent;
+class APlayerAttackComponent;
+class APlayerStatComponent;
 UCLASS(config=Game)
 class ARetargetingTestCharacter : public ACharacter
 {
@@ -37,6 +41,9 @@ class ARetargetingTestCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* AttackAction;
+
 public:
 	ARetargetingTestCharacter();
 	
@@ -48,7 +55,8 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
+
+	void Attack(const FInputActionValue& Value);
 
 protected:
 	// APawn interface
@@ -72,11 +80,11 @@ private:
 	UPROPERTY()
 	USkeletalMeshComponent* skeletalMeshComp;
 
-	UPROPERTY()
-	FTransform headBoneTransform;
-	UPROPERTY()
-	int HEAD_BONE_IDX;
-	
 
+	UPROPERTY(VisibleAnywhere)
+	UStatComponent* StatComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	UAttackComponent* AttackComponent;
 };
 

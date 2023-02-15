@@ -9,12 +9,14 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-
+#include "../Component/StatComponent.h"
+#include "RetargetingTest/Component/AttackComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
 
 ARetargetingTestCharacter::ARetargetingTestCharacter()
+	
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -49,7 +51,8 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
-	
+	StatComponent= CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
+	AttackComponent = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComponent"));
 }
 
 void ARetargetingTestCharacter::BeginPlay()
@@ -67,13 +70,10 @@ void ARetargetingTestCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+	
+	//mAttackComponent = GetWorld()->SpawnActor<APlayerAttackComponent>(mAttackComponentClass,FVector::ZeroVector,FRotator::ZeroRotator);
+	//mAttackComponent->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "RightHandSocket");
 
-	if(GetMesh()!=nullptr)
-	{
-		GEngine->AddOnScreenDebugMessage(5,2.0f,FColor::Red,TEXT("Mesh nullptr"));
-		skeletalMeshComp=GetMesh();
-		HEAD_BONE_IDX=GetMesh()->GetBoneIndex(TEXT("head"));
-	}
 	
 }
 
@@ -103,6 +103,8 @@ void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARetargetingTestCharacter::Look);
 
+		//Attack
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &ARetargetingTestCharacter::Attack);
 	}
 
 }
@@ -139,10 +141,14 @@ void ARetargetingTestCharacter::Look(const FInputActionValue& Value)
 	{
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
-		headBoneTransform=skeletalMeshComp->GetBoneTransform(HEAD_BONE_IDX);
-		UE_LOG(LogTemp,Warning,TEXT("%d"),HEAD_BONE_IDX);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void ARetargetingTestCharacter::Attack(const FInputActionValue& Value)
+{
+	GEngine->AddOnScreenDebugMessage(1,2.0f,FColor::Green,TEXT("Do Attack"));
+	UE_LOG(LogTemp,Warning,TEXT("Do Attack"));
 }
 
 

@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "RetargetingTestGameMode.h"
-#include "RetargetingTestCharacter.h"
+#include "Player/RetargetingTestCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 ARetargetingTestGameMode::ARetargetingTestGameMode()
