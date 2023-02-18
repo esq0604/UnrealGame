@@ -10,11 +10,13 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "../Component/StatComponent.h"
-#include "RetargetingTest/Component/AttackComponent.h"
 #include "CharaterAnimInstance.h"
-#include "Components/SphereComponent.h"
 #include "Components/SceneComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Engine/DamageEvents.h"
+#include "Engine/EngineTypes.h"
+#include "Kismet/GameplayStatics.h"
+
 
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
@@ -57,15 +59,15 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 	//mSkeletalMeshComponent=CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
 	mStatComponent= CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
-	Weapon=CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
-
+	//Weapon=CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
+	
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> WeaponMesh(TEXT("/Game/InfinityBladeWeapons/Weapons/Blade/Swords/Blade_HeroSword22/SK_Blade_HeroSword22"));
 	if(WeaponMesh.Succeeded())
 	{
-		Weapon->SetSkeletalMesh(WeaponMesh.Object);
+		//Weapon->SetSkeletalMesh(WeaponMesh.Object);
 	}
-	Weapon->SetupAttachment(GetMesh(),TEXT("WeaponSocket"));
-
+	//Weapon->SetupAttachment(GetMesh(),TEXT("WeaponSocket"));
+	//Weapon->SetCollisionProfileName("NoCollsion");
 	//애니메이션 인스턴스
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
@@ -79,9 +81,6 @@ void ARetargetingTestCharacter::OnAttackCollisionOverlap(UPrimitiveComponent* Ov
 	//if(bEnableAttackCollision)
 		//ApplyAttackDamage();
 }
-
-
-
 
 
 float ARetargetingTestCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
@@ -128,12 +127,15 @@ void ARetargetingTestCharacter::AttackCheck()
 	
 	if(bResult)
 	{
-		if(HitResult.GetActor())
+		if(HitResult.GetActor()->ActorHasTag("Monster"))
 		{
 			UE_LOG(LogTemp,Warning,TEXT("%s"),*HitResult.GetActor()->GetName());
-
-			//FDamageEvent DamageEvent;
-			//HitResult.GetActor()->TakeDamage(50.0f,DamageEvent,GetController(),this);
+			FDamageEvent DamageEvent;
+			HitResult.GetActor()->TakeDamage(50.0f,DamageEvent,GetController(),this);
+			//UGameplayStatics::ApplyDamage(HitResult.GetActor(),)
+			//UGameplayStatics::ApplyPointDamage(HitResult.GetActor(),50.0f,HitResult.GetActor()->GetActorLocation(),HitResult,nullptr,this,nullptr);
+			//HitResult.GetActor()->Dama
+			//UGameplayStatics::ApplyDamage(HitResult.GetActor(),50.0f)
 		}
 	}
 	else
@@ -249,8 +251,11 @@ void ARetargetingTestCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	mAnimInstance = Cast<UCharaterAnimInstance>(GetMesh()->GetAnimInstance());
-	//mAnimInstance->OnMontageEnded.AddDynamic(this,&ARetargetingTestCharacter::OnAttackMontageEnded);
-	mAnimInstance->OnAttackHitCheck.AddUObject(this,&ARetargetingTestCharacter::AttackCheck);
+	if(mAnimInstance != nullptr)
+	{
+		//mAnimInstance->OnMontageEnded.AddDynamic(this,&ARetargetingTestCharacter::OnAttackMontageEnded);
+		mAnimInstance->OnAttackHitCheck.AddUObject(this,&ARetargetingTestCharacter::AttackCheck);
+	}
 }
 
 

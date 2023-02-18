@@ -19,10 +19,12 @@ ABaseMonster::ABaseMonster()
 	static ConstructorHelpers::FObjectFinder<UMaterial> MaterialFinder(TEXT("/Game/StarterContent/Materials/M_Metal_Gold"));
 	if(MaterialFinder.Succeeded())
 	{
-		mSkeletalMeshComp->SetMaterial(0,MaterialFinder.Object);
+		mSkeletalMeshComp->SetMaterial(BODY_MATERIAL_IDX,MaterialFinder.Object);
 	}
 	
-	
+	static ConstructorHelpers::FObjectFinder<UMaterial> DamagedMaterial(TEXT("/Game/StarterContent/Materials/M_Ground_Moss"));
+	if(DamagedMaterial.Succeeded())
+		mDamagedMaterial=DamagedMaterial.Object;
 }
 
 // Called when the game starts or when spawned
@@ -47,6 +49,15 @@ void ABaseMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void ABaseMonster::GetDamaged(float Damaged)
 {
-	mHp-=Damaged;
+	//mHp-=Damaged;
+	//mSkeletalMeshComp->SetMaterial(BODY_MATERIAL_IDX,mDamagedMaterial);
+}
+
+float ABaseMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	mSkeletalMeshComp->SetMaterial(BODY_MATERIAL_IDX,mDamagedMaterial);
+
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 

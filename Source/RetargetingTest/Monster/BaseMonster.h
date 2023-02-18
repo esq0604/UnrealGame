@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "NativeGameplayTags.h"
 #include "GameFramework/Character.h"
 #include "BaseMonster.generated.h"
 
@@ -30,6 +31,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void GetDamaged(float Damage);
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 private:
     UPROPERTY(VisibleAnywhere, Category="Monster | Stat", meta=(AllowPrivateAccess="true"))
 	float mHp;
@@ -40,5 +44,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category="Monster | Stat")
 	float mSpeed;
 
+	UPROPERTY()
 	USkeletalMeshComponent* mSkeletalMeshComp;
+
+	UPROPERTY()
+	UMaterial* mDamagedMaterial;
+
+	const int BODY_MATERIAL_IDX=0;
+
 };

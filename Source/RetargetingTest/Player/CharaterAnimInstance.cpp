@@ -38,6 +38,7 @@ void UCharaterAnimInstance::AnimNotify_SaveAttack()
 void UCharaterAnimInstance::AnimNotify_EnableCollision()
 {
 	OnAttackHitCheck.Broadcast();
+	
 }
 
 void UCharaterAnimInstance::AnimNotify_DisableCollision()

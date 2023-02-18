@@ -12,6 +12,7 @@ class UAttackComponent;
 class UStatComponent;
 class APlayerAttackComponent;
 class APlayerStatComponent;
+struct FDamageEvent;
 UCLASS(config=Game)
 class ARetargetingTestCharacter : public ACharacter
 {
