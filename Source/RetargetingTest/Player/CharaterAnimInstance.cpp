@@ -8,12 +8,7 @@
 
 UCharaterAnimInstance::UCharaterAnimInstance(const FObjectInitializer& ObjectInitializer)
 {
-	static ConstructorHelpers::FObjectFinder<UAnimMontage> ATTACK_MONTAGE(TEXT("/Game/ParagonAurora/Characters/Heroes/Aurora/Animations/Primary_Attack_A_Montage"));
 
-	if(ATTACK_MONTAGE.Succeeded())
-	{
-		AttackMontage=ATTACK_MONTAGE.Object;
-	}
 }
 
 void UCharaterAnimInstance::PlayAttackMontage()

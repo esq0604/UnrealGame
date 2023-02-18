@@ -84,6 +84,9 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+protected:
+	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category="Animation")
+	class UCharaterAnimInstance* mAnimInstance;
 
 private:
 	UPROPERTY(VisibleInstanceOnly,Category="Component")
@@ -91,9 +94,6 @@ private:
 
 	//UPROPERTY(VisibleInstanceOnly,Category="Component")
 	//UAttackComponent* mAttackComponent;
-
-	UPROPERTY(VisibleInstanceOnly,Category="Animation")
-	class UCharaterAnimInstance* mAnimInstance;
 
 	UPROPERTY()
 	bool bEnableAttackCollision;

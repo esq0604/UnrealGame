@@ -69,11 +69,7 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 	//Weapon->SetupAttachment(GetMesh(),TEXT("WeaponSocket"));
 	//Weapon->SetCollisionProfileName("NoCollsion");
 	//애니메이션 인스턴스
-	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 
-	static ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Game/BP/ABP_TEST"));
-	if(Anim.Succeeded())
-		GetMesh()->SetAnimInstanceClass(Anim.Class);
 }
 
 void ARetargetingTestCharacter::OnAttackCollisionOverlap(UPrimitiveComponent* OverlappedComponent)
@@ -95,7 +91,6 @@ void ARetargetingTestCharacter::AttackCheck()
 {
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None,false,this);
-	UE_LOG(LogTemp,Warning,TEXT("AttackCheck"));
 	bool bResult=GetWorld()->SweepSingleByChannel(
 		HitResult,
 		GetActorLocation(),

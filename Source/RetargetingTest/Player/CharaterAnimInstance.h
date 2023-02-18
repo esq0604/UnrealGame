@@ -37,10 +37,10 @@ public:
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
 	FOnMontageEndedDelegate OnMontageEnded;
 protected:
-	
-private:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	UAnimMontage* AttackMontage;
+private:
+
 
 
 };

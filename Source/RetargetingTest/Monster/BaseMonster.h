@@ -23,17 +23,17 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	UFUNCTION(BlueprintCallable)
-	void GetDamaged(float Damage);
-
+	
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
+protected:
+	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
+	UMaterial* mDamagedMaterial;
+
+	UPROPERTY(BlueprintReadWrite, meta=(AllowPrivateAccess=true))
+	UMaterial* mDefaultMaterial;
 private:
     UPROPERTY(VisibleAnywhere, Category="Monster | Stat", meta=(AllowPrivateAccess="true"))
 	float mHp;
@@ -43,13 +43,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category="Monster | Stat")
 	float mSpeed;
-
-	UPROPERTY()
-	USkeletalMeshComponent* mSkeletalMeshComp;
-
-	UPROPERTY()
-	UMaterial* mDamagedMaterial;
-
+	
 	const int BODY_MATERIAL_IDX=0;
 
 };
