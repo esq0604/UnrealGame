@@ -11,16 +11,20 @@
 #include "EnhancedInputSubsystems.h"
 #include "../Component/StatComponent.h"
 #include "RetargetingTest/Component/AttackComponent.h"
+#include "CharaterAnimInstance.h"
+#include "Components/SphereComponent.h"
+#include "Components/SceneComponent.h"
+#include "DrawDebugHelpers.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
 
 ARetargetingTestCharacter::ARetargetingTestCharacter()
-	
+	:AttackRange(200.0f) , AttackRadius(50.0f)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-		
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Character"));
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -51,8 +55,92 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
-	StatComponent= CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
-	AttackComponent = CreateDefaultSubobject<UAttackComponent>(TEXT("AttackComponent"));
+	//mSkeletalMeshComponent=CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
+	mStatComponent= CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
+	Weapon=CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> WeaponMesh(TEXT("/Game/InfinityBladeWeapons/Weapons/Blade/Swords/Blade_HeroSword22/SK_Blade_HeroSword22"));
+	if(WeaponMesh.Succeeded())
+	{
+		Weapon->SetSkeletalMesh(WeaponMesh.Object);
+	}
+	Weapon->SetupAttachment(GetMesh(),TEXT("WeaponSocket"));
+
+	//애니메이션 인스턴스
+	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
+
+	static ConstructorHelpers::FClassFinder<UAnimInstance> Anim(TEXT("/Game/BP/ABP_TEST"));
+	if(Anim.Succeeded())
+		GetMesh()->SetAnimInstanceClass(Anim.Class);
+}
+
+void ARetargetingTestCharacter::OnAttackCollisionOverlap(UPrimitiveComponent* OverlappedComponent)
+{
+	//if(bEnableAttackCollision)
+		//ApplyAttackDamage();
+}
+
+
+
+
+
+float ARetargetingTestCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+                                            AController* EventInstigator, AActor* DamageCauser)
+{
+	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	UE_LOG(LogTemp,Warning,TEXT("Actor %s took Damage %d"),*GetName(), FinalDamage);
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}
+
+void ARetargetingTestCharacter::AttackCheck()
+{
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None,false,this);
+	UE_LOG(LogTemp,Warning,TEXT("AttackCheck"));
+	bool bResult=GetWorld()->SweepSingleByChannel(
+		HitResult,
+		GetActorLocation(),
+		GetActorLocation()+GetActorForwardVector()*200.0f,
+		FQuat::Identity,
+		ECC_GameTraceChannel1,
+		FCollisionShape::MakeSphere(50.0f),
+		Params
+	);
+
+#if ENABLE_DRAW_DEBUG
+	FVector TraceVec = GetActorForwardVector()*AttackRange;
+	FVector Center = GetActorLocation() + TraceVec*0.5f;
+	float HalfHeight = AttackRange* 0.5f +AttackRadius;
+	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+	FColor DrawColor = bResult ? FColor::Green : FColor::Red;
+	float DebugLifeTime = 3.0f;
+
+	DrawDebugCapsule(GetWorld()
+		,Center
+		,HalfHeight
+		,AttackRadius
+		,CapsuleRot
+		,DrawColor
+		,false
+		,DebugLifeTime
+		);
+#endif
+	
+	if(bResult)
+	{
+		if(HitResult.GetActor())
+		{
+			UE_LOG(LogTemp,Warning,TEXT("%s"),*HitResult.GetActor()->GetName());
+
+			//FDamageEvent DamageEvent;
+			//HitResult.GetActor()->TakeDamage(50.0f,DamageEvent,GetController(),this);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Hit result none"));
+
+	}
 }
 
 void ARetargetingTestCharacter::BeginPlay()
@@ -71,10 +159,8 @@ void ARetargetingTestCharacter::BeginPlay()
 		}
 	}
 	
-	//mAttackComponent = GetWorld()->SpawnActor<APlayerAttackComponent>(mAttackComponentClass,FVector::ZeroVector,FRotator::ZeroRotator);
-	//mAttackComponent->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, "RightHandSocket");
-
 	
+
 }
 
 void ARetargetingTestCharacter::Tick(float DeltaSeconds)
@@ -104,7 +190,10 @@ void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARetargetingTestCharacter::Look);
 
 		//Attack
-		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &ARetargetingTestCharacter::Attack);
+		EnhancedInputComponent->BindAction(AttackAction,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::Attack);
+		
+		//InputComponent->BindAction("AttackAction",IE_Pressed, this, &ARetargetingTestCharacter::Attack);
+		
 	}
 
 }
@@ -113,7 +202,6 @@ void ARetargetingTestCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
-	UE_LOG(LogTemp,Warning,TEXT("Moving"));
 	if (Controller != nullptr)
 	{
 		// find out which way is forward
@@ -147,8 +235,22 @@ void ARetargetingTestCharacter::Look(const FInputActionValue& Value)
 
 void ARetargetingTestCharacter::Attack(const FInputActionValue& Value)
 {
-	GEngine->AddOnScreenDebugMessage(1,2.0f,FColor::Green,TEXT("Do Attack"));
-	UE_LOG(LogTemp,Warning,TEXT("Do Attack"));
+
+	if(mAnimInstance!=nullptr)
+	{
+		mAnimInstance->PlayAttackMontage();
+	}
+
+	
+	//AttackAction->
+}
+
+void ARetargetingTestCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	mAnimInstance = Cast<UCharaterAnimInstance>(GetMesh()->GetAnimInstance());
+	//mAnimInstance->OnMontageEnded.AddDynamic(this,&ARetargetingTestCharacter::OnAttackMontageEnded);
+	mAnimInstance->OnAttackHitCheck.AddUObject(this,&ARetargetingTestCharacter::AttackCheck);
 }
 
 

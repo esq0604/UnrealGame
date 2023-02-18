@@ -6,6 +6,8 @@
 #include "Animation/AnimInstance.h"
 #include "CharaterAnimInstance.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnMontageEndedDelegate,UAnimMontage* Montage, bool bInterrupted);
 /**
  * 
  */
@@ -18,17 +20,27 @@ class RETARGETINGTEST_API UCharaterAnimInstance : public UAnimInstance
 
 public:
 	UCharaterAnimInstance(const FObjectInitializer& ObjectInitializer);
-	
-protected:
-	
-private:
 
+	void PlayAttackMontage();
+protected:
+	virtual void NativeBeginPlay() override;
+private:
+	UFUNCTION()
+	void AnimNotify_SaveAttack();
+
+	UFUNCTION()
+	void AnimNotify_EnableCollision();
+	
+	UFUNCTION()
+	void AnimNotify_DisableCollision();
 public:
-	
+	FOnAttackHitCheckDelegate OnAttackHitCheck;
+	FOnMontageEndedDelegate OnMontageEnded;
 protected:
- 	virtual void NativeBeginPlay() override;
-
-
-private:
 	
+private:
+	UPROPERTY()
+	UAnimMontage* AttackMontage;
+
+
 };

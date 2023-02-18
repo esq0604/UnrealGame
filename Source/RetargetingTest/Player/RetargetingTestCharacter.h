@@ -47,7 +47,18 @@ class ARetargetingTestCharacter : public ACharacter
 public:
 	ARetargetingTestCharacter();
 	
+	UFUNCTION(BlueprintCallable)
+	void OnAttackCollisionOverlap(UPrimitiveComponent* OverlappedComponent);
 
+	//UFUNCTION()
+	//UAttackComponent* GetAttackComponent();
+
+	
+	UFUNCTION()
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	UFUNCTION()
+	void AttackCheck();
 protected:
 
 	/** Called for movement input */
@@ -58,7 +69,7 @@ protected:
 
 	void Attack(const FInputActionValue& Value);
 
-protected:
+	virtual void PostInitializeComponents() override;
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
@@ -74,17 +85,25 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 private:
-	UPROPERTY()
-	USkeleton* skeleton;
+	UPROPERTY(VisibleInstanceOnly,Category="Component")
+	UStatComponent* mStatComponent;
+
+	//UPROPERTY(VisibleInstanceOnly,Category="Component")
+	//UAttackComponent* mAttackComponent;
+
+	UPROPERTY(VisibleInstanceOnly,Category="Animation")
+	class UCharaterAnimInstance* mAnimInstance;
 
 	UPROPERTY()
-	USkeletalMeshComponent* skeletalMeshComp;
+	bool bEnableAttackCollision;
 
+	UPROPERTY(VisibleAnywhere,Category="Weapon")
+	USkeletalMeshComponent* Weapon;
 
-	UPROPERTY(VisibleAnywhere)
-	UStatComponent* StatComponent;
+	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Category="Attack",meta=(AllowPrivateAccess=true))
+	float AttackRange;
 
-	UPROPERTY(VisibleAnywhere)
-	UAttackComponent* AttackComponent;
+	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Category="Attack",meta=(AllowPrivateAccess=true))
+	float AttackRadius;
 };
 

@@ -43,7 +43,6 @@ void ABaseMonster::Tick(float DeltaTime)
 void ABaseMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void ABaseMonster::GetDamaged(float Damaged)
