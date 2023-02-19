@@ -124,7 +124,6 @@ void ARetargetingTestCharacter::AttackCheck()
 	{
 		if(HitResult.GetActor()->ActorHasTag("Monster"))
 		{
-			UE_LOG(LogTemp,Warning,TEXT("%s"),*HitResult.GetActor()->GetName());
 			FDamageEvent DamageEvent;
 			HitResult.GetActor()->TakeDamage(50.0f,DamageEvent,GetController(),this);
 			//UGameplayStatics::ApplyDamage(HitResult.GetActor(),)
