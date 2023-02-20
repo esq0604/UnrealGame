@@ -8,7 +8,9 @@
 #include "BaseMonster.generated.h"
 
 
-DECLARE_DELEGATE_OneParam(FMonsterDie,ABaseMonster*)
+class UProgressBar;
+class UWidgetComponent;
+DECLARE_DELEGATE_OneParam(FMonsterDie, ABaseMonster*)
 class USkeletalMeshComponent;
 class UBaseMonsterAnimInstance;
 UCLASS()
@@ -33,7 +35,8 @@ private:
 	UFUNCTION()
 	void Dead();
 
-
+	UFUNCTION()
+	float GetHPRatio();
 public:
 	FMonsterDie MonsterDieDelegate;
 protected:
@@ -44,19 +47,27 @@ protected:
 	UMaterial* mDefaultMaterial;
 
 	UPROPERTY(VisibleAnywhere, Category="Monster | Stat", meta=(AllowPrivateAccess="true"))
-	float mHp;
+	float mCurrentHp;
+
+	UPROPERTY(VisibleAnywhere, Category="Monster | Stat", meta=(AllowPrivateAccess="true"))
+	float mMaxHP;
 
 	UPROPERTY(VisibleAnywhere, Category="Monster | Stat")
 	float mAttackDamage;
 
 	UPROPERTY(VisibleAnywhere, Category="Monster | Stat")
 	float mSpeed;
+	
+	UPROPERTY(EditAnywhere)
+	UWidgetComponent* mHPWidgetComponent;
 
+	UPROPERTY(EditAnywhere)
+	class UMonsterWidget* HPBarWidget;
 private:
 	const int BODY_MATERIAL_IDX=0;
 
 	UPROPERTY()
 	UBaseMonsterAnimInstance* mAnimInstacne;
-
+	
 	
 };
