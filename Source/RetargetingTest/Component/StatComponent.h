@@ -16,7 +16,9 @@ public:
 	// Sets default values for this component's properties
 	UStatComponent();
 
-UPROPERTY(EditAnywhere,Category="Stat|HP")
+
+public:
+	UPROPERTY(EditAnywhere,Category="Stat|HP")
 	float mHP=500.0f;
-	
+
 };

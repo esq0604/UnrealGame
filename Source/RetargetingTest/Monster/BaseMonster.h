@@ -21,7 +21,8 @@ class RETARGETINGTEST_API ABaseMonster : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ABaseMonster();
-	
+
+	virtual void PostInitializeComponents() override;
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
@@ -35,28 +36,12 @@ private:
 	UFUNCTION()
 	void Dead();
 
-	UFUNCTION()
-	float GetHPRatio();
+
 public:
 	FMonsterDie MonsterDieDelegate;
 protected:
-	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
-	UMaterial* mDamagedMaterial;
-
-	UPROPERTY(BlueprintReadWrite, meta=(AllowPrivateAccess=true))
-	UMaterial* mDefaultMaterial;
-
-	UPROPERTY(VisibleAnywhere, Category="Monster | Stat", meta=(AllowPrivateAccess="true"))
-	float mCurrentHp;
-
-	UPROPERTY(VisibleAnywhere, Category="Monster | Stat", meta=(AllowPrivateAccess="true"))
-	float mMaxHP;
-
-	UPROPERTY(VisibleAnywhere, Category="Monster | Stat")
-	float mAttackDamage;
-
-	UPROPERTY(VisibleAnywhere, Category="Monster | Stat")
-	float mSpeed;
+	UPROPERTY(VisibleAnywhere,Category=Stat)
+	class UMonsterStatComponent* StatComponent;
 	
 	UPROPERTY(EditAnywhere)
 	UWidgetComponent* mHPWidgetComponent;

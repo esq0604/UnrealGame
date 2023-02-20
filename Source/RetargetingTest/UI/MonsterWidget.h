@@ -15,12 +15,20 @@ class RETARGETINGTEST_API UMonsterWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
-	class UProgressBar* mHPProgressBar;
-	
+	void BindMonsterStat(class UMonsterStatComponent* NewMonsterStat);
+	void UpdateHPWidget();
 protected:
 	virtual void NativeConstruct() override;
 
 private:
 
+
+public:
+	UPROPERTY()
+	class UProgressBar* mHPProgressBar;
+
+protected:
+	
+private:
+	TWeakObjectPtr<class UMonsterStatComponent> CurrentMonsterStat;
 };

@@ -15,7 +15,8 @@ AFloatingDamageActor::AFloatingDamageActor()
 void AFloatingDamageActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	AnchorLocation=GetActorLocation();
 }
 
 // Called every frame

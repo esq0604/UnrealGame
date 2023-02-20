@@ -7,23 +7,39 @@
 #include "Components/ProgressBar.h"
 #include "Components/WidgetComponent.h"
 #include "RetargetingTest/UI/MonsterWidget.h"
+#include "RetargetingTest/Component/MonsterStatComponent.h"
 //#include "RetargetingTest/Management/MonsterPool.h"
 // Sets default values
 ABaseMonster::ABaseMonster()
-	:mCurrentHp(200),mMaxHP(200),mAttackDamage(20),mSpeed(20)
 {
 	mHPWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
 	mHPWidgetComponent->SetupAttachment(RootComponent);
+	StatComponent =CreateDefaultSubobject<UMonsterStatComponent>(TEXT("StatComponent"));
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+}
+
+void ABaseMonster::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	StatComponent->OnHPIsZero.AddLambda([this]()->void
+	{
+		mAnimInstacne->PlayDeadMontage();
+		SetActorHiddenInGame(true);
+		SetActorEnableCollision(false);
+		SetActorTickEnabled(false);
+		
+		//몬스터가 죽으면 풀에 넣도록 몬스터 풀의 InputMonsterToPool과 바인딩 되어 있습니다.
+		MonsterDieDelegate.ExecuteIfBound(this);
+	});
 }
 
 // Called when the game starts or when spawned
 void ABaseMonster::BeginPlay()
 {
 	Super::BeginPlay();
-	GetMesh()->SetMaterial(BODY_MATERIAL_IDX,mDefaultMaterial);
 	mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
 	HPBarWidget = Cast<UMonsterWidget>(mHPWidgetComponent->GetWidget());
+	HPBarWidget->BindMonsterStat(StatComponent);
 }
 
 // Called to bind functionality to input
@@ -35,14 +51,9 @@ void ABaseMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 float ABaseMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
-	//GetMesh()->SetMaterial(BODY_MATERIAL_IDX,mDamagedMaterial);
-	mCurrentHp-=DamageAmount;
 	mAnimInstacne->PlayHitMontage();
-	HPBarWidget->mHPProgressBar->SetPercent(GetHPRatio());
-	if(mCurrentHp<=0)
-	{
-		Dead();
-	}
+
+	StatComponent->GetDamaged(DamageAmount);
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	
 }
@@ -56,11 +67,9 @@ void ABaseMonster::Dead()
 	SetActorEnableCollision(false);
 	SetActorTickEnabled(false);
 
+	//몬스터가 죽으면 풀에 넣도록 몬스터 풀의 InputMonsterToPool과 바인딩 되어 있습니다.
 	MonsterDieDelegate.ExecuteIfBound(this);
 	
 }
 
-float ABaseMonster::GetHPRatio()
-{
-	return (mMaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (mCurrentHp / mMaxHP); 
-}
+

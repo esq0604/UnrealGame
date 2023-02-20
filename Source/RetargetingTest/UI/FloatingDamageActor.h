@@ -15,6 +15,11 @@ public:
 	// Sets default values for this actor's properties
 	AFloatingDamageActor();
 
+	//액터와 시작시 필요한 정보를 초기화합니다.
+	UFUNCTION(BlueprintImplementableEvent, Category="FloatingTextActor")
+	void Initialize(const FText& text);
+
+	inline const FVector& GetAnchorLocation() const {return AnchorLocation;}
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -23,4 +28,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+
+private:
+	FVector AnchorLocation;
 };
