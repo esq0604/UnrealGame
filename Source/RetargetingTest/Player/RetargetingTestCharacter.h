@@ -8,6 +8,8 @@
 #include "RetargetingTestCharacter.generated.h"
 
 
+
+
 class UAttackComponent;
 class UStatComponent;
 class APlayerAttackComponent;
@@ -47,14 +49,7 @@ class ARetargetingTestCharacter : public ACharacter
 
 public:
 	ARetargetingTestCharacter();
-	
-	UFUNCTION(BlueprintCallable)
-	void OnAttackCollisionOverlap(UPrimitiveComponent* OverlappedComponent);
 
-	//UFUNCTION()
-	//UAttackComponent* GetAttackComponent();
-
-	
 	UFUNCTION()
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -84,17 +79,18 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	
 protected:
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category="Animation")
 	class UCharaterAnimInstance* mAnimInstance;
 
+	UPROPERTY(EditAnywhere,meta=(AllowPrivateAccess=true))
+	class UFloatingCombatTextComponent* FloatingTextComponent;
 private:
 	UPROPERTY(VisibleInstanceOnly,Category="Component")
-	UStatComponent* mStatComponent;
-
-	//UPROPERTY(VisibleInstanceOnly,Category="Component")
-	//UAttackComponent* mAttackComponent;
-
+	class UPlayerStatComponent* StatComponent;
+	
 	UPROPERTY()
 	bool bEnableAttackCollision;
 
@@ -106,5 +102,7 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Category="Attack",meta=(AllowPrivateAccess=true))
 	float AttackRadius;
+
+
 };
 

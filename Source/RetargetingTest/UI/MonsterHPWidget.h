@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "MonsterWidget.generated.h"
+#include "MonsterHPWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RETARGETINGTEST_API UMonsterWidget : public UUserWidget
+class RETARGETINGTEST_API UMonsterHPWidget : public UUserWidget
 {
 	GENERATED_BODY()
 

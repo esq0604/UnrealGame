@@ -1,6 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "RetargetingTestCharacter.h"
+
+#include <string>
+
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -16,6 +19,9 @@
 #include "Engine/DamageEvents.h"
 #include "Engine/EngineTypes.h"
 #include "Kismet/GameplayStatics.h"
+#include "RetargetingTest/Component/FloatingCombatTextComponent.h"
+#include "RetargetingTest/Component/PlayerStatComponent.h"
+#include "RetargetingTest/Management/FloatingTextObjectPool.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -57,27 +63,9 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
-	//mSkeletalMeshComponent=CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
-	mStatComponent= CreateDefaultSubobject<UStatComponent>(TEXT("StatComponent"));
-	//Weapon=CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
-	
-	static ConstructorHelpers::FObjectFinder<USkeletalMesh> WeaponMesh(TEXT("/Game/InfinityBladeWeapons/Weapons/Blade/Swords/Blade_HeroSword22/SK_Blade_HeroSword22"));
-	if(WeaponMesh.Succeeded())
-	{
-		//Weapon->SetSkeletalMesh(WeaponMesh.Object);
-	}
-	//Weapon->SetupAttachment(GetMesh(),TEXT("WeaponSocket"));
-	//Weapon->SetCollisionProfileName("NoCollsion");
-	//애니메이션 인스턴스
-
+	StatComponent= CreateDefaultSubobject<UPlayerStatComponent>(TEXT("StatComponent"));
+	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));	
 }
-
-void ARetargetingTestCharacter::OnAttackCollisionOverlap(UPrimitiveComponent* OverlappedComponent)
-{
-	//if(bEnableAttackCollision)
-		//ApplyAttackDamage();
-}
-
 
 float ARetargetingTestCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
                                             AController* EventInstigator, AActor* DamageCauser)
@@ -125,17 +113,11 @@ void ARetargetingTestCharacter::AttackCheck()
 		if(HitResult.GetActor()->ActorHasTag("Monster"))
 		{
 			FDamageEvent DamageEvent;
-			HitResult.GetActor()->TakeDamage(50.0f,DamageEvent,GetController(),this);
-			//UGameplayStatics::ApplyDamage(HitResult.GetActor(),)
-			//UGameplayStatics::ApplyPointDamage(HitResult.GetActor(),50.0f,HitResult.GetActor()->GetActorLocation(),HitResult,nullptr,this,nullptr);
-			//HitResult.GetActor()->Dama
-			//UGameplayStatics::ApplyDamage(HitResult.GetActor(),50.0f)
+			HitResult.GetActor()->TakeDamage(StatComponent->GetAttackDamage(),DamageEvent,GetController(),this);
+			//플러팅텍스트를 스폰합니다.
+			FText AttackDamage = FText::FromString(FString::SanitizeFloat(StatComponent->GetAttackDamage()));
+			FloatingTextComponent->AddFloatingActor(AttackDamage,HitResult.GetActor()->GetActorLocation());
 		}
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Hit result none"));
-
 	}
 }
 

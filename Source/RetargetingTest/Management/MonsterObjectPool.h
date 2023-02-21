@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "MonsterObjectPool.generated.h"
 
+//풀이 꽉차면 몬스터가 재생성되도록하는 델리게이트입니다.
 DECLARE_DELEGATE_OneParam(FPoolIsFullSinature,bool)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -40,7 +41,6 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TSubclassOf<class ABaseMonster> PooledMonster;
 
-	
 	FPoolIsFullSinature FIsFullDieDelegate;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))

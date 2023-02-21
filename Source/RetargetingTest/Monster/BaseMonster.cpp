@@ -6,7 +6,7 @@
 #include "BaseMonsterAnimInstance.h"
 #include "Components/ProgressBar.h"
 #include "Components/WidgetComponent.h"
-#include "RetargetingTest/UI/MonsterWidget.h"
+#include "RetargetingTest/UI/MonsterHPWidget.h"
 #include "RetargetingTest/Component/MonsterStatComponent.h"
 //#include "RetargetingTest/Management/MonsterPool.h"
 // Sets default values
@@ -38,7 +38,7 @@ void ABaseMonster::BeginPlay()
 {
 	Super::BeginPlay();
 	mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
-	HPBarWidget = Cast<UMonsterWidget>(mHPWidgetComponent->GetWidget());
+	HPBarWidget = Cast<UMonsterHPWidget>(mHPWidgetComponent->GetWidget());
 	HPBarWidget->BindMonsterStat(StatComponent);
 }
 
@@ -52,7 +52,7 @@ float ABaseMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	AActor* DamageCauser)
 {
 	mAnimInstacne->PlayHitMontage();
-
+	
 	StatComponent->GetDamaged(DamageAmount);
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	

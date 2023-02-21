@@ -30,13 +30,10 @@ void UCharaterAnimInstance::AnimNotify_SaveAttack()
 	
 }
 
-void UCharaterAnimInstance::AnimNotify_EnableCollision()
+void UCharaterAnimInstance::AnimNotify_AttackHitCheck()
 {
+	//UE_LOG(LogTemp,Warning,TEXT)
 	OnAttackHitCheck.Broadcast();
-	
 }
 
-void UCharaterAnimInstance::AnimNotify_DisableCollision()
-{
-}
 

@@ -29,10 +29,8 @@ private:
 	void AnimNotify_SaveAttack();
 
 	UFUNCTION()
-	void AnimNotify_EnableCollision();
-	
-	UFUNCTION()
-	void AnimNotify_DisableCollision();
+	void AnimNotify_AttackHitCheck();
+
 public:
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
 	FOnMontageEndedDelegate OnMontageEnded;

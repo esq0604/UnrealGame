@@ -47,7 +47,7 @@ protected:
 	UWidgetComponent* mHPWidgetComponent;
 
 	UPROPERTY(EditAnywhere)
-	class UMonsterWidget* HPBarWidget;
+	class UMonsterHPWidget* HPBarWidget;
 private:
 	const int BODY_MATERIAL_IDX=0;
 
