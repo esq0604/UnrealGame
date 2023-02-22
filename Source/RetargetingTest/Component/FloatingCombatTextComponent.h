@@ -28,7 +28,7 @@ public:
 	void AddFloatingActor(const FText& Text, FVector WorldLocation);
 private:
 	//callback for when floating actor destroyed
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnTextDestroyed(AActor* DestroyedActor);
 	
 	
@@ -46,7 +46,7 @@ private:
 	float TextVerticalOffset =100.0f; 
 
 	//An array of all active floating text actors;
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess=true))
 	TArray<AFloatingDamageActor*> ActiveFloatingDamageActors;
 
 };

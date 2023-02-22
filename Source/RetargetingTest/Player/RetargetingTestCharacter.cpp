@@ -136,7 +136,8 @@ void ARetargetingTestCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-	
+
+	UE_LOG(LogTemp,Warning,TEXT("%d"),GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
 	
 
 }
