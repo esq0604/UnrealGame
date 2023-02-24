@@ -7,7 +7,10 @@
 #include "CharaterAnimInstance.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnMontageEndedDelegate,UAnimMontage* Montage, bool bInterrupted);
+//DECLARE_MULTICAST_DELEGATE_TwoParams(FOnMontageEndedDelegate,UAnimMontage* , bool);
+DECLARE_MULTICAST_DELEGATE(FOnNextAttackCheckDelegate);
+
+
 /**
  * 
  */
@@ -22,6 +25,7 @@ public:
 	UCharaterAnimInstance(const FObjectInitializer& ObjectInitializer);
 
 	void PlayAttackMontage();
+	void JumpToAttackMontageSection(int32 NewSection);
 protected:
 	virtual void NativeBeginPlay() override;
 private:
@@ -31,13 +35,22 @@ private:
 	UFUNCTION()
 	void AnimNotify_AttackHitCheck();
 
+	UFUNCTION()
+	void AnimNotify_NextAttackCheck();
+	
+	FName GetAttackMontageSectionName(int32 Section);
+
 public:
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
-	FOnMontageEndedDelegate OnMontageEnded;
-protected:
-	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
+	FOnNextAttackCheckDelegate OnNextAttackHitCheck;
+	//FOnMontageEnded OnMontageEnded;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	UAnimMontage* AttackMontage;
+protected:
+
 private:
+	
 
 
 

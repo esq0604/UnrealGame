@@ -28,7 +28,7 @@
 // ARetargetingTestCharacter
 
 ARetargetingTestCharacter::ARetargetingTestCharacter()
-	:AttackRange(200.0f) , AttackRadius(50.0f)
+	:AttackRange(200.0f) , AttackRadius(50.0f),MaxCombo(4),IsAttacking(false)
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -150,6 +150,7 @@ void ARetargetingTestCharacter::Tick(float DeltaSeconds)
 
 
 
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
@@ -214,14 +215,19 @@ void ARetargetingTestCharacter::Look(const FInputActionValue& Value)
 
 void ARetargetingTestCharacter::Attack(const FInputActionValue& Value)
 {
-
-	if(mAnimInstance!=nullptr)
+	if(IsAttacking)
 	{
-		mAnimInstance->PlayAttackMontage();
+		if(CanNextCombo)
+		{
+			IsComboInputOn=true;
+		}
 	}
-
-	
-	//AttackAction->
+	else
+	{
+		AttackStartComboState();
+		mAnimInstance->PlayAttackMontage();
+		IsAttacking=true;
+	}
 }
 
 void ARetargetingTestCharacter::PostInitializeComponents()
@@ -230,11 +236,43 @@ void ARetargetingTestCharacter::PostInitializeComponents()
 	mAnimInstance = Cast<UCharaterAnimInstance>(GetMesh()->GetAnimInstance());
 	if(mAnimInstance != nullptr)
 	{
-		//mAnimInstance->OnMontageEnded.AddDynamic(this,&ARetargetingTestCharacter::OnAttackMontageEnded);
 		mAnimInstance->OnAttackHitCheck.AddUObject(this,&ARetargetingTestCharacter::AttackCheck);
+		mAnimInstance->OnMontageEnded.AddDynamic(this,&ARetargetingTestCharacter::OnAttackMontageEnded);
+		mAnimInstance->OnNextAttackHitCheck.AddLambda([this]()->void
+		{
+			CanNextCombo=false;
+			if(IsComboInputOn)
+			{
+				AttackStartComboState();
+				mAnimInstance->JumpToAttackMontageSection(CurrentCombo);
+			}
+		});
 	}
+
+	
 }
 
+void ARetargetingTestCharacter::AttackStartComboState()
+{
+	CanNextCombo=true;
+	IsComboInputOn=false;
+	UE_LOG(LogTemp,Warning,TEXT("%d"),FMath::Clamp<int32>(CurrentCombo+1,1,MaxCombo));
+	CurrentCombo = FMath::Clamp<int32>(CurrentCombo+1,1,MaxCombo);
+}
+
+void ARetargetingTestCharacter::AttackEndComboState()
+{
+	IsComboInputOn=false;
+	CanNextCombo=false;
+	CurrentCombo=0;
+}
+
+
+void ARetargetingTestCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	IsAttacking=false;
+	AttackEndComboState();
+}
 
 
 

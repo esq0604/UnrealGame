@@ -8,13 +8,16 @@
 
 UCharaterAnimInstance::UCharaterAnimInstance(const FObjectInitializer& ObjectInitializer)
 {
-
+	
 }
 
 void UCharaterAnimInstance::PlayAttackMontage()
 {
+	UE_LOG(LogTemp,Warning,TEXT("Do Play Attack Montage"));
 	Montage_Play(AttackMontage,1.0f);
 }
+
+
 
 void UCharaterAnimInstance::NativeBeginPlay()
 {
@@ -23,6 +26,7 @@ void UCharaterAnimInstance::NativeBeginPlay()
 	// character=Cast<ARetargetingTestCharacter>(GetOwningActor());
 	// bIsTrunLeft=character->GetIsTurnLeft();
 	// bIsTrunRight=character->GetIsTurnRight();
+	//Montage_SetEndDelegate(OnMontageEnded);
 }
 
 void UCharaterAnimInstance::AnimNotify_SaveAttack()
@@ -35,5 +39,22 @@ void UCharaterAnimInstance::AnimNotify_AttackHitCheck()
 	//UE_LOG(LogTemp,Warning,TEXT)
 	OnAttackHitCheck.Broadcast();
 }
+
+void UCharaterAnimInstance::AnimNotify_NextAttackCheck()
+{
+	OnNextAttackHitCheck.Broadcast();
+}
+
+void UCharaterAnimInstance::JumpToAttackMontageSection(int32 NewSection)
+{
+	Montage_JumpToSection(GetAttackMontageSectionName(NewSection),AttackMontage);
+}
+
+FName UCharaterAnimInstance::GetAttackMontageSectionName(int32 Section)
+{
+	return FName(*FString::Printf(TEXT("Attack%d"),Section));
+}
+
+
 
 

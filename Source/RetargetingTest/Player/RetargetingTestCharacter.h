@@ -55,6 +55,12 @@ public:
 
 	UFUNCTION()
 	void AttackCheck();
+
+	void AttackStartComboState();
+	void AttackEndComboState();
+
+	UFUNCTION()
+	void OnAttackMontageEnded(class UAnimMontage* Montage, bool bInterrupted);
 protected:
 
 	/** Called for movement input */
@@ -74,6 +80,8 @@ protected:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+private:
+	
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -87,6 +95,7 @@ protected:
 
 	UPROPERTY(EditAnywhere,meta=(AllowPrivateAccess=true))
 	class UFloatingCombatTextComponent* FloatingTextComponent;
+
 private:
 	UPROPERTY(VisibleInstanceOnly,Category="Component")
 	class UPlayerStatComponent* StatComponent;
@@ -103,6 +112,21 @@ private:
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Category="Attack",meta=(AllowPrivateAccess=true))
 	float AttackRadius;
 
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category= Attack, meta=(AllowPrivateAccess=true))
+	bool CanNextCombo;
 
+	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Category=Attack,meta=(AllowPrivateAccess=true))
+	bool IsComboInputOn;
+
+	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Category=Attack,meta=(AllowPrivateAccess=true))
+	int32 CurrentCombo;
+
+	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Category=Attack,meta=(AllowPrivateAccess=true))
+	int32 MaxCombo;
+
+	const int32 MAX_COMBO =4;
+	
+	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Category=Attack,meta=(AllowPrivateAccess=true))
+	bool IsAttacking;
 };
 
