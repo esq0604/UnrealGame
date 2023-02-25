@@ -41,6 +41,11 @@
 			"Name": "AGRPRO",
 			"Enabled": true,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/c4f13f7fc2c048d8ad4985ecfbf4f6c6"
+		},
+		{
+			"Name": "TempestCombatFramework",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/15eff4da8e8348a18a82212ead7e1c46"
 		}
 	]
 }
