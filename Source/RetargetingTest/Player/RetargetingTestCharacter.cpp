@@ -16,12 +16,14 @@
 #include "CharaterAnimInstance.h"
 #include "Components/SceneComponent.h"
 #include "DrawDebugHelpers.h"
+#include "Components/WidgetComponent.h"
 #include "Engine/DamageEvents.h"
 #include "Engine/EngineTypes.h"
 #include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/Component/FloatingCombatTextComponent.h"
 #include "RetargetingTest/Component/PlayerStatComponent.h"
 #include "RetargetingTest/Management/FloatingTextObjectPool.h"
+#include "RetargetingTest/UI/PlayerHPWidget.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -65,13 +67,17 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 	StatComponent= CreateDefaultSubobject<UPlayerStatComponent>(TEXT("StatComponent"));
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));	
+
+	mHPWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
+
 }
 
 float ARetargetingTestCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
                                             AController* EventInstigator, AActor* DamageCauser)
 {
 	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	UE_LOG(LogTemp,Warning,TEXT("Actor %s took Damage %d"),*GetName(), FinalDamage);
+	StatComponent->GetDamaged(DamageAmount);
+
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
@@ -127,6 +133,9 @@ void ARetargetingTestCharacter::BeginPlay()
 	Super::BeginPlay();
 	UE_LOG(LogTemp,Warning,TEXT("Character In BeginPlay"));
 	//Add Input Mapping Context
+	HPBarWidget = Cast<UPlayerHPWidget>(mHPWidgetComponent->GetWidget());
+	HPBarWidget->BindCharacterStat(StatComponent);
+	HPBarWidget->AddToViewport();
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))

@@ -6,6 +6,8 @@
 #include "BaseMonsterAnimInstance.h"
 #include "Components/ProgressBar.h"
 #include "Components/WidgetComponent.h"
+#include "Engine/DamageEvents.h"
+
 #include "RetargetingTest/UI/MonsterHPWidget.h"
 #include "RetargetingTest/Component/MonsterStatComponent.h"
 //#include "RetargetingTest/Management/MonsterPool.h"
@@ -21,6 +23,8 @@ ABaseMonster::ABaseMonster()
 void ABaseMonster::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+	mAnimInstacne = Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
+	mAnimInstacne->OnDoDamage.AddUObject(this,&ABaseMonster::AttackCheck);
 	StatComponent->OnHPIsZero.AddLambda([this]()->void
 	{
 		mAnimInstacne->PlayDeadMontage();
@@ -41,6 +45,9 @@ void ABaseMonster::BeginPlay()
 	HPBarWidget = Cast<UMonsterHPWidget>(mHPWidgetComponent->GetWidget());
 	HPBarWidget->BindMonsterStat(StatComponent);
 }
+
+
+
 
 // Called to bind functionality to input
 void ABaseMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -70,6 +77,52 @@ void ABaseMonster::Dead()
 	//몬스터가 죽으면 풀에 넣도록 몬스터 풀의 InputMonsterToPool과 바인딩 되어 있습니다.
 	MonsterDieDelegate.ExecuteIfBound(this);
 	
+}
+
+void ABaseMonster::AttackCheck()
+{
+	FHitResult HitResult;
+	FCollisionQueryParams Params(NAME_None,false,this);
+	bool bResult=GetWorld()->SweepSingleByChannel(
+		HitResult,
+		GetActorLocation(),
+		GetActorLocation()+GetActorForwardVector()*200.0f,
+		FQuat::Identity,
+		ECC_GameTraceChannel1,
+		FCollisionShape::MakeSphere(50.0f),
+		Params
+	);
+
+#if ENABLE_DRAW_DEBUG
+	FVector TraceVec = GetActorForwardVector()*AttackRange;
+	FVector Center = GetActorLocation() + TraceVec*0.5f;
+	float HalfHeight = AttackRange* 0.5f +AttackRadius;
+	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
+	FColor DrawColor = bResult ? FColor::Blue : FColor::Red;
+	float DebugLifeTime = 3.0f;
+
+	DrawDebugCapsule(GetWorld()
+		,Center
+		,HalfHeight
+		,AttackRadius
+		,CapsuleRot
+		,DrawColor
+		,false
+		,DebugLifeTime
+		);
+#endif
+	
+	if(bResult)
+	{
+		if(HitResult.GetActor()->ActorHasTag("Player"))
+		{
+			FDamageEvent DamageEvent;
+			HitResult.GetActor()->TakeDamage(StatComponent->GetAttackDamage(),DamageEvent,GetController(),this);
+			//플러팅텍스트를 스폰합니다.
+			//FText AttackDamage = FText::FromString(FString::SanitizeFloat(StatComponent->GetAttackDamage()));
+			//FloatingTextComponent->AddFloatingActor(AttackDamage,HitResult.GetActor()->GetActorLocation());
+		}
+	}
 }
 
 

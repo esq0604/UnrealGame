@@ -9,6 +9,7 @@
 /**
  * 
  */
+DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
 UCLASS()
 class RETARGETINGTEST_API UBaseMonsterAnimInstance : public UAnimInstance
 {
@@ -20,6 +21,10 @@ public:
 	void PlayHitMontage();
 
 	void PlayDeadMontage();
+
+private:
+	UFUNCTION()
+	void AnimNotify_DoDamage();
 protected:
 	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	UAnimMontage* mHitMontage;
@@ -32,5 +37,7 @@ protected:
 
 	
 private:
-	
+
+public:
+	FOnAttackHitCheckDelegate OnDoDamage;
 };

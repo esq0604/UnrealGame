@@ -39,10 +39,12 @@ void UMonsterStatComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
+//데미지를 입었을때 입니다.
 void UMonsterStatComponent::GetDamaged(const float& Damage)
 {
 	SetHP(FMath::Clamp<float>(CurrentHP-Damage,0.0f,MaxHP));
 }
+
 
 void UMonsterStatComponent::SetHP(const float& NewHP)
 {
@@ -58,4 +60,9 @@ void UMonsterStatComponent::SetHP(const float& NewHP)
 float UMonsterStatComponent::GetHPRatio() const
 {
 	return (MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / MaxHP); 
+}
+
+float UMonsterStatComponent::GetAttackDamage()
+{
+	return AttackDamage;
 }

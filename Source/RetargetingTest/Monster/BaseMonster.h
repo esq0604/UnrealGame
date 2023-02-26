@@ -13,6 +13,7 @@ class UWidgetComponent;
 DECLARE_DELEGATE_OneParam(FMonsterDie, ABaseMonster*)
 class USkeletalMeshComponent;
 class UBaseMonsterAnimInstance;
+struct FDamageEvent;
 UCLASS()
 class RETARGETINGTEST_API ABaseMonster : public ACharacter
 {
@@ -22,7 +23,6 @@ public:
 	// Sets default values for this character's properties
 	ABaseMonster();
 
-	virtual void PostInitializeComponents() override;
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
@@ -31,11 +31,14 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
 private:
 	UFUNCTION()
 	void Dead();
 
+	UFUNCTION()
+	void AttackCheck();
 
 public:
 	FMonsterDie MonsterDieDelegate;
@@ -54,5 +57,8 @@ private:
 	UPROPERTY()
 	UBaseMonsterAnimInstance* mAnimInstacne;
 	
+	float AttackRadius=200.0f;
+
+	float AttackRange=350.0f;
 	
 };

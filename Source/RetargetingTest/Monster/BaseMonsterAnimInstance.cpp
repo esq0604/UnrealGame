@@ -17,3 +17,8 @@ void UBaseMonsterAnimInstance::PlayDeadMontage()
 {
 	Montage_Play(mDeadMontage);
 }
+
+void UBaseMonsterAnimInstance::AnimNotify_DoDamage()
+{
+	OnDoDamage.Broadcast();
+}

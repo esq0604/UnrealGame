@@ -4,7 +4,6 @@
 #include "CharaterAnimInstance.h"
 #include "RetargetingTestCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "RetargetingTest/Component/AttackComponent.h"
 
 UCharaterAnimInstance::UCharaterAnimInstance(const FObjectInitializer& ObjectInitializer)
 {

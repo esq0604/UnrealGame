@@ -19,7 +19,6 @@ float UPlayerStatComponent::GetAttackDamage()
 	return AttackDamage;
 }
 
-
 // Called when the game starts
 void UPlayerStatComponent::BeginPlay()
 {
@@ -39,3 +38,24 @@ void UPlayerStatComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
+void UPlayerStatComponent::SetHP(const float& NewHP)
+{
+	CurrentHP=NewHP;
+	OnHPChanged.Broadcast();
+	if(CurrentHP<KINDA_SMALL_NUMBER)
+	{
+		CurrentHP =0.0f;
+		OnHPIsZero.Broadcast();
+	}
+}
+
+float UPlayerStatComponent::GetHPRatio()
+{
+	return (MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / MaxHP); 
+}
+
+
+void UPlayerStatComponent::GetDamaged(const float& Damage)
+{
+	SetHP(FMath::Clamp<float>(CurrentHP-Damage,0.0f,MaxHP));
+}

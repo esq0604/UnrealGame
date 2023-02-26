@@ -31,6 +31,7 @@ public:
 	void GetDamaged(const float& Damage);
 	void SetHP(const float& NewHP);
 	float GetHPRatio() const;
+	float GetAttackDamage(); //getter
 
 public:
 	FOnHPIsZeroDelegate OnHPIsZero;
@@ -41,5 +42,7 @@ private:
 
 	UPROPERTY()
 	float CurrentHP;
-	
+
+	float AttackDamage=10.0f;
+
 };

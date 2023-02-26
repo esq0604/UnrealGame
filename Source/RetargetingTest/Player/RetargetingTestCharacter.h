@@ -96,6 +96,10 @@ protected:
 	UPROPERTY(EditAnywhere,meta=(AllowPrivateAccess=true))
 	class UFloatingCombatTextComponent* FloatingTextComponent;
 
+	UPROPERTY(EditAnywhere)
+	class UWidgetComponent* mHPWidgetComponent;
+	UPROPERTY(EditAnywhere)
+	class UPlayerHPWidget* HPBarWidget;
 private:
 	UPROPERTY(VisibleInstanceOnly,Category="Component")
 	class UPlayerStatComponent* StatComponent;
