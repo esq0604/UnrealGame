@@ -8,8 +8,7 @@
 #include "RetargetingTestCharacter.generated.h"
 
 
-
-
+class UBaseStateManagerComponent;
 class UAttackComponent;
 class UStatComponent;
 class APlayerAttackComponent;
@@ -100,6 +99,15 @@ protected:
 	class UWidgetComponent* mHPWidgetComponent;
 	UPROPERTY(EditAnywhere)
 	class UPlayerHPWidget* HPBarWidget;
+
+	UPROPERTY(EditAnywhere,Category="Component")
+	UBaseStateManagerComponent* StateManagerComponent;
+	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category=Move,meta=(AllowPrivateAccess=true))
+	bool IsMoving;
+	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category=Move,meta=(AllowPrivateAccess=true))
+	bool IsDodge;
+	
+	
 private:
 	UPROPERTY(VisibleInstanceOnly,Category="Component")
 	class UPlayerStatComponent* StatComponent;

@@ -23,6 +23,7 @@
 #include "RetargetingTest/Component/FloatingCombatTextComponent.h"
 #include "RetargetingTest/Component/PlayerStatComponent.h"
 #include "RetargetingTest/Management/FloatingTextObjectPool.h"
+#include "RetargetingTest/Component/BaseStateManagerComponent.h"
 #include "RetargetingTest/UI/PlayerHPWidget.h"
 
 
@@ -32,6 +33,7 @@
 ARetargetingTestCharacter::ARetargetingTestCharacter()
 	:AttackRange(200.0f) , AttackRadius(50.0f),MaxCombo(4),IsAttacking(false)
 {
+	StateManagerComponent = CreateDefaultSubobject<UBaseStateManagerComponent>(TEXT("StateManager"));
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Character"));
@@ -190,6 +192,7 @@ void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 void ARetargetingTestCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
+	IsMoving=true;
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	if (Controller != nullptr)
 	{
@@ -224,6 +227,7 @@ void ARetargetingTestCharacter::Look(const FInputActionValue& Value)
 
 void ARetargetingTestCharacter::Attack(const FInputActionValue& Value)
 {
+	IsMoving=false;
 	if(IsAttacking)
 	{
 		if(CanNextCombo)
