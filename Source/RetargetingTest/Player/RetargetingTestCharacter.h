@@ -100,7 +100,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	class UPlayerHPWidget* HPBarWidget;
 
-	UPROPERTY(EditAnywhere,Category="Component")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Component")
 	UBaseStateManagerComponent* StateManagerComponent;
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category=Move,meta=(AllowPrivateAccess=true))
 	bool IsMoving;

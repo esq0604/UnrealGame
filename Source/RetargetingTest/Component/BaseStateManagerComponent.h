@@ -4,9 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "../Object/BaseStateObject.h"
+
 #include "BaseStateManagerComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUpdatedActiveState);
+struct FGameplayTag;
+class UBaseStateObject;
+class UPlayerWalkingState;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RETARGETINGTEST_API UBaseStateManagerComponent : public UActorComponent
@@ -20,11 +24,13 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Base Variables")
 	TArray<UBaseStateObject*> ActivatableStates;
 
+	UPROPERTY()
+	FOnUpdatedActiveState OnUpdatedDelegate;
 protected:
-	UPROPERTY(BlueprintReadWrite,Category="Base Variables")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Base Variables")
 	AActor* PerformingActor;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Base Variables")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Base Variables")
 	UBaseStateObject* CurrentActiveState;
 
 protected:
@@ -35,16 +41,22 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable, Category = "Setters")
 	void PerformStateOfClass(TSubclassOf<UBaseStateObject> StateToSet);
-	
+
+	UFUNCTION(BlueprintCallable,Category="Setters")
+	void SetPerformingActor(AActor* SettedActor);
 	/* Setter */
 
+	UFUNCTION(BlueprintCallable, Category = "Setters")
 	void SetCurrentActiveState(UBaseStateObject* NewCurrentActiveState);
 	
 	/* Getters */
-	UBaseStateObject* GetCurrentActiveState() {return CurrentActiveState;}
+//	UBaseStateObject* GetCurrentActiveState() {return CurrentActiveState;}
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Getters")
 	void GetStateOfClass(TSubclassOf<UBaseStateObject> StateToSearch, UBaseStateObject*& FoundState);
 
-	void ConstructStateOfClass(TSubclassOf<UBaseStateObject> StateToConstruct, UBaseStateObject*& ConstructedState);
+	void ConstructStatebyClass(TSubclassOf<UBaseStateObject> StateToConstruct);
+
+	UBaseStateObject* GetStateOfGameplayTag(FGameplayTag StateGamePlayTag);
+	
 };

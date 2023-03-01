@@ -7,6 +7,7 @@
 #include "PlayerWalkingState.generated.h"
 
 /**
+
  * 
  */
 UCLASS()
@@ -14,8 +15,10 @@ class RETARGETINGTEST_API UPlayerWalkingState : public UBaseStateObject
 {
 	GENERATED_BODY()
 
-
+public:
+	UPlayerWalkingState();
 
 public:
 	virtual bool CanPerformState() override;
+
 };

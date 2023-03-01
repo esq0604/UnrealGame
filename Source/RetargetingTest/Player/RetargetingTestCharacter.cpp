@@ -25,6 +25,7 @@
 #include "RetargetingTest/Management/FloatingTextObjectPool.h"
 #include "RetargetingTest/Component/BaseStateManagerComponent.h"
 #include "RetargetingTest/UI/PlayerHPWidget.h"
+#include "GameplayTagContainer.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -34,6 +35,8 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 	:AttackRange(200.0f) , AttackRadius(50.0f),MaxCombo(4),IsAttacking(false)
 {
 	StateManagerComponent = CreateDefaultSubobject<UBaseStateManagerComponent>(TEXT("StateManager"));
+	StateManagerComponent->SetPerformingActor(this);
+	//StateManagerComponent->Perform
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Character"));
@@ -131,7 +134,8 @@ void ARetargetingTestCharacter::AttackCheck()
 
 void ARetargetingTestCharacter::BeginPlay()
 {
-	// Call the base class  
+	// Call the base class
+
 	Super::BeginPlay();
 	UE_LOG(LogTemp,Warning,TEXT("Character In BeginPlay"));
 	//Add Input Mapping Context
@@ -192,7 +196,9 @@ void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 void ARetargetingTestCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
+	//FGameplayTag walk=FGameplayTag::RequestGameplayTag(TEXT("State.Walk"));
 	IsMoving=true;
+	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->ActivatableStates[0]);
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	if (Controller != nullptr)
 	{

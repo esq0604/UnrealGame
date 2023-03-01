@@ -2,7 +2,11 @@
 
 
 #include "BaseStateObject.h"
+#include "../Component/BaseStateManagerComponent.h"
 
+UBaseStateObject::UBaseStateObject()
+{
+}
 
 bool UBaseStateObject::CanPerformState()
 {

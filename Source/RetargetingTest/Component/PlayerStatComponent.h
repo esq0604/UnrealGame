@@ -37,8 +37,12 @@ public:
 	FOnHPIsZeroDelegate OnHPIsZero;
 	FOnHPChangedDelegate OnHPChanged;
 private:
+	
 	float AttackDamage=50.0f;
 
+	
 	float MaxHP=100.0f;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="HP",meta=(AllowPrivateAccess=true))
 	float CurrentHP=MaxHP;
 };

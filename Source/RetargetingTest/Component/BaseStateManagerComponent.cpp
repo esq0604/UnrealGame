@@ -3,6 +3,9 @@
 
 #include "BaseStateManagerComponent.h"
 
+#include "RetargetingTest/Object/BaseStateObject.h"
+#include "RetargetingTest/Object/PlayerWalkingState.h"
+
 
 // Sets default values for this component's properties
 UBaseStateManagerComponent::UBaseStateManagerComponent()
@@ -11,8 +14,9 @@ UBaseStateManagerComponent::UBaseStateManagerComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 	
+	ActivatableStates.AddUnique(CreateDefaultSubobject<UPlayerWalkingState>(TEXT("WalkState")));
+	//CurrentActiveState=ActivatableStates[0];
 }
 
 
@@ -21,7 +25,6 @@ void UBaseStateManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
 	
 }
 
@@ -29,11 +32,17 @@ void UBaseStateManagerComponent::PerformStateOfClass(TSubclassOf<UBaseStateObjec
 {
 }
 
+void UBaseStateManagerComponent::SetPerformingActor(AActor* SettedActor)
+{
+	PerformingActor=SettedActor;
+}
+
 
 void UBaseStateManagerComponent::SetCurrentActiveState(UBaseStateObject* NewCurrentActiveState)
 {
-	CurrentActiveState = NewCurrentActiveState;
-	
+	//if(NewCurrentActiveState->CanPerformState())
+	CurrentActiveState = ActivatableStates[0];
+
 }
 
 
@@ -55,20 +64,36 @@ void UBaseStateManagerComponent::GetStateOfClass(TSubclassOf<UBaseStateObject> S
 	return;
 }
 
-void UBaseStateManagerComponent::ConstructStateOfClass(TSubclassOf<UBaseStateObject> StateToConstruct,
-	UBaseStateObject*& ConstructedState)
+void UBaseStateManagerComponent::ConstructStatebyClass(TSubclassOf<UBaseStateObject> StateToConstruct)
 {
-	ConstructedState=nullptr;
+	//ConstructedState=nullptr;
 
 	if(StateToConstruct)
 	{
 		UBaseStateObject* LocalNewState;
-		LocalNewState = NewObject<UBaseStateObject>(GetOwner(),StateToConstruct);
+		LocalNewState = NewObject<UBaseStateObject>(PerformingActor,StateToConstruct);
 
 		ActivatableStates.AddUnique(LocalNewState);
 		LocalNewState->SetPerformingActor(PerformingActor);
-		LocalNewState->ConstructState();
-		ConstructedState = LocalNewState;
+		UE_LOG(LogTemp,Warning,TEXT("ActivatableStates %d"),ActivatableStates.Num());
 	}
+}
+
+//get state by gameplayTag
+UBaseStateObject* UBaseStateManagerComponent::GetStateOfGameplayTag(FGameplayTag StateGamePlayTag)
+{
+	 
+	for(int32 i=0; i<ActivatableStates.Num(); i++)
+	{
+		if(ActivatableStates[i])
+		{
+			if(ActivatableStates[i]->StateGameplayTag==StateGamePlayTag)
+			{
+				return ActivatableStates[i];
+				
+			}
+		}
+	}
+	return nullptr;
 }  
 
