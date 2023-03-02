@@ -21,7 +21,7 @@ public:
 	// Sets default values for this component's properties
 	UBaseStateManagerComponent();
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Base Variables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Base Variables")
 	TArray<UBaseStateObject*> ActivatableStates;
 
 	UPROPERTY()
@@ -32,7 +32,6 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Base Variables")
 	UBaseStateObject* CurrentActiveState;
-
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;

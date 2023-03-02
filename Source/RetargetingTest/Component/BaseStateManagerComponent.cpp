@@ -4,6 +4,10 @@
 #include "BaseStateManagerComponent.h"
 
 #include "RetargetingTest/Object/BaseStateObject.h"
+#include "RetargetingTest/Object/PlayerDodgeState.h"
+#include "RetargetingTest/Object/PlayerIdleState.h"
+#include "RetargetingTest/Object/PlayerJumpingState.h"
+#include "RetargetingTest/Object/PlayerSprintingState.h"
 #include "RetargetingTest/Object/PlayerWalkingState.h"
 
 
@@ -14,8 +18,17 @@ UBaseStateManagerComponent::UBaseStateManagerComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	
-	ActivatableStates.AddUnique(CreateDefaultSubobject<UPlayerWalkingState>(TEXT("WalkState")));
+	//DodgeStateTest=;
+	//WalkingStateTest=;
+	ActivatableStates.Add(CreateDefaultSubobject<UPlayerDodgeState>(TEXT("DodgeState")));
+	ActivatableStates.Add(CreateDefaultSubobject<UPlayerWalkingState>(TEXT("WalkingState")));
+	ActivatableStates.Add(CreateDefaultSubobject<UPlayerIdleState>(TEXT("IdleState")));
+	ActivatableStates.Add(CreateDefaultSubobject<UPlayerJumpingState>(TEXT("JumpState")));
+	ActivatableStates.Add(CreateDefaultSubobject<UPlayerSprintingState>(TEXT("SprintState")));
+
+	//ActivatableStates.AddUnique(CreateDefaultSubobject<UPlayerIdleState>(TEXT("IdleState")));
+	//ActivatableStates.AddUnique(CreateDefaultSubobject<UPlayerJumpingState>(TEXT("JumpingState")));
+
 	//CurrentActiveState=ActivatableStates[0];
 }
 
@@ -41,7 +54,7 @@ void UBaseStateManagerComponent::SetPerformingActor(AActor* SettedActor)
 void UBaseStateManagerComponent::SetCurrentActiveState(UBaseStateObject* NewCurrentActiveState)
 {
 	//if(NewCurrentActiveState->CanPerformState())
-	CurrentActiveState = ActivatableStates[0];
+	CurrentActiveState = NewCurrentActiveState;
 
 }
 
