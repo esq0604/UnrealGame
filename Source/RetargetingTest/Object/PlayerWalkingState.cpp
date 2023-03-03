@@ -15,6 +15,7 @@ UPlayerWalkingState::UPlayerWalkingState()
 
 bool UPlayerWalkingState::CanPerformState()
 {
+	UE_LOG(LogTemp,Warning,TEXT("Walking State CanPerformState"));
 	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
 	if(PerformingActor->GetVelocity().Length()>0 && !Character->GetMovementComponent()->IsFalling())
 		return true;

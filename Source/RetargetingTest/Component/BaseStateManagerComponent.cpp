@@ -20,11 +20,13 @@ UBaseStateManagerComponent::UBaseStateManagerComponent()
 
 	//DodgeStateTest=;
 	//WalkingStateTest=;
-	ActivatableStates.Add(CreateDefaultSubobject<UPlayerDodgeState>(TEXT("DodgeState")));
-	ActivatableStates.Add(CreateDefaultSubobject<UPlayerWalkingState>(TEXT("WalkingState")));
-	ActivatableStates.Add(CreateDefaultSubobject<UPlayerIdleState>(TEXT("IdleState")));
-	ActivatableStates.Add(CreateDefaultSubobject<UPlayerJumpingState>(TEXT("JumpState")));
-	ActivatableStates.Add(CreateDefaultSubobject<UPlayerSprintingState>(TEXT("SprintState")));
+
+	ActiveAbleStates.Add(CreateDefaultSubobject<UPlayerDodgeState>(TEXT("DodgeeState")));
+	ActiveAbleStates.Add(CreateDefaultSubobject<UPlayerIdleState>(TEXT("IdleState")));
+	ActiveAbleStates.Add(CreateDefaultSubobject<UPlayerJumpingState>(TEXT("JumpingState")));
+	ActiveAbleStates.Add(CreateDefaultSubobject<UPlayerSprintingState>(TEXT("SprintingState")));
+	ActiveAbleStates.Add(CreateDefaultSubobject<UPlayerWalkingState>(TEXT("WalkingState")));
+
 
 	//ActivatableStates.AddUnique(CreateDefaultSubobject<UPlayerIdleState>(TEXT("IdleState")));
 	//ActivatableStates.AddUnique(CreateDefaultSubobject<UPlayerJumpingState>(TEXT("JumpingState")));
@@ -40,6 +42,8 @@ void UBaseStateManagerComponent::BeginPlay()
 
 	
 }
+
+
 
 void UBaseStateManagerComponent::PerformStateOfClass(TSubclassOf<UBaseStateObject> StateToSet)
 {
@@ -62,13 +66,13 @@ void UBaseStateManagerComponent::SetCurrentActiveState(UBaseStateObject* NewCurr
 void UBaseStateManagerComponent::GetStateOfClass(TSubclassOf<UBaseStateObject> StateToSearch,
 	UBaseStateObject*& FoundState)
 {
-	for(int32 i =0; i<ActivatableStates.Num(); i++)
+	for(int32 i =0; i<ActiveAbleStates.Num(); i++)
 	{
-		if(ActivatableStates[i])
+		if(ActiveAbleStates[i])
 		{
-			if(ActivatableStates[i]->GetClass()==StateToSearch)
+			if(ActiveAbleStates[i]->GetClass()==StateToSearch)
 			{
-				FoundState=ActivatableStates[i];
+				FoundState=ActiveAbleStates[i];
 				return;
 			}
 		}
@@ -86,9 +90,9 @@ void UBaseStateManagerComponent::ConstructStatebyClass(TSubclassOf<UBaseStateObj
 		UBaseStateObject* LocalNewState;
 		LocalNewState = NewObject<UBaseStateObject>(PerformingActor,StateToConstruct);
 
-		ActivatableStates.AddUnique(LocalNewState);
+		ActiveAbleStates.AddUnique(LocalNewState);
 		LocalNewState->SetPerformingActor(PerformingActor);
-		UE_LOG(LogTemp,Warning,TEXT("ActivatableStates %d"),ActivatableStates.Num());
+		UE_LOG(LogTemp,Warning,TEXT("ActivatableStates %d"),ActiveAbleStates.Num());
 	}
 }
 
@@ -96,13 +100,13 @@ void UBaseStateManagerComponent::ConstructStatebyClass(TSubclassOf<UBaseStateObj
 UBaseStateObject* UBaseStateManagerComponent::GetStateOfGameplayTag(FGameplayTag StateGamePlayTag)
 {
 	 
-	for(int32 i=0; i<ActivatableStates.Num(); i++)
+	for(int32 i=0; i<ActiveAbleStates.Num(); i++)
 	{
-		if(ActivatableStates[i])
+		if(ActiveAbleStates[i])
 		{
-			if(ActivatableStates[i]->StateGameplayTag==StateGamePlayTag)
+			if(ActiveAbleStates[i]->StateGameplayTag==StateGamePlayTag)
 			{
-				return ActivatableStates[i];
+				return ActiveAbleStates[i];
 				
 			}
 		}

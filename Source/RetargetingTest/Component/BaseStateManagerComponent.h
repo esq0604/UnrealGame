@@ -22,7 +22,7 @@ public:
 	UBaseStateManagerComponent();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Base Variables")
-	TArray<UBaseStateObject*> ActivatableStates;
+	TArray<UBaseStateObject*> ActiveAbleStates;
 
 	UPROPERTY()
 	FOnUpdatedActiveState OnUpdatedDelegate;
@@ -36,7 +36,6 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	
 public:
 	UFUNCTION(BlueprintCallable, Category = "Setters")
 	void PerformStateOfClass(TSubclassOf<UBaseStateObject> StateToSet);
@@ -49,7 +48,7 @@ public:
 	void SetCurrentActiveState(UBaseStateObject* NewCurrentActiveState);
 	
 	/* Getters */
-//	UBaseStateObject* GetCurrentActiveState() {return CurrentActiveState;}
+	UBaseStateObject* GetCurrentActiveState() {return CurrentActiveState;}
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Getters")
 	void GetStateOfClass(TSubclassOf<UBaseStateObject> StateToSearch, UBaseStateObject*& FoundState);

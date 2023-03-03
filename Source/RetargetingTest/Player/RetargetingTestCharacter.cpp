@@ -26,6 +26,7 @@
 #include "RetargetingTest/Component/BaseStateManagerComponent.h"
 #include "RetargetingTest/UI/PlayerHPWidget.h"
 #include "GameplayTagContainer.h"
+#include "RetargetingTest/Object/BaseStateObject.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -198,8 +199,14 @@ void ARetargetingTestCharacter::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	//FGameplayTag walk=FGameplayTag::RequestGameplayTag(TEXT("State.Walk"));
 	IsMoving=true;
-	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->ActivatableStates[0]);
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	//현재 walk 스테이트가 아니고, walk 스테이트로 가능하다면 스테이트를 변경합니다,.
+	FGameplayTag WalkStateTag = FGameplayTag::RequestGameplayTag(TEXT("State.Walk"));
+	if(StateManagerComponent->GetCurrentActiveState()!=StateManagerComponent->GetStateOfGameplayTag(WalkStateTag))
+	{
+		if(StateManagerComponent->GetStateOfGameplayTag(WalkStateTag)->CanPerformState())
+		StateManagerComponent->SetCurrentActiveState(StateManagerComponent->ActiveAbleStates[0]);
+	}
+		FVector2D MovementVector = Value.Get<FVector2D>();
 	if (Controller != nullptr)
 	{
 		// find out which way is forward

@@ -38,5 +38,6 @@ public:
 	UFUNCTION(BlueprintCallable,Category= "State Base Events")
 	void ConstructState();
 
+	void SetStateManagerComponent(UBaseStateManagerComponent* NewStateManagerComponent) {StateManagerComponent=NewStateManagerComponent;}
 	UBaseStateManagerComponent* GetStateManagerComponent() {return StateManagerComponent;}
 };
