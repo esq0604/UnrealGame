@@ -13,6 +13,15 @@ bool UBaseStateObject::CanPerformState()
 	return true;
 }
 
+void UBaseStateObject::StartState()
+{
+	
+}
+
+void UBaseStateObject::EndState()
+{
+}
+
 void UBaseStateObject::ConstructState()
 {
 }

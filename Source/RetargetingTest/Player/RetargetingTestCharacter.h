@@ -45,6 +45,9 @@ class ARetargetingTestCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* AttackAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* SprintAction;
 
 public:
 	ARetargetingTestCharacter();
@@ -60,6 +63,9 @@ public:
 
 	UFUNCTION()
 	void OnAttackMontageEnded(class UAnimMontage* Montage, bool bInterrupted);
+
+	UFUNCTION(BlueprintCallable)
+	void JumpAndDodge();
 protected:
 
 	/** Called for movement input */
@@ -79,6 +85,7 @@ protected:
 
 	virtual void Tick(float DeltaSeconds) override;
 
+	void Sprint(const FInputActionValue& Value);
 private:
 	
 public:
@@ -140,5 +147,12 @@ private:
 	
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Category=Attack,meta=(AllowPrivateAccess=true))
 	bool IsAttacking;
+
+	bool IsSprint;
+
+
+	//Test
+	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
+	UAnimMontage* DodgeMontage;
 };
 

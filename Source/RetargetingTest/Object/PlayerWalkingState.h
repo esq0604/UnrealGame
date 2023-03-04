@@ -22,4 +22,7 @@ public:
 public:
 	virtual bool CanPerformState() override;
 
+	virtual void EndState() override;
+
+	virtual void StartState() override;
 };

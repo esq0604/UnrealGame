@@ -15,12 +15,23 @@ UPlayerWalkingState::UPlayerWalkingState()
 
 bool UPlayerWalkingState::CanPerformState()
 {
-	UE_LOG(LogTemp,Warning,TEXT("Walking State CanPerformState"));
-	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
-	if(PerformingActor->GetVelocity().Length()>0 && !Character->GetMovementComponent()->IsFalling())
-		return true;
+	if(PerformingActor!= nullptr)
+	{
+		ARetargetingTestCharacter* PerformingCharacter=Cast<ARetargetingTestCharacter>(PerformingActor);
+			if(PerformingCharacter->GetVelocity().Size()>0 && !PerformingCharacter->GetMovementComponent()->IsFalling())return true;
+		
+	}
+	return false;
+}
 
-	return Super::CanPerformState();
+void UPlayerWalkingState::EndState()
+{
+	Super::EndState();
+}
+
+void UPlayerWalkingState::StartState()
+{
+	Super::StartState();
 }
 
 

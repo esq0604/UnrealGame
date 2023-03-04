@@ -30,8 +30,14 @@ protected:
 	UPROPERTY()
 	UBaseStateManagerComponent* StateManagerComponent;
 public:
+	UFUNCTION()
 	virtual bool CanPerformState();
+
+	UFUNCTION()
+	virtual void StartState();
 	
+	UFUNCTION()
+	virtual void EndState();
 	UFUNCTION(BlueprintCallable, Category = "State Setters")
 	void SetPerformingActor(AActor* NewPerformingActor) { PerformingActor = NewPerformingActor; }
 
@@ -40,4 +46,6 @@ public:
 
 	void SetStateManagerComponent(UBaseStateManagerComponent* NewStateManagerComponent) {StateManagerComponent=NewStateManagerComponent;}
 	UBaseStateManagerComponent* GetStateManagerComponent() {return StateManagerComponent;}
+
+	FGameplayTag GetGameplayTag() {return StateGameplayTag;}
 };

@@ -3,6 +3,9 @@
 
 #include "PlayerJumpingState.h"
 
+#include "GameFramework/PawnMovementComponent.h"
+#include "RetargetingTest/Player/RetargetingTestCharacter.h"
+
 UPlayerJumpingState::UPlayerJumpingState()
 {
 	StateGameplayTag.FromExportString("State.Jump");

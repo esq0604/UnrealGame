@@ -161,10 +161,19 @@ void ARetargetingTestCharacter::BeginPlay()
 void ARetargetingTestCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	
+	if(GetVelocity()==FVector::ZeroVector)
+	{
+		StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("State.Idle"))));
+	}
+		
 }
 
-
+void ARetargetingTestCharacter::Sprint(const FInputActionValue& Value)
+{
+ 	IsSprint=true;
+	//StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("State.Sprint"))));
+	GetCharacterMovement()->MaxWalkSpeed=800;
+}
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -176,7 +185,10 @@ void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
 		//Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		// EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		// EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ARetargetingTestCharacter::JumpAndDodge);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		//Moving
@@ -187,7 +199,8 @@ void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 
 		//Attack
 		EnhancedInputComponent->BindAction(AttackAction,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::Attack);
-		
+
+		EnhancedInputComponent->BindAction(SprintAction,ETriggerEvent::Triggered, this,&ARetargetingTestCharacter::Sprint);
 		//InputComponent->BindAction("AttackAction",IE_Pressed, this, &ARetargetingTestCharacter::Attack);
 		
 	}
@@ -198,13 +211,22 @@ void ARetargetingTestCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	//FGameplayTag walk=FGameplayTag::RequestGameplayTag(TEXT("State.Walk"));
-	IsMoving=true;
-	//현재 walk 스테이트가 아니고, walk 스테이트로 가능하다면 스테이트를 변경합니다,.
-	FGameplayTag WalkStateTag = FGameplayTag::RequestGameplayTag(TEXT("State.Walk"));
-	if(StateManagerComponent->GetCurrentActiveState()!=StateManagerComponent->GetStateOfGameplayTag(WalkStateTag))
+	// IsMoving=true;
+	if(IsSprint)
 	{
-		if(StateManagerComponent->GetStateOfGameplayTag(WalkStateTag)->CanPerformState())
-		StateManagerComponent->SetCurrentActiveState(StateManagerComponent->ActiveAbleStates[0]);
+		const FGameplayTag SprintState = FGameplayTag::RequestGameplayTag(TEXT("State.Sprint"));
+		if(StateManagerComponent->GetCurrentActiveState()!=StateManagerComponent->GetStateOfGameplayTag(SprintState))
+		{
+			StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(SprintState));
+		}
+	}
+	if(!IsSprint)
+	{
+		const FGameplayTag WalkStateTag = FGameplayTag::RequestGameplayTag(TEXT("State.Walk"));
+		if(StateManagerComponent->GetCurrentActiveState()!=StateManagerComponent->GetStateOfGameplayTag(WalkStateTag))
+		{
+			StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(WalkStateTag));
+		}
 	}
 		FVector2D MovementVector = Value.Get<FVector2D>();
 	if (Controller != nullptr)
@@ -240,6 +262,13 @@ void ARetargetingTestCharacter::Look(const FInputActionValue& Value)
 
 void ARetargetingTestCharacter::Attack(const FInputActionValue& Value)
 {
+	//어택 스테이트로 변환합니다.
+	// const FGameplayTag AttackingState = FGameplayTag::RequestGameplayTag(TEXT("State.Attack"));
+	// if(StateManagerComponent->GetCurrentActiveState()->StateGameplayTag!=AttackingState)
+	// {
+	// 	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(AttackingState));
+	// }
+	
 	IsMoving=false;
 	if(IsAttacking)
 	{
@@ -298,6 +327,21 @@ void ARetargetingTestCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool
 {
 	IsAttacking=false;
 	AttackEndComboState();
+}
+
+void ARetargetingTestCharacter::JumpAndDodge()
+{
+	//UE_LOG(LogTemp,Warning,TEXT(""))
+	if(StateManagerComponent->GetCurrentActiveState()->StateGameplayTag==FGameplayTag::RequestGameplayTag("State.Walk"))
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Current State %s -> Do Dodge"),*FGameplayTag::RequestGameplayTag("State.Walk").ToString())
+		PlayAnimMontage(DodgeMontage);
+	}
+	else if(StateManagerComponent->GetCurrentActiveState()->StateGameplayTag==FGameplayTag::RequestGameplayTag("State.Sprint"))
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Current State %s -> Do Jump"),*FGameplayTag::RequestGameplayTag("State.Sprint").ToString())
+		ACharacter::Jump();
+	}
 }
 
 

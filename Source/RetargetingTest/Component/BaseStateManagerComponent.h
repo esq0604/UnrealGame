@@ -41,7 +41,7 @@ public:
 	void PerformStateOfClass(TSubclassOf<UBaseStateObject> StateToSet);
 
 	UFUNCTION(BlueprintCallable,Category="Setters")
-	void SetPerformingActor(AActor* SettedActor);
+	void SetPerformingActor(AActor* NewPerformingActor);
 	/* Setter */
 
 	UFUNCTION(BlueprintCallable, Category = "Setters")
@@ -55,6 +55,7 @@ public:
 
 	void ConstructStatebyClass(TSubclassOf<UBaseStateObject> StateToConstruct);
 
+	UFUNCTION(BlueprintCallable)
 	UBaseStateObject* GetStateOfGameplayTag(FGameplayTag StateGamePlayTag);
 	
 };

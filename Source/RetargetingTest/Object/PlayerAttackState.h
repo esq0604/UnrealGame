@@ -4,21 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "BasePlayerState.h"
-#include "PlayerSprintingState.generated.h"
+#include "PlayerAttackState.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RETARGETINGTEST_API UPlayerSprintingState : public UBasePlayerState
+class RETARGETINGTEST_API UPlayerAttackState : public UBasePlayerState
 {
 	GENERATED_BODY()
 public:
-	UPlayerSprintingState();
+	UPlayerAttackState();
 
 	virtual bool CanPerformState() override;
-
-	virtual void StartState() override;
-
-	virtual void EndState() override;
 };
