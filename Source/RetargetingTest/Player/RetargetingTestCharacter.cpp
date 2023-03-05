@@ -81,10 +81,22 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 float ARetargetingTestCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
                                             AController* EventInstigator, AActor* DamageCauser)
 {
-	float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	StatComponent->GetDamaged(DamageAmount);
+	if(!IsInvincible)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("IsInvincible false"));
+		float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+		StatComponent->GetDamaged(DamageAmount);
 
+		return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	}
+	else
+	{
+
+		UE_LOG(LogTemp,Warning,TEXT("IsInvincible true"));
+
+	}
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
 }
 
 void ARetargetingTestCharacter::AttackCheck()
@@ -140,6 +152,7 @@ void ARetargetingTestCharacter::BeginPlay()
 	Super::BeginPlay();
 	UE_LOG(LogTemp,Warning,TEXT("Character In BeginPlay"));
 	//Add Input Mapping Context
+	
 	HPBarWidget = Cast<UPlayerHPWidget>(mHPWidgetComponent->GetWidget());
 	HPBarWidget->BindCharacterStat(StatComponent);
 	HPBarWidget->AddToViewport();
@@ -171,8 +184,12 @@ void ARetargetingTestCharacter::Tick(float DeltaSeconds)
 void ARetargetingTestCharacter::Sprint(const FInputActionValue& Value)
 {
  	IsSprint=true;
-	//StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("State.Sprint"))));
 	GetCharacterMovement()->MaxWalkSpeed=800;
+}
+
+UPlayerStatComponent* ARetargetingTestCharacter::GetStatComponent() const
+{
+	return StatComponent;
 }
 
 
@@ -334,12 +351,12 @@ void ARetargetingTestCharacter::JumpAndDodge()
 	//UE_LOG(LogTemp,Warning,TEXT(""))
 	if(StateManagerComponent->GetCurrentActiveState()->StateGameplayTag==FGameplayTag::RequestGameplayTag("State.Walk"))
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Current State %s -> Do Dodge"),*FGameplayTag::RequestGameplayTag("State.Walk").ToString())
-		PlayAnimMontage(DodgeMontage);
+		const FGameplayTag DodgeTag = FGameplayTag::RequestGameplayTag("State.Dodge");
+		StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(DodgeTag));
+
 	}
 	else if(StateManagerComponent->GetCurrentActiveState()->StateGameplayTag==FGameplayTag::RequestGameplayTag("State.Sprint"))
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Current State %s -> Do Jump"),*FGameplayTag::RequestGameplayTag("State.Sprint").ToString())
 		ACharacter::Jump();
 	}
 }

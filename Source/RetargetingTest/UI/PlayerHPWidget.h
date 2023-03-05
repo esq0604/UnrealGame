@@ -16,6 +16,7 @@ class RETARGETINGTEST_API UPlayerHPWidget : public UUserWidget
 
 public:
 	void BindCharacterStat(class UPlayerStatComponent* NewMonsterStat);
+	
 	void UpdateHPWidget();
 protected:
 	virtual void NativeConstruct() override;
@@ -27,6 +28,8 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UPlayerHPWidget* HPBarWidget;
+
+	float Percent;
 private:
 	TWeakObjectPtr<class UPlayerStatComponent> CurrentCharacterStat;
 };

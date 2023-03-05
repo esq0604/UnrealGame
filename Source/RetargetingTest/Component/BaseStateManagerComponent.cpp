@@ -63,6 +63,7 @@ void UBaseStateManagerComponent::SetCurrentActiveState(UBaseStateObject* NewCurr
 	{
 		if(NewCurrentActiveState->CanPerformState())
 		{
+			//TODO : Dodge-> Walk는 바로 전환이 일어나는데 어떻게 해결할래
 			CurrentActiveState = NewCurrentActiveState;
 			CurrentActiveState->StartState();
 		}

@@ -40,22 +40,29 @@ void UPlayerStatComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void UPlayerStatComponent::SetHP(const float& NewHP)
 {
-	CurrentHP=NewHP;
-	OnHPChanged.Broadcast();
+	CurrentHpPercent=GetHPRatio(CurrentHP); //현재 피 퍼센트
+	NewHpPercent=GetHPRatio(NewHP); //받아서 까인 피 퍼센트
+	UE_LOG(LogTemp,Warning,TEXT("CurrentHPPercent %f"),CurrentHpPercent);
+	UE_LOG(LogTemp,Warning,TEXT("NewHPPercent %f"),NewHpPercent);
+	OnHPChanged.Broadcast(); //widget 처리 후
+	CurrentHP=NewHP; //현재 피 갱신 
 	if(CurrentHP<KINDA_SMALL_NUMBER)
 	{
 		CurrentHP =0.0f;
 		OnHPIsZero.Broadcast();
 	}
-}
+} 
 
-float UPlayerStatComponent::GetHPRatio()
+float UPlayerStatComponent::GetHPRatio(const float& ChangedHP)
 {
-	return (MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (CurrentHP / MaxHP); 
+	return (MaxHP < KINDA_SMALL_NUMBER) ? 0.0f : (ChangedHP / MaxHP); 
 }
 
 
 void UPlayerStatComponent::GetDamaged(const float& Damage)
 {
+	UE_LOG(LogTemp,Warning,TEXT("CurrentHP-Damage %f"),FMath::Clamp<float>(CurrentHP-Damage,0.0f,MaxHP));
 	SetHP(FMath::Clamp<float>(CurrentHP-Damage,0.0f,MaxHP));
 }
+
+

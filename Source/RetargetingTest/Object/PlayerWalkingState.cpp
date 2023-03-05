@@ -18,7 +18,8 @@ bool UPlayerWalkingState::CanPerformState()
 	if(PerformingActor!= nullptr)
 	{
 		ARetargetingTestCharacter* PerformingCharacter=Cast<ARetargetingTestCharacter>(PerformingActor);
-			if(PerformingCharacter->GetVelocity().Size()>0 && !PerformingCharacter->GetMovementComponent()->IsFalling())return true;
+			if(PerformingCharacter->GetVelocity().Size()>150 && !PerformingCharacter->GetMovementComponent()->IsFalling())
+				return true;
 		
 	}
 	return false;

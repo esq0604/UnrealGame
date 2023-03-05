@@ -66,6 +66,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void JumpAndDodge();
+
+	UFUNCTION(BlueprintCallable)
+	void SetInvincible(bool NewIsInvincible){IsInvincible=NewIsInvincible;}
 protected:
 
 	/** Called for movement input */
@@ -95,6 +98,8 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+	UFUNCTION(BlueprintCallable)
+	class UPlayerStatComponent* GetStatComponent() const;
 	
 protected:
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category="Animation")
@@ -151,7 +156,7 @@ private:
 
 	bool IsSprint;
 
-
+	bool IsInvincible; 
 	//Test
 	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	UAnimMontage* DodgeMontage;

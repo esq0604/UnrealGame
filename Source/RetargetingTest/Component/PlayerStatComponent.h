@@ -28,7 +28,11 @@ public:
 
 	void SetHP(const float& NewHP);
 	
-	float GetHPRatio();
+	float GetHPRatio(const float& ChangedHP);
+
+	float GetCurrentHPPercent() const {return CurrentHpPercent;}
+	UFUNCTION(BlueprintCallable)
+	float GetNewHPPercent() const {return NewHpPercent;}
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -43,6 +47,8 @@ private:
 	
 	float MaxHP=100.0f;
 
+	float CurrentHpPercent;
+	float NewHpPercent=1;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="HP",meta=(AllowPrivateAccess=true))
 	float CurrentHP=MaxHP;
 };

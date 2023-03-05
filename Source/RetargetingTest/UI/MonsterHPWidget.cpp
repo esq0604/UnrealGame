@@ -3,6 +3,7 @@
 
 #include "MonsterHPWidget.h"
 
+#include "VectorTypes.h"
 #include "Components/ProgressBar.h"
 #include "RetargetingTest/Component/MonsterStatComponent.h"
 
@@ -20,6 +21,7 @@ void UMonsterHPWidget::BindMonsterStat(UMonsterStatComponent* NewMonsterStat)
 
 void UMonsterHPWidget::UpdateHPWidget()
 {
+	
 	mHPProgressBar->SetPercent(CurrentMonsterStat->GetHPRatio());
 }
  

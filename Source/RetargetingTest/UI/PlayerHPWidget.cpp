@@ -19,8 +19,16 @@ void UPlayerHPWidget::BindCharacterStat(UPlayerStatComponent* NewCharaterStat)
 
 void UPlayerHPWidget::UpdateHPWidget()
 {
-	UE_LOG(LogTemp,Warning,TEXT("Update Player HP bar widget"));
-	mHPProgressBar->SetPercent(CurrentCharacterStat->GetHPRatio());
+
+	//현재 체력 퍼센트에서 감소한 체력퍼센트까지보간을 이용해 줄입니다.
+	//UE_LOG(LogTemp,Warning,TEXT("CurrentHPPercent %f"),CurrentCharacterStat->GetCurrentHPPercent());
+	//UE_LOG(LogTemp,Warning,TEXT("NewHPPercent %f"),CurrentCharacterStat->GetNewHPPercent());
+	 // while(CurrentCharacterStat->GetCurrentHPPercent()>CurrentCharacterStat->GetNewHPPercent())
+	 // {
+	 // 	Percent=FMath::Lerp(CurrentCharacterStat->GetCurrentHPPercent(),CurrentCharacterStat->GetNewHPPercent(),0.1);
+	 // 	//UE_LOG(LogTemp,Warning,TEXT("%f"),SettingHPPercent);
+	 // 	mHPProgressBar->SetPercent(Percent);
+	 // }
 }
 
 
