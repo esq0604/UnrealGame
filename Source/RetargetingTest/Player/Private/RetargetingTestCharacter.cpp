@@ -12,7 +12,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "RetargetingTest/Component/Public/PlayerStatComponent.h"
+#include "RetargetingTest/Component/Public/BasePlayerStatComponent.h"
 #include "RetargetingTest/Player/Public/CharaterAnimInstance.h"
 #include "Components/SceneComponent.h"
 #include "DrawDebugHelpers.h"
@@ -70,7 +70,7 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 	//사용자 정의 컴포넌트입니다.
-	StatComponent= CreateDefaultSubobject<UPlayerStatComponent>(TEXT("StatComponent"));
+	StatComponent= CreateDefaultSubobject<UBasePlayerStatComponent>(TEXT("StatComponent"));
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));	
 	mHPWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
 	StateManagerComponent = CreateDefaultSubobject<UBaseStateManagerComponent>(TEXT("StateManager"));
@@ -87,17 +87,10 @@ float ARetargetingTestCharacter::TakeDamage(float DamageAmount, FDamageEvent con
 {
 	if(!IsInvincible)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("IsInvincible false"));
 		float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-		StatComponent->GetDamaged(DamageAmount);
+		StatComponent->SufferDamage(DamageAmount);
 
 		return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("IsInvincible true"));
-
-		
 	}
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
@@ -109,7 +102,6 @@ float ARetargetingTestCharacter::TakeDamage(float DamageAmount, FDamageEvent con
  */
 void ARetargetingTestCharacter::AttackCheck()
 {
-	UE_LOG(LogTemp,Warning,TEXT("AttackCheck"));
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None,false,this);
 	
@@ -166,7 +158,7 @@ void ARetargetingTestCharacter::BeginPlay()
 	//Add Input Mapping Context
 	
 	HPBarWidget = Cast<UPlayerHPWidget>(mHPWidgetComponent->GetWidget());
-	HPBarWidget->BindCharacterStat(StatComponent);
+	HPBarWidget->BindActorStat(StatComponent);
 	HPBarWidget->AddToViewport();
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -195,7 +187,7 @@ void ARetargetingTestCharacter::Sprint(const FInputActionValue& Value)
 	GetCharacterMovement()->MaxWalkSpeed=800;
 }
 
-UPlayerStatComponent* ARetargetingTestCharacter::GetStatComponent() const
+UBasePlayerStatComponent* ARetargetingTestCharacter::GetStatComponent() const
 {
 	return StatComponent;
 }
@@ -346,7 +338,6 @@ void ARetargetingTestCharacter::AttackStartComboState()
 {
 	CanNextCombo=true;
 	IsComboInputOn=false;
-	UE_LOG(LogTemp,Warning,TEXT("%d"),FMath::Clamp<int32>(CurrentCombo+1,1,MaxCombo));
 	CurrentCombo = FMath::Clamp<int32>(CurrentCombo+1,1,MaxCombo);
 }
 

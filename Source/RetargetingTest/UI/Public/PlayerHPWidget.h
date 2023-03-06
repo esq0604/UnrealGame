@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseHPWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "PlayerHPWidget.generated.h"
 
@@ -10,26 +11,18 @@
  * 
  */
 UCLASS()
-class RETARGETINGTEST_API UPlayerHPWidget : public UUserWidget
+class RETARGETINGTEST_API UPlayerHPWidget : public UBaseHPWidget
 {
 	GENERATED_BODY()
 
 public:
-	void BindCharacterStat(class UPlayerStatComponent* NewMonsterStat);
 	
-	void UpdateHPWidget();
+	virtual void UpdateHPWidget() override;
 protected:
 	virtual void NativeConstruct() override;
 
 	
-public:
-	UPROPERTY()
-	class UProgressBar* mHPProgressBar;
+protected:
 
-	UPROPERTY(EditAnywhere)
-	class UPlayerHPWidget* HPBarWidget;
-
-	float Percent;
 private:
-	TWeakObjectPtr<class UPlayerStatComponent> CurrentCharacterStat;
 };

@@ -3,21 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseStatComponent.h"
 #include "Components/ActorComponent.h"
-#include "StatComponent.generated.h"
+#include "BasePlayerStatComponent.generated.h"
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class RETARGETINGTEST_API UStatComponent : public UActorComponent
+class RETARGETINGTEST_API UBasePlayerStatComponent : public UBaseStatComponent
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this component's properties
-	UStatComponent();
+	UBasePlayerStatComponent();
+
+protected:
 
 public:
-	UPROPERTY(EditAnywhere,Category="Stat|HP")
-	float mHP=500.0f;
+private:
 
 };

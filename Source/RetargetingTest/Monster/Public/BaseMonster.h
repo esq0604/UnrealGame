@@ -39,7 +39,7 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere,Category=Stat)
-	class UMonsterStatComponent* StatComponent;
+	class UBaseMonsterStatComponent* StatComponent;
 	
 	UPROPERTY(EditAnywhere)
 	UWidgetComponent* mHPWidgetComponent;

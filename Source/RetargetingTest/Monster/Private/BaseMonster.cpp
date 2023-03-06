@@ -10,13 +10,13 @@
 #include "Engine/DamageEvents.h"
 
 #include "RetargetingTest/UI/Public/MonsterHPWidget.h"
-#include "RetargetingTest/Component/Public/MonsterStatComponent.h"
+#include "RetargetingTest/Component/Public/BaseMonsterStatComponent.h"
 
 ABaseMonster::ABaseMonster()
 {
 	mHPWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
 	mHPWidgetComponent->SetupAttachment(RootComponent);
-	StatComponent =CreateDefaultSubobject<UMonsterStatComponent>(TEXT("StatComponent"));
+	StatComponent =CreateDefaultSubobject<UBaseMonsterStatComponent>(TEXT("StatComponent"));
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 }
 
@@ -48,7 +48,7 @@ void ABaseMonster::BeginPlay()
 	Super::BeginPlay();
 	mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
 	HPBarWidget = Cast<UMonsterHPWidget>(mHPWidgetComponent->GetWidget());
-	HPBarWidget->BindMonsterStat(StatComponent);
+	HPBarWidget->BindActorStat(StatComponent);
 }
 
 
@@ -61,7 +61,7 @@ float ABaseMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	AActor* DamageCauser)
 {
 	mAnimInstacne->PlayHitMontage();
-	StatComponent->GetDamaged(DamageAmount);
+	StatComponent->SufferDamage(DamageAmount);
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	
 }

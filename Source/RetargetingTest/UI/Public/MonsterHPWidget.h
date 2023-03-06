@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BaseHPWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "MonsterHPWidget.generated.h"
 
@@ -10,13 +11,12 @@
  * 
  */
 UCLASS()
-class RETARGETINGTEST_API UMonsterHPWidget : public UUserWidget
+class RETARGETINGTEST_API UMonsterHPWidget : public UBaseHPWidget
 {
 	GENERATED_BODY()
 
 public:
-	void BindMonsterStat(class UMonsterStatComponent* NewMonsterStat);
-	void UpdateHPWidget();
+	virtual void UpdateHPWidget() override;
 protected:
 	virtual void NativeConstruct() override;
 
@@ -24,11 +24,9 @@ private:
 
 
 public:
-	UPROPERTY()
-	class UProgressBar* mHPProgressBar;
+
 
 protected:
 	
 private:
-	TWeakObjectPtr<class UMonsterStatComponent> CurrentMonsterStat;
 };

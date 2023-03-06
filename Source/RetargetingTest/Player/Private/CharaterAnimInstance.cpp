@@ -37,7 +37,6 @@ void UCharaterAnimInstance::AnimNotify_SaveAttack()
  */
 void UCharaterAnimInstance::AnimNotify_AttackHitCheck()
 {
-	UE_LOG(LogTemp,Warning,TEXT("AttackHitCheck"));
 	OnAttackHitCheck.Broadcast();
 }
 

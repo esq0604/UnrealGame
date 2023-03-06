@@ -10,7 +10,7 @@
 
 class UBaseStateManagerComponent;
 class UAttackComponent;
-class UStatComponent;
+class UBaseStatComponent;
 class APlayerAttackComponent;
 class APlayerStatComponent;
 struct FDamageEvent;
@@ -42,7 +42,7 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	UFUNCTION(BlueprintCallable)
-	class UPlayerStatComponent* GetStatComponent() const;
+	class UBasePlayerStatComponent* GetStatComponent() const;
 protected:
 
 	//Input Action Bind Action 
@@ -118,7 +118,7 @@ private:
 	class UInputAction* SprintAction;
 
 	UPROPERTY(VisibleInstanceOnly,Category="Component")
-	class UPlayerStatComponent* StatComponent;
+	class UBasePlayerStatComponent* StatComponent;
 
 	/*Attack*/
 	UPROPERTY(VisibleAnywhere,Category="Weapon")
