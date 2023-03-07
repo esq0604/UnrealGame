@@ -35,14 +35,12 @@ public:
 
 
 	/* Setter */
-	UFUNCTION(BlueprintCallable)
-	void SetInvincible(bool NewIsInvincible){IsInvincible=NewIsInvincible;}
-
 	/* Getter */
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	UFUNCTION(BlueprintCallable)
 	class UBasePlayerStatComponent* GetStatComponent() const;
+	class UBaseStateManagerComponent* GetStateManagerComponent() const;
 protected:
 
 	//Input Action Bind Action 
@@ -65,6 +63,7 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 
+	void SprintEnd();
 private:
 	
 public:
@@ -138,10 +137,6 @@ private:
 	const int32 MAX_COMBO =4;
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Category=Attack,meta=(AllowPrivateAccess=true))
 	bool IsAttacking;
-
-	
-	bool IsSprint;
-	bool IsInvincible;
 	
 	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	UAnimMontage* DodgeMontage;

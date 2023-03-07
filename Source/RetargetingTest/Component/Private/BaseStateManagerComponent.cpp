@@ -28,6 +28,15 @@ UBaseStateManagerComponent::UBaseStateManagerComponent()
 	ActiveAbleStates.Add(CreateDefaultSubobject<UPlayerAttackState>(TEXT("AttackingState")));
 }
 
+/**
+ * 스테이트가 변경이 가능한지에 대한 bool 변수인 CanChangeState를 수정합니다.
+ * @param canChange - true시 스테이트 변경이 가능합니다. false시 불가능합니다.
+ */
+void UBaseStateManagerComponent::SetCanChangeState(bool canChange)
+{
+	CanChangeState=canChange;
+}
+
 
 // Called when the game starts
 void UBaseStateManagerComponent::BeginPlay()
@@ -47,25 +56,36 @@ void UBaseStateManagerComponent::BeginPlay()
 void UBaseStateManagerComponent::PerformStateOfClass(TSubclassOf<UBaseStateObject> StateToSet)
 {
 }
-
+/**
+ * 현재 수행중인 액터를 결정합니다. StateManagerComponent의 수행중인 액터는 캐릭터 입니다.
+ * @param NewPerformingActor - StateManagerComponent를 사용하는 액터가 들어옵니다.
+ */
 void UBaseStateManagerComponent::SetPerformingActor(AActor* NewPerformingActor)
 {
 	PerformingActor=NewPerformingActor;
 }
 
-
+/**
+ * 활성화 된 상태를 변경합니다.
+ * @param NewCurrentActiveState - 새로 변경될 스테이트 객체가 들어옵니다.
+ * @warning 몽타주 행위에 대한 스테이트는 노티파이를 통해 CanChangeState가 결정됩니다.(애니메이션 동작시 스테이트 변경못하도록)
+ * @warning Sprint,Jump,Walk와 같은 행동들(몽타주를 사용하지 않는 상태들)은 객체 내부에서 CanChangeState가 결정됩니다.
+ */
 void UBaseStateManagerComponent::SetCurrentActiveState(UBaseStateObject* NewCurrentActiveState)
 {
-	//TODO: 처음 스테이트 상태는 Idle로 지정해놔야하고, nullptr이 있으면안된다.
-	if(CurrentActiveState!=nullptr)
-		CurrentActiveState->EndState();
-	if(NewCurrentActiveState!=nullptr)
+	if(CanChangeState)
 	{
-		if(NewCurrentActiveState->CanPerformState())
+		if(CurrentActiveState!=nullptr)
 		{
-			//TODO : Dodge-> Walk는 바로 전환이 일어나는데 어떻게 해결할래
-			CurrentActiveState = NewCurrentActiveState;
-			CurrentActiveState->StartState();
+			CurrentActiveState->EndState();
+		}
+		if(NewCurrentActiveState!=nullptr)
+		{
+			if(NewCurrentActiveState->CanPerformState())
+			{
+				CurrentActiveState = NewCurrentActiveState;
+				CurrentActiveState->StartState();
+			}
 		}
 	}
 }
@@ -103,7 +123,10 @@ void UBaseStateManagerComponent::ConstructStatebyClass(TSubclassOf<UBaseStateObj
 	}
 }
 
-//get state by gameplayTag
+/**
+ * FGamePlayTag를 통해 스테이트 객체를 반환합니다.
+ * @param StateGamePlayTag - 반환받을 객체의 게임플레이 태그가 들어옵니다.
+ */
 UBaseStateObject* UBaseStateManagerComponent::GetStateOfGameplayTag(FGameplayTag StateGamePlayTag)
 {
 	 
@@ -111,7 +134,7 @@ UBaseStateObject* UBaseStateManagerComponent::GetStateOfGameplayTag(FGameplayTag
 	{
 		if(ActiveAbleStates[i])
 		{
-			if(ActiveAbleStates[i]->StateGameplayTag==StateGamePlayTag)
+			if(ActiveAbleStates[i]->GetGameplayTag()==StateGamePlayTag)
 			{
 				return ActiveAbleStates[i];
 				
@@ -119,5 +142,6 @@ UBaseStateObject* UBaseStateManagerComponent::GetStateOfGameplayTag(FGameplayTag
 		}
 	}
 	return nullptr;
-}  
+}
+
 

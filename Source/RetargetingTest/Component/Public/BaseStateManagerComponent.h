@@ -21,17 +21,7 @@ public:
 	// Sets default values for this component's properties
 	UBaseStateManagerComponent();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Base Variables")
-	TArray<UBaseStateObject*> ActiveAbleStates;
-
-	UPROPERTY()
-	FOnUpdatedActiveState OnUpdatedDelegate;
-protected:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Base Variables")
-	AActor* PerformingActor;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Base Variables")
-	UBaseStateObject* CurrentActiveState;
+	void SetCanChangeState(bool canChange);
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -57,5 +47,21 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UBaseStateObject* GetStateOfGameplayTag(FGameplayTag StateGamePlayTag);
-	
+
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Base Variables")
+	TArray<UBaseStateObject*> ActiveAbleStates;
+
+	UPROPERTY()
+	FOnUpdatedActiveState OnUpdatedDelegate;
+protected:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Base Variables")
+	AActor* PerformingActor;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Base Variables")
+	UBaseStateObject* CurrentActiveState;
+
+private:
+	bool CanChangeState=true;
 };

@@ -19,10 +19,20 @@ void UBaseStateObject::StartState()
 	
 }
 
+void UBaseStateObject::TickState()
+{
+	
+}
+
 void UBaseStateObject::EndState()
 {
 }
 
 void UBaseStateObject::ConstructState()
 {
+}
+
+void UBaseStateObject::SetGameplayTag(const FGameplayTag& GameplayTag)
+{
+	StateGameplayTag=GameplayTag;
 }

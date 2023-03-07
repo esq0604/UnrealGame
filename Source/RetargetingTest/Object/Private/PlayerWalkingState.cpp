@@ -10,7 +10,9 @@
 
 UPlayerWalkingState::UPlayerWalkingState()
 {
+	StateGameplayTag=GameTags::Get().State_Walk;
 	StateGameplayTag.FromExportString("State.Walk");
+	UE_LOG(LogTemp,Warning,TEXT("WalkState Constructor %s"),*StateGameplayTag.ToString());
 }
 
 bool UPlayerWalkingState::CanPerformState()
@@ -18,9 +20,8 @@ bool UPlayerWalkingState::CanPerformState()
 	if(PerformingActor!= nullptr)
 	{
 		ARetargetingTestCharacter* PerformingCharacter=Cast<ARetargetingTestCharacter>(PerformingActor);
-			if(PerformingCharacter->GetVelocity().Size()>150 && !PerformingCharacter->GetMovementComponent()->IsFalling())
+		if(PerformingCharacter->GetVelocity().Size()>150 && !PerformingCharacter->GetMovementComponent()->IsFalling())
 				return true;
-		
 	}
 	return false;
 }
@@ -34,5 +35,6 @@ void UPlayerWalkingState::StartState()
 {
 	Super::StartState();
 }
+
 
 

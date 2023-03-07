@@ -8,15 +8,15 @@
 UPlayerDodgeState::UPlayerDodgeState()
 {
 	StateGameplayTag.FromExportString("State.Dodge");
+	UE_LOG(LogTemp,Warning,TEXT("Dodge Constructor %s"),*StateGameplayTag.ToString());
+
 }
 
 bool UPlayerDodgeState::CanPerformState()
 {
-	//닷지 스테이트가 활성화 되기 위해서는, WalkState 상태 이여야합니다.
-	
-	if(StateManagerComponent->GetCurrentActiveState()==StateManagerComponent->ActiveAbleStates[4])
+	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==GameTags::Get().State_Walk)
 	{
 		return true;
-	}
+	}    
 	return false;
 }

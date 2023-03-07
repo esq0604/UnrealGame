@@ -4,8 +4,8 @@
 #include "RetargetingTest/Player/Public/CharaterAnimInstance.h"
 
 #include "../Public//RetargetingTestCharacter.h"
-#include "GameFramework/CharacterMovementComponent.h"
-
+#include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
+#include "RetargetingTest/Lib/GameTags.h"
 UCharaterAnimInstance::UCharaterAnimInstance(const FObjectInitializer& ObjectInitializer)
 {
 }
@@ -16,14 +16,13 @@ void UCharaterAnimInstance::PlayAttackMontage()
 }
 
 
-
+/**
+ * CharacterAnimInstance를 사용하고 있는 캐릭터에 대해서 받아옵니다.
+ */
 void UCharaterAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
-	
-	// character=Cast<ARetargetingTestCharacter>(GetOwningActor());
-	// bIsTrunLeft=character->GetIsTurnLeft();
-	// bIsTrunRight=character->GetIsTurnRight();
+	OwnerCharacter=Cast<ARetargetingTestCharacter>(GetOwningActor());
 	//Montage_SetEndDelegate(OnMontageEnded);
 }
 
@@ -46,6 +45,23 @@ void UCharaterAnimInstance::AnimNotify_AttackHitCheck()
 void UCharaterAnimInstance::AnimNotify_NextAttackCheck()
 {
 	OnNextAttackHitCheck.Broadcast();
+}
+
+/**
+ * 애니메이션이 시작 됬을시 다른 스테이트로 변경하지 못하도록 변수를 설정합니다.
+ */
+void UCharaterAnimInstance::AnimNotify_StateStart()
+{
+	OwnerCharacter->GetStateManagerComponent()->SetCurrentActiveState(OwnerCharacter->GetStateManagerComponent()->GetStateOfGameplayTag(GameTags::Get().State_Dodge));
+	OwnerCharacter->GetStateManagerComponent()->SetCanChangeState(false);
+}
+
+/**
+ * 애니메이션이 끝났을시 다른 스테이트로 변경될 수 있도록 변수를 설정합니다.
+ */
+void UCharaterAnimInstance::AnimNotify_StateEnd()
+{
+	OwnerCharacter->GetStateManagerComponent()->SetCanChangeState(true);
 }
 
 /**

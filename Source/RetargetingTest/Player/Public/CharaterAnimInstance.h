@@ -29,6 +29,7 @@ public:
 
 protected:
 	virtual void NativeBeginPlay() override;
+	
 private:
 	UFUNCTION()
 	void AnimNotify_SaveAttack();
@@ -38,7 +39,12 @@ private:
 
 	UFUNCTION()
 	void AnimNotify_NextAttackCheck();
-	
+
+	UFUNCTION()
+	void AnimNotify_StateStart();
+
+	UFUNCTION()
+	void AnimNotify_StateEnd();
 	FName GetAttackMontageSectionName(int32 Section);
 
 public :
@@ -51,7 +57,8 @@ protected:
 protected:
 
 private:
-
+	UPROPERTY()
+	ARetargetingTestCharacter* OwnerCharacter;
 
 
 

@@ -20,8 +20,6 @@ class RETARGETINGTEST_API UBaseStateObject : public UObject
 
 public:
 	UBaseStateObject();
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "State Properties")
-	FGameplayTag StateGameplayTag;
 
 protected:
 	UPROPERTY()
@@ -35,7 +33,9 @@ public:
 
 	UFUNCTION()
 	virtual void StartState();
-	
+
+	UFUNCTION()
+	virtual void TickState();
 	UFUNCTION()
 	virtual void EndState();
 	UFUNCTION(BlueprintCallable, Category = "State Setters")
@@ -48,4 +48,9 @@ public:
 	UBaseStateManagerComponent* GetStateManagerComponent() {return StateManagerComponent;}
 
 	FGameplayTag GetGameplayTag() {return StateGameplayTag;}
+
+	void SetGameplayTag(const FGameplayTag& GameplayTag); 
+protected:
+	FGameplayTag StateGameplayTag;
+
 };

@@ -2,8 +2,6 @@
 
 #include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
 
-#include <string>
-
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -24,7 +22,7 @@
 #include "RetargetingTest/UI/Public/PlayerHPWidget.h"
 #include "GameplayTagContainer.h"
 #include "RetargetingTest/Object/Public/BaseStateObject.h"
-
+#include "RetargetingTest/Lib/GameTags.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
@@ -78,14 +76,14 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 
 }
 /**
- * 데미지 전달을 위한 함수입니다. IsInvincible(무적 상태)을 통해 데미지를 받을지 말지를 결정합니다.
- * @warning IsInvincible은 Dodge시 활성화 됩니다.
+ * 데미지 전달을 위한 함수입니다. 현재 상태가 Dodge State가 아니라면 데미지를 받습니다.
+ * @param DamageAmount - 받는 데미지의 양 입니다.
  *
  */
 float ARetargetingTestCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
                                             AController* EventInstigator, AActor* DamageCauser)
 {
-	if(!IsInvincible)
+	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()!=GameTags::Get().State_Dodge)
 	{
 		float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 		StatComponent->SufferDamage(DamageAmount);
@@ -171,25 +169,33 @@ void ARetargetingTestCharacter::BeginPlay()
 	}
 }
 
+/**
+ * 현재 속도가 0이면 Idle 상태로 전환합니다. 
+ */
 void ARetargetingTestCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	if(GetVelocity()==FVector::ZeroVector)
-	{
-		StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag(TEXT("State.Idle"))));
-	}
-		
+	
+}
+
+void ARetargetingTestCharacter::SprintEnd()
+{
 }
 
 void ARetargetingTestCharacter::Sprint(const FInputActionValue& Value)
 {
- 	IsSprint=true;
+	//StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(GameTags::Get().State_Sprint));
 	GetCharacterMovement()->MaxWalkSpeed=800;
 }
 
 UBasePlayerStatComponent* ARetargetingTestCharacter::GetStatComponent() const
 {
 	return StatComponent;
+}
+
+UBaseStateManagerComponent* ARetargetingTestCharacter::GetStateManagerComponent() const
+{
+	return StateManagerComponent;
 }
 
 
@@ -218,6 +224,8 @@ void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 		EnhancedInputComponent->BindAction(AttackAction,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::Attack);
 
 		EnhancedInputComponent->BindAction(SprintAction,ETriggerEvent::Triggered, this,&ARetargetingTestCharacter::Sprint);
+		EnhancedInputComponent->BindAction(SprintAction,ETriggerEvent::Completed, this,&ARetargetingTestCharacter::SprintEnd);
+
 		//InputComponent->BindAction("AttackAction",IE_Pressed, this, &ARetargetingTestCharacter::Attack);
 		
 	}
@@ -229,26 +237,8 @@ void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent*
  */
 void ARetargetingTestCharacter::Move(const FInputActionValue& Value)
 {
-	// input is a Vector2D
-	//FGameplayTag walk=FGameplayTag::RequestGameplayTag(TEXT("State.Walk"));
-	// IsMoving=true;
-	if(IsSprint)
-	{
-		const FGameplayTag SprintState = FGameplayTag::RequestGameplayTag(TEXT("State.Sprint"));
-		if(StateManagerComponent->GetCurrentActiveState()!=StateManagerComponent->GetStateOfGameplayTag(SprintState))
-		{
-			StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(SprintState));
-		}
-	}
-	if(!IsSprint)
-	{
-		const FGameplayTag WalkStateTag = FGameplayTag::RequestGameplayTag(TEXT("State.Walk"));
-		if(StateManagerComponent->GetCurrentActiveState()!=StateManagerComponent->GetStateOfGameplayTag(WalkStateTag))
-		{
-			StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(WalkStateTag));
-		}
-	}
-		FVector2D MovementVector = Value.Get<FVector2D>();
+	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(GameTags::Get().State_Walk));
+	FVector2D MovementVector = Value.Get<FVector2D>();
 	if (Controller != nullptr)
 	{
 		// find out which way is forward
@@ -365,13 +355,11 @@ void ARetargetingTestCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool
  */
 void ARetargetingTestCharacter::JumpAndDodge()
 {
-	if(StateManagerComponent->GetCurrentActiveState()->StateGameplayTag==FGameplayTag::RequestGameplayTag("State.Walk"))
+	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==GameTags::Get().State_Walk)
 	{
-		const FGameplayTag DodgeTag = FGameplayTag::RequestGameplayTag("State.Dodge");
-		StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(DodgeTag));
-
+		StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(GameTags::Get().State_Dodge));
 	}
-	else if(StateManagerComponent->GetCurrentActiveState()->StateGameplayTag==FGameplayTag::RequestGameplayTag("State.Sprint"))
+	else if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==GameTags::Get().State_Sprint)
 	{
 		ACharacter::Jump();
 	}
