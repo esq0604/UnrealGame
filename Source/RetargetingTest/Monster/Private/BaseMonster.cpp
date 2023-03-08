@@ -14,8 +14,8 @@
 
 ABaseMonster::ABaseMonster()
 {
-	mHPWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
-	mHPWidgetComponent->SetupAttachment(RootComponent);
+//	HPWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
+//	HPWidgetComponent->SetupAttachment(RootComponent);
 	StatComponent =CreateDefaultSubobject<UBaseMonsterStatComponent>(TEXT("StatComponent"));
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 }
@@ -46,9 +46,16 @@ void ABaseMonster::PostInitializeComponents()
 void ABaseMonster::BeginPlay()
 {
 	Super::BeginPlay();
-	mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
-	HPBarWidget = Cast<UMonsterHPWidget>(mHPWidgetComponent->GetWidget());
-	HPBarWidget->BindActorStat(StatComponent);
+	//mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
+	//HPBarWidget = Cast<UMonsterHPWidget>(HPWidgetComponent->GetWidget());
+	if(HPBarWidget!=nullptr)
+	{
+		HPBarWidget->BindActorStat(StatComponent);
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("BindWidget nullptr"));
+	}
 }
 
 

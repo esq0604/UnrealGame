@@ -41,10 +41,10 @@ protected:
 	UPROPERTY(VisibleAnywhere,Category=Stat)
 	class UBaseMonsterStatComponent* StatComponent;
 	
-	UPROPERTY(EditAnywhere)
-	UWidgetComponent* mHPWidgetComponent;
+	//UPROPERTY(EditAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess=true))
+	//UWidgetComponent* HPWidgetComponent;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	class UMonsterHPWidget* HPBarWidget;
 	
 private:
