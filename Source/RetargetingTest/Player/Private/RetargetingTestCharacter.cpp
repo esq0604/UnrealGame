@@ -178,14 +178,20 @@ void ARetargetingTestCharacter::Tick(float DeltaSeconds)
 	
 }
 
+/**
+ * Sprint입력이 끝날때 호출되는 함수입니다. EndState를 통해 다른 상태로 바뀔 수 있습니다.
+ */
 void ARetargetingTestCharacter::SprintEnd()
 {
+	StateManagerComponent->GetCurrentActiveState()->EndState();
 }
 
+/**
+ * 캐릭터의 IA_Sprint 와 바인딩된 함수입니다. SprintState로 진입합니다.
+ */
 void ARetargetingTestCharacter::Sprint(const FInputActionValue& Value)
 {
-	//StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(GameTags::Get().State_Sprint));
-	GetCharacterMovement()->MaxWalkSpeed=800;
+	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Sprint")));
 }
 
 UBasePlayerStatComponent* ARetargetingTestCharacter::GetStatComponent() const
@@ -237,7 +243,8 @@ void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent*
  */
 void ARetargetingTestCharacter::Move(const FInputActionValue& Value)
 {
-	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(GameTags::Get().State_Walk));
+	
+	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Walk")));
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	if (Controller != nullptr)
 	{
@@ -355,11 +362,11 @@ void ARetargetingTestCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool
  */
 void ARetargetingTestCharacter::JumpAndDodge()
 {
-	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==GameTags::Get().State_Walk)
+	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Walk"))
 	{
-		StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(GameTags::Get().State_Dodge));
+		StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Dodge")));
 	}
-	else if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==GameTags::Get().State_Sprint)
+	else if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Sprint"))
 	{
 		ACharacter::Jump();
 	}

@@ -12,7 +12,6 @@ UPlayerWalkingState::UPlayerWalkingState()
 {
 	StateGameplayTag=GameTags::Get().State_Walk;
 	StateGameplayTag.FromExportString("State.Walk");
-	UE_LOG(LogTemp,Warning,TEXT("WalkState Constructor %s"),*StateGameplayTag.ToString());
 }
 
 bool UPlayerWalkingState::CanPerformState()

@@ -21,6 +21,7 @@ public:
 	// Sets default values for this component's properties
 	UBaseStateManagerComponent();
 
+	UFUNCTION(BlueprintCallable)
 	void SetCanChangeState(bool canChange);
 protected:
 	// Called when the game starts

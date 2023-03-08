@@ -15,17 +15,21 @@ UPlayerSprintingState::UPlayerSprintingState()
 
 bool UPlayerSprintingState::CanPerformState()
 {
-	if(StateManagerComponent->GetCurrentActiveState()==StateManagerComponent->ActiveAbleStates[4])
+	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Walk"))
 	{
 		return true;
 	}
 	return false;
 }
-
+/**
+ * SprintState로 변경하고 shift 입력을 땔때까지. 다른 상태로 변경되지 않도록 합니다.
+ */
 void UPlayerSprintingState::StartState()
 {
-	Super::StartState();     
-
+	Super::StartState();
+	UE_LOG(LogTemp,Warning,TEXT("SprintStae Start"));
+	GetStateManagerComponent()->SetCanChangeState(false);
+	//GetStateManagerComponent()->SetCurrentActiveState(GetStateManagerComponent()->GetStateOfGameplayTag(StateGameplayTag));
 	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
 	Character->GetCharacterMovement()->MaxWalkSpeed=800.0f;
 }
@@ -35,5 +39,6 @@ void UPlayerSprintingState::EndState()
 	Super::EndState();
 	
 	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
-	Character->GetCharacterMovement()->MaxWalkSpeed=500.0f;
+	GetStateManagerComponent()->SetCanChangeState(true);
+
 }

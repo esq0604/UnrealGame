@@ -48,12 +48,15 @@ void UCharaterAnimInstance::AnimNotify_NextAttackCheck()
 }
 
 /**
+ * TODO: 현재는 Dodge만 가능하지만 추후 노티파이에서 FGameplayTag를 변수로 받아. 다른 몽타주에도 적용해야합니다.
  * 애니메이션이 시작 됬을시 다른 스테이트로 변경하지 못하도록 변수를 설정합니다.
  */
 void UCharaterAnimInstance::AnimNotify_StateStart()
 {
-	OwnerCharacter->GetStateManagerComponent()->SetCurrentActiveState(OwnerCharacter->GetStateManagerComponent()->GetStateOfGameplayTag(GameTags::Get().State_Dodge));
+	
+	OwnerCharacter->GetStateManagerComponent()->SetCurrentActiveState(OwnerCharacter->GetStateManagerComponent()->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Dodge")));
 	OwnerCharacter->GetStateManagerComponent()->SetCanChangeState(false);
+
 }
 
 /**

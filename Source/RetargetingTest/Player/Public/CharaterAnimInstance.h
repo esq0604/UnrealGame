@@ -42,6 +42,7 @@ private:
 
 	UFUNCTION()
 	void AnimNotify_StateStart();
+	
 
 	UFUNCTION()
 	void AnimNotify_StateEnd();

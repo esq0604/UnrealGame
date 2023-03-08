@@ -8,13 +8,12 @@
 UPlayerDodgeState::UPlayerDodgeState()
 {
 	StateGameplayTag.FromExportString("State.Dodge");
-	UE_LOG(LogTemp,Warning,TEXT("Dodge Constructor %s"),*StateGameplayTag.ToString());
 
 }
 
 bool UPlayerDodgeState::CanPerformState()
 {
-	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==GameTags::Get().State_Walk)
+	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Walk"))
 	{
 		return true;
 	}    
