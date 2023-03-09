@@ -16,5 +16,6 @@ class RETARGETINGTEST_API UPlayerDodgeState : public UBasePlayerState
 public:
 	UPlayerDodgeState();
 
+	virtual void StartState() override;
 	virtual bool CanPerformState() override;
 };

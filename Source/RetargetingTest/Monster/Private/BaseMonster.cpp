@@ -9,7 +9,7 @@
 #include "Components/WidgetComponent.h"
 #include "Engine/DamageEvents.h"
 
-#include "RetargetingTest/UI/Public/MonsterHPWidget.h"
+#include "RetargetingTest/UI/Public/MonsterStatWidget.h"
 #include "RetargetingTest/Component/Public/BaseMonsterStatComponent.h"
 
 ABaseMonster::ABaseMonster()
@@ -47,15 +47,15 @@ void ABaseMonster::BeginPlay()
 {
 	Super::BeginPlay();
 	//mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
-	//HPBarWidget = Cast<UMonsterHPWidget>(HPWidgetComponent->GetWidget());
-	if(HPBarWidget!=nullptr)
-	{
-		HPBarWidget->BindActorStat(StatComponent);
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("BindWidget nullptr"));
-	}
+	// = Cast<UMonsterStatWidget>(UMonsterStatWidget->GetWidget());
+	//if(HPBarWidget!=nullptr)
+	//{
+	//	HPBarWidget->BindActorStat(StatComponent);
+	//}
+	//else
+	//{
+	//	UE_LOG(LogTemp,Warning,TEXT("BindWidget nullptr"));
+	//}
 }
 
 

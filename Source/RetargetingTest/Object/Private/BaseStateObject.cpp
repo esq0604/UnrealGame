@@ -16,20 +16,20 @@ bool UBaseStateObject::CanPerformState()
 
 void UBaseStateObject::StartState()
 {
-	
 }
 
 void UBaseStateObject::TickState()
 {
-	
 }
 
 void UBaseStateObject::EndState()
 {
+
 }
 
-void UBaseStateObject::ConstructState()
+bool UBaseStateObject::GetHasTickState() const
 {
+	return HasTickState;
 }
 
 void UBaseStateObject::SetGameplayTag(const FGameplayTag& GameplayTag)

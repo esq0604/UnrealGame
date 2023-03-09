@@ -3,26 +3,30 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseHPWidget.h"
+#include "BaseStatWidget.h"
 #include "Blueprint/UserWidget.h"
-#include "PlayerHPWidget.generated.h"
+#include "MonsterStatWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RETARGETINGTEST_API UPlayerHPWidget : public UBaseHPWidget
+class RETARGETINGTEST_API UMonsterStatWidget : public UBaseStatWidget
 {
 	GENERATED_BODY()
 
 public:
-	
 	virtual void UpdateHPWidget() override;
 protected:
 	virtual void NativeConstruct() override;
 
-	
-protected:
+private:
 
+
+public:
+
+
+protected:
+	
 private:
 };

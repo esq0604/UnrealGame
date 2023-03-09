@@ -26,6 +26,11 @@ UBaseStateManagerComponent::UBaseStateManagerComponent()
 	ActiveAbleStates.Add(CreateDefaultSubobject<UPlayerSprintingState>(TEXT("SprintingState")));
 	ActiveAbleStates.Add(CreateDefaultSubobject<UPlayerWalkingState>(TEXT("WalkingState")));
 	ActiveAbleStates.Add(CreateDefaultSubobject<UPlayerAttackState>(TEXT("AttackingState")));
+
+	for(UBaseStateObject* elements : ActiveAbleStates)
+	{
+		elements->SetPerformingActor(PerformingActor);
+	}
 }
 
 /**
@@ -51,6 +56,18 @@ void UBaseStateManagerComponent::BeginPlay()
 	}
 }
 
+void UBaseStateManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+	FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if(CurrentActiveState!=nullptr)
+	{
+		if(CurrentActiveState->GetHasTickState())
+		{
+			CurrentActiveState->TickState();
+		}
+	}
+}
 
 
 void UBaseStateManagerComponent::PerformStateOfClass(TSubclassOf<UBaseStateObject> StateToSet)

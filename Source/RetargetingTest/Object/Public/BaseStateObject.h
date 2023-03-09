@@ -40,17 +40,18 @@ public:
 	virtual void EndState();
 	UFUNCTION(BlueprintCallable, Category = "State Setters")
 	void SetPerformingActor(AActor* NewPerformingActor) { PerformingActor = NewPerformingActor; }
-
-	UFUNCTION(BlueprintCallable,Category= "State Base Events")
-	void ConstructState();
+	
 
 	void SetStateManagerComponent(UBaseStateManagerComponent* NewStateManagerComponent) {StateManagerComponent=NewStateManagerComponent;}
 	UBaseStateManagerComponent* GetStateManagerComponent() {return StateManagerComponent;}
 
 	FGameplayTag GetGameplayTag() {return StateGameplayTag;}
 
+	bool GetHasTickState() const;
 	void SetGameplayTag(const FGameplayTag& GameplayTag); 
 protected:
 	FGameplayTag StateGameplayTag;
+
+	bool HasTickState;
 
 };

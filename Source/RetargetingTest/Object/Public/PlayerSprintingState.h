@@ -21,4 +21,6 @@ public:
 	virtual void StartState() override;
 
 	virtual void EndState() override;
+
+	virtual void TickState() override;
 };

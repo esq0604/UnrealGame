@@ -77,9 +77,9 @@ protected:
 	class UFloatingCombatTextComponent* FloatingTextComponent;
 
 	UPROPERTY(EditAnywhere)
-	class UWidgetComponent* mHPWidgetComponent;
+	class UWidgetComponent* mStatWidgetComponent;
 	UPROPERTY(EditAnywhere)
-	class UPlayerHPWidget* HPBarWidget;
+	class UPlayerStatWidget* StatBarWidget;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Component")
 	UBaseStateManagerComponent* StateManagerComponent;

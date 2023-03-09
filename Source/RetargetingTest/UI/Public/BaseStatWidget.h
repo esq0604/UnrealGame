@@ -4,18 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "BaseHPWidget.generated.h"
+#include "BaseStatWidget.generated.h"
 
 /**
- * 
+ * 캐릭터의 피, 마나  or 몬스터의 피 에 대한 위젯의 부모클래스입니다.
  */
 UCLASS()
-class RETARGETINGTEST_API UBaseHPWidget : public UUserWidget
+class RETARGETINGTEST_API UBaseStatWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
 
-	void BindActorStat(class UBaseStatComponent* NewMonsterStat);
+	UFUNCTION(BlueprintCallable)
+	virtual void BindActorStat(class UBaseStatComponent* NewActorStat);
 
 protected:
 	virtual void UpdateHPWidget();

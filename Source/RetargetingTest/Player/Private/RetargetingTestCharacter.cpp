@@ -19,7 +19,7 @@
 #include "Engine/EngineTypes.h"
 #include "RetargetingTest/Component/Public/FloatingCombatTextComponent.h"
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
-#include "RetargetingTest/UI/Public/PlayerHPWidget.h"
+#include "RetargetingTest/UI/Public/PlayerStatWidget.h"
 #include "GameplayTagContainer.h"
 #include "RetargetingTest/Object/Public/BaseStateObject.h"
 #include "RetargetingTest/Lib/GameTags.h"
@@ -31,7 +31,6 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 	:AttackRange(200.0f) , AttackRadius(50.0f),MaxCombo(4),IsAttacking(false)
 {
 
-	
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Character"));
@@ -70,7 +69,7 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 	//사용자 정의 컴포넌트입니다.
 	StatComponent= CreateDefaultSubobject<UBasePlayerStatComponent>(TEXT("StatComponent"));
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));	
-	mHPWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
+	mStatWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("StatBarWidget"));
 	StateManagerComponent = CreateDefaultSubobject<UBaseStateManagerComponent>(TEXT("StateManager"));
 	StateManagerComponent->SetPerformingActor(this);
 
@@ -155,9 +154,9 @@ void ARetargetingTestCharacter::BeginPlay()
 	Super::BeginPlay();
 	//Add Input Mapping Context
 	
-	HPBarWidget = Cast<UPlayerHPWidget>(mHPWidgetComponent->GetWidget());
-	HPBarWidget->BindActorStat(StatComponent);
-	HPBarWidget->AddToViewport();
+	StatBarWidget = Cast<UPlayerStatWidget>(mStatWidgetComponent->GetWidget());
+	StatBarWidget->BindActorStat(StatComponent);
+	StatBarWidget->AddToViewport();
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -188,6 +187,8 @@ void ARetargetingTestCharacter::SprintEnd()
 
 /**
  * 캐릭터의 IA_Sprint 와 바인딩된 함수입니다. SprintState로 진입합니다.
+ * 해당 로직의 문제점은 SprintState로 진입할 수 없을때에도 스태미나를 사용하는것 입니다.
+ * 이를 올바르게 처리하기 위해선 Sprint State에서 로직을 처리하는것 입니다.
  */
 void ARetargetingTestCharacter::Sprint(const FInputActionValue& Value)
 {
@@ -358,17 +359,22 @@ void ARetargetingTestCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool
 }
 
 /**
- * Space키에 매핑된 함수입니다. Walk 상태라면 Dodge를, Sprint 상태라면 점프를 수행합니다. 
+ * Space키에 매핑된 함수입니다. Walk 상태라면 Dodge를, Sprint 상태라면 점프를 수행합니다.
+ * 현재 Dodge 입력 매핑은 Blueprint로 되어있습니다.
  */
 void ARetargetingTestCharacter::JumpAndDodge()
 {
-	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Walk"))
-	{
-		StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Dodge")));
-	}
-	else if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Sprint"))
+	// if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Walk"))
+	// {
+	// 	//StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Dodge")));
+	// }
+	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Sprint"))
 	{
 		ACharacter::Jump();
+	}
+	else
+	{
+		return;
 	}
 }
 

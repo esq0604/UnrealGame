@@ -38,14 +38,14 @@ public:
 	FMonsterDieSignature MonsterDieDelegate;
 
 protected:
-	UPROPERTY(VisibleAnywhere,Category=Stat)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category=Stat,meta=(AllowPrivateAccess=ture))
 	class UBaseMonsterStatComponent* StatComponent;
 	
 	//UPROPERTY(EditAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess=true))
 	//UWidgetComponent* HPWidgetComponent;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
-	class UMonsterHPWidget* HPBarWidget;
+	class UMonsterStatWidget* HPBarWidget;
 	
 private:
 

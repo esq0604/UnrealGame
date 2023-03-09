@@ -4,17 +4,19 @@
 #include "RetargetingTest/Object/Public/PlayerSprintingState.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
+#include "RetargetingTest/Component/Public/BasePlayerStatComponent.h"
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
 #include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
 
 UPlayerSprintingState::UPlayerSprintingState()
 {
 	StateGameplayTag.FromExportString("State.Sprint");
-
 }
 
 bool UPlayerSprintingState::CanPerformState()
 {
+	if(StateManagerComponent->GetCurrentActiveState()==nullptr)
+		return false;
 	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Walk"))
 	{
 		return true;
@@ -27,6 +29,7 @@ bool UPlayerSprintingState::CanPerformState()
 void UPlayerSprintingState::StartState()
 {
 	Super::StartState();
+	HasTickState=true;
 	UE_LOG(LogTemp,Warning,TEXT("SprintStae Start"));
 	GetStateManagerComponent()->SetCanChangeState(false);
 	//GetStateManagerComponent()->SetCurrentActiveState(GetStateManagerComponent()->GetStateOfGameplayTag(StateGameplayTag));
@@ -40,5 +43,15 @@ void UPlayerSprintingState::EndState()
 	
 	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
 	GetStateManagerComponent()->SetCanChangeState(true);
-
+	HasTickState=false;
+}
+/**
+ * Sprint 상태에 들어서면 Stamina를 소비하게 됩니다. 
+ */
+void UPlayerSprintingState::TickState()
+{
+	Super::TickState();
+	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
+	const float CharacterCurrentStamina=Character->GetStatComponent()->GetCurrentStamina();
+	Character->GetStatComponent()->SetStamina(CharacterCurrentStamina-0.1f);
 }

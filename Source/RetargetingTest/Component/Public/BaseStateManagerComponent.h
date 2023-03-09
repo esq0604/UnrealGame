@@ -27,6 +27,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 public:
 	UFUNCTION(BlueprintCallable, Category = "Setters")
 	void PerformStateOfClass(TSubclassOf<UBaseStateObject> StateToSet);
