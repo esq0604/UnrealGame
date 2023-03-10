@@ -2,6 +2,7 @@
 
 #include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
 
+#include "DiffUtils.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -23,6 +24,7 @@
 #include "GameplayTagContainer.h"
 #include "RetargetingTest/Object/Public/BaseStateObject.h"
 #include "RetargetingTest/Lib/GameTags.h"
+#include "RetargetingTest/Component/Public/Interactable.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
@@ -174,7 +176,8 @@ void ARetargetingTestCharacter::BeginPlay()
 void ARetargetingTestCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	
+
+	CheckForInteractalbe();
 }
 
 /**
@@ -183,6 +186,56 @@ void ARetargetingTestCharacter::Tick(float DeltaSeconds)
 void ARetargetingTestCharacter::SprintEnd()
 {
 	StateManagerComponent->GetCurrentActiveState()->EndState();
+}
+
+/**
+ *	인벤토리 토글 입력에 대한 매핑 함수 입니다. 
+ */
+void ARetargetingTestCharacter::ToggleInventory()
+{
+}
+
+/**
+ *	현재 인터랙터블이 있는 경우 인터랙터블과 상호작용합니다.
+ *	TODO : InputMaaping을 해야합니다.
+ */
+void ARetargetingTestCharacter::Interact()
+{
+	if(CurrentInteractable!=nullptr)
+	{
+		CurrentInteractable->Interact_Implementation();
+		
+	}
+}
+
+/**
+ * 라인트레이스를 이용해 인터렉터블 아이템이 있는지 확인합니다. 
+ */
+void ARetargetingTestCharacter::CheckForInteractalbe()
+{
+	FVector StartTrace = FollowCamera->GetComponentLocation();
+	FVector EndTrace = (FollowCamera->GetComponentLocation()*CheckInteractableReach) + StartTrace;
+
+	FHitResult HitResult;
+
+	FCollisionQueryParams CQP;
+	CQP.AddIgnoredActor(this);
+
+	GetWorld()->LineTraceSingleByChannel(HitResult,StartTrace,EndTrace,ECC_WorldDynamic,CQP);
+
+	AInteractable* PotentialInteractable = Cast<AInteractable>(HitResult.GetActor());
+
+	if(PotentialInteractable ==nullptr)
+	{
+		HelpText=FString("");
+		CurrentInteractable=nullptr;
+		return;
+	}
+	else
+	{
+		CurrentInteractable=PotentialInteractable;
+		HelpText=PotentialInteractable->InteractableHelpText;
+	}
 }
 
 /**

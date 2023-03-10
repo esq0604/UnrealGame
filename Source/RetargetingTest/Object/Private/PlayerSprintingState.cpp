@@ -36,7 +36,9 @@ void UPlayerSprintingState::StartState()
 	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
 	Character->GetCharacterMovement()->MaxWalkSpeed=800.0f;
 }
-
+/**
+ * SprintState가 끝난다면 Tick State를 멈추게됩니다.
+ */
 void UPlayerSprintingState::EndState()
 {
 	Super::EndState();

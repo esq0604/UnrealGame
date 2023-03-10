@@ -65,7 +65,11 @@ protected:
 
 	void SprintEnd();
 private:
-	
+	void ToggleInventory();
+
+	void Interact();
+
+	void CheckForInteractalbe();
 public:
 	
 	
@@ -140,5 +144,10 @@ private:
 	
 	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	UAnimMontage* DodgeMontage;
+
+	float CheckInteractableReach=250.0f;
+	FString HelpText;
+
+	class AInteractable* CurrentInteractable;
 };
 
