@@ -9,5 +9,7 @@ public class RetargetingTest : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "EnhancedInput","UMG","GameplayTags" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "Slate","SlateCore" });
+
 	}
 }

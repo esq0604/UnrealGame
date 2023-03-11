@@ -11,7 +11,6 @@ UBasePlayerStatComponent::UBasePlayerStatComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	UE_LOG(LogTemp,Warning,TEXT("PlayerStatComponent Constructor "));
 	PrimaryComponentTick.bCanEverTick = true;
 	AttackDamage=10.0f;
 	MaxHp=100.0f;
@@ -34,7 +33,6 @@ void UBasePlayerStatComponent::SetStamina(float NewStamina)
 	CurrentStamina=NewStamina;
 	CurStaminaPercent=GetCalculateStaminaRatio(CurrentStamina);
 	OnStaminaChangedDelegate.Broadcast();
-	UE_LOG(LogTemp,Warning,TEXT("Current Stamina : %f"),CurrentStamina);
 }
 
 float UBasePlayerStatComponent::GetCurrentStamina() const

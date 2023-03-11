@@ -185,6 +185,7 @@ void ARetargetingTestCharacter::Tick(float DeltaSeconds)
  */
 void ARetargetingTestCharacter::SprintEnd()
 {
+	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Sprint"))
 	StateManagerComponent->GetCurrentActiveState()->EndState();
 }
 
@@ -193,6 +194,7 @@ void ARetargetingTestCharacter::SprintEnd()
  */
 void ARetargetingTestCharacter::ToggleInventory()
 {
+	UE_LOG(LogTemp,Warning,TEXT("Toggle Inventory"));
 }
 
 /**
@@ -204,7 +206,8 @@ void ARetargetingTestCharacter::Interact()
 	if(CurrentInteractable!=nullptr)
 	{
 		CurrentInteractable->Interact_Implementation();
-		
+		UE_LOG(LogTemp,Warning,TEXT("Interact"));
+
 	}
 }
 
@@ -287,7 +290,8 @@ void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 		EnhancedInputComponent->BindAction(SprintAction,ETriggerEvent::Completed, this,&ARetargetingTestCharacter::SprintEnd);
 
 		//InputComponent->BindAction("AttackAction",IE_Pressed, this, &ARetargetingTestCharacter::Attack);
-		
+		EnhancedInputComponent->BindAction(IteractionAction,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::Interact);
+		EnhancedInputComponent->BindAction(ToggleInventoryAction,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::ToggleInventory);
 	}
 
 }
