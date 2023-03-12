@@ -6,5 +6,4 @@
 void UInventory::NativeConstruct()
 {
 	Super::NativeConstruct();
-	//UE_LOG(LogTemp,Warning,TEXT("UInventory NativeConstruct"));
 }

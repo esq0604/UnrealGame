@@ -22,9 +22,11 @@
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
 #include "RetargetingTest/UI/Public/PlayerStatWidget.h"
 #include "GameplayTagContainer.h"
+#include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/Object/Public/BaseStateObject.h"
 #include "RetargetingTest/Lib/GameTags.h"
 #include "RetargetingTest/Component/Public/Interactable.h"
+#include "RetargetingTest/UI/Public/Inventory.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
@@ -194,12 +196,20 @@ void ARetargetingTestCharacter::SprintEnd()
  */
 void ARetargetingTestCharacter::ToggleInventory()
 {
-	UE_LOG(LogTemp,Warning,TEXT("Toggle Inventory"));
+	if(!bInventoryShow)
+	{
+		Invenwidget=Cast<UInventory>(CreateWidget(GetWorld(),WidgetClass));
+		if(Invenwidget!=nullptr)
+		{
+			Invenwidget->AddToViewport();
+			APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
+			PlayerController->SetShowMouseCursor(true);
+		}
+	}
 }
 
 /**
  *	현재 인터랙터블이 있는 경우 인터랙터블과 상호작용합니다.
- *	TODO : InputMaaping을 해야합니다.
  */
 void ARetargetingTestCharacter::Interact()
 {
@@ -207,7 +217,6 @@ void ARetargetingTestCharacter::Interact()
 	{
 		CurrentInteractable->Interact_Implementation();
 		UE_LOG(LogTemp,Warning,TEXT("Interact"));
-
 	}
 }
 
@@ -239,6 +248,16 @@ void ARetargetingTestCharacter::CheckForInteractalbe()
 		CurrentInteractable=PotentialInteractable;
 		HelpText=PotentialInteractable->InteractableHelpText;
 	}
+}
+
+void ARetargetingTestCharacter::UpdateGold(int32 Amount)
+{
+	
+}
+
+bool ARetargetingTestCharacter::AddItemToInventory(APickUp* Item)
+{
+	return false;
 }
 
 /**
@@ -413,6 +432,7 @@ void ARetargetingTestCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool
 {
 	IsAttacking=false;
 	AttackEndComboState();
+	
 }
 
 /**

@@ -13,8 +13,9 @@ UCLASS()
 class RETARGETINGTEST_API USlot : public UUserWidget
 {
 	GENERATED_BODY()
-
-
+public:
+protected:
+	virtual void NativeConstruct() override;
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	int32 SlotNum;

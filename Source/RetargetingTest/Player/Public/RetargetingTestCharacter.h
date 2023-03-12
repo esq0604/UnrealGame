@@ -71,8 +71,22 @@ private:
 
 	void CheckForInteractalbe();
 public:
-	
-	
+	//플레이어의 도움말입니다.
+    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="HUD")
+	FString HelpText;
+
+	//플레이어가 소유한 골드양을 나타냅니다.
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="HUD")
+	int32 Gold;
+	/**
+	 * Update the coins
+	 * @param Amount - 골드의 양을 업데이트합니다.
+	 */
+	UFUNCTION(BlueprintCallable,Category="Inventory function")
+	void UpdateGold(int32 Amount);
+
+	UFUNCTION(BlueprintPure,Category="Inventory function")
+	bool AddItemToInventory(APickUp* Item);
 protected:
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category="Animation")
 	class UCharaterAnimInstance* mAnimInstance;
@@ -93,7 +107,14 @@ protected:
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category=Move,meta=(AllowPrivateAccess=true))
 	bool IsDodge;
 	
-	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Inventory Test",meta=(AllowPrivateAccess=true))
+	bool bInventoryShow;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Inventory Test",meta=(AllowPrivateAccess=true))
+	TSubclassOf<UUserWidget> WidgetClass;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite,Category="Inventory Test",meta=(AllowPrivateAccess=true))
+	class UInventory* Invenwidget;
 private:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -150,8 +171,9 @@ private:
 	UAnimMontage* DodgeMontage;
 
 	float CheckInteractableReach=250.0f;
-	FString HelpText;
-
+	
 	class AInteractable* CurrentInteractable;
+
+
 };
 

@@ -3,3 +3,9 @@
 
 #include "RetargetingTest/UI/Public/Slot.h"
 
+
+void USlot::NativeConstruct()
+{
+	Super::NativeConstruct();
+	
+}
