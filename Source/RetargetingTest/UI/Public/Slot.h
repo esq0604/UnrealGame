@@ -7,18 +7,32 @@
 #include "Slot.generated.h"
 
 /**
- * 
+ * 술롯의타입을 나타냅니다. 슬롯은 각각 인벤토리, 퀵슬롯, 장비에 쓰이기 때문에.
+ * 슬롯의 타입 또한 장비아이템, 소비아이템, 퀵슬롯에서 사용할아이템, 퀵슬롯에서 사용할 스킬로 나눴습니다.
  */
+UENUM()
+enum class ESlotType : uint8
+{
+	SLOT_INVENTORY,
+	SLOT_QUICK,
+	SLOT_EQUIP
+};
 UCLASS()
 class RETARGETINGTEST_API USlot : public UUserWidget
 {
 	GENERATED_BODY()
 public:
+	void Refresh();
+	
+	UFUNCTION(BlueprintCallable)
+	void Init();
+
+	void SetType(ESlotType NewSlotType);
+	int32 GetSlotNum() const;
 protected:
 	virtual void NativeConstruct() override;
 public:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	int32 SlotNum;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	int32 Count;
@@ -28,6 +42,15 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(BindWidget))
 	class UTextBlock* Text;
+
 protected:
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	int32 SlotNum;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	int32 Index;
+	
+private:
+	ESlotType SlotType;
 
 };

@@ -23,16 +23,13 @@ APickUp::APickUp()
 void APickUp::BeginPlay()
 {
 	Super::BeginPlay();
-	//InteractableHelpText=FString("%s: Press E to pick up"),*ItemName));
 }
 
 void APickUp::Interact_Implementation()
 {
 	Super::Interact_Implementation();
 	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(UGameplayStatics::GetPlayerCharacter(this,0));
-
-	//여기에 아이템을 캐릭터 인벤토리에 배치하는 코드를 입력합니다.
-
+	
 	OnPickup();
 }
 

@@ -34,7 +34,7 @@
 ARetargetingTestCharacter::ARetargetingTestCharacter()
 	:AttackRange(200.0f) , AttackRadius(50.0f),MaxCombo(4),IsAttacking(false)
 {
-
+	PrimaryActorTick.bCanEverTick=true;
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Character"));
@@ -178,8 +178,6 @@ void ARetargetingTestCharacter::BeginPlay()
 void ARetargetingTestCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	CheckForInteractalbe();
 }
 
 /**
@@ -213,20 +211,23 @@ void ARetargetingTestCharacter::ToggleInventory()
  */
 void ARetargetingTestCharacter::Interact()
 {
+	UE_LOG(LogTemp,Warning,TEXT("Interact"));
+
+	CheckForInteractalbe();
 	if(CurrentInteractable!=nullptr)
 	{
 		CurrentInteractable->Interact_Implementation();
-		UE_LOG(LogTemp,Warning,TEXT("Interact"));
 	}
 }
 
 /**
- * 라인트레이스를 이용해 인터렉터블 아이템이 있는지 확인합니다. 
+ * 라인트레이스를 이용해 인터렉터블 아이템이 있는지 확인합니다.
+ * 
  */
 void ARetargetingTestCharacter::CheckForInteractalbe()
 {
-	FVector StartTrace = FollowCamera->GetComponentLocation();
-	FVector EndTrace = (FollowCamera->GetComponentLocation()*CheckInteractableReach) + StartTrace;
+	FVector StartTrace = GetActorLocation();
+	FVector EndTrace = GetActorLocation()+GetActorForwardVector()*200.0f;
 
 	FHitResult HitResult;
 
@@ -237,6 +238,15 @@ void ARetargetingTestCharacter::CheckForInteractalbe()
 
 	AInteractable* PotentialInteractable = Cast<AInteractable>(HitResult.GetActor());
 
+	DrawDebugLine(GetWorld(),
+		StartTrace,
+		EndTrace,
+		FColor::Red,
+		true,
+		1,
+		0,
+		2
+		);
 	if(PotentialInteractable ==nullptr)
 	{
 		HelpText=FString("");

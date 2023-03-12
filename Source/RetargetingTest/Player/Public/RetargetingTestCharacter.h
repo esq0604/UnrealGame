@@ -170,7 +170,7 @@ private:
 	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	UAnimMontage* DodgeMontage;
 
-	float CheckInteractableReach=250.0f;
+	float CheckInteractableReach=100.0f;
 	
 	class AInteractable* CurrentInteractable;
 
