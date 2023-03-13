@@ -3,12 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RetargetingTest/Component/Public/Interactable.h"
+#include "RetargetingTest/Object/Public/Interactable.h"
 #include "PickUp.generated.h"
 
 /**
  * 
  */
+UENUM()
+enum class EItemType : uint8
+{
+	ITEM_None,
+	ITEM_Useable,
+	ITEM_Equipmentable
+};
 UCLASS()
 class RETARGETINGTEST_API APickUp : public AInteractable
 {
@@ -36,4 +43,8 @@ public:
 
 	UPROPERTY(EditAnywhere,Category="PickupProperties")
 	FString ItemName;
+
+private:
+	UPROPERTY(EditAnywhere,Category="PickupProperties",meta=(AllowPrivateAccess=true))
+	EItemType ItemType;
 };

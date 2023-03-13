@@ -4,6 +4,7 @@
 #include "RetargetingTest/UI/Public/Inventory.h"
 
 #include "Blueprint/WidgetTree.h"
+#include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/UI/Public/Slot.h"
 
 void UInventory::NativeConstruct()
@@ -17,6 +18,7 @@ void UInventory::NativeConstruct()
  */
 void UInventory::Init()
 {
+	Character=Cast<ARetargetingTestCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
 	TArray<UWidget*> Widgets;
 	WidgetTree->GetAllWidgets(Widgets);
 	Slots.Init(nullptr,12);
@@ -27,11 +29,21 @@ void UInventory::Init()
 		slot = Cast<USlot>(widget);
 		if(slot != nullptr)
 		{
-			UE_LOG(LogTemp,Warning,TEXT("Inventory Init %s"),*slot->GetName());
 			slot->SetType(ESlotType::SLOT_INVENTORY);
+			slot->SetCharacter(this->Character);
 			slot->Init();
 			Slots[slot->GetSlotNum()]=slot;
+			UE_LOG(LogTemp,Warning,TEXT("Inventory Init Name : %s Index : %d"),*Slots[slot->GetSlotNum()]->GetName(),slot->GetSlotNum());
+			
 		}
+	}
+}
+
+void UInventory::Refresh()
+{
+	for(int i = 0; i<12; i++ )
+	{
+		Slots[i]->Refresh();
 	}
 }
 

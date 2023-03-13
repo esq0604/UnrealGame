@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "RetargetingTest/Component/Public/Interactable.h"
+#include "RetargetingTest/Object/Public/Interactable.h"
 
 // Sets default values
 AInteractable::AInteractable()
@@ -20,5 +20,8 @@ void AInteractable::BeginPlay()
 void AInteractable::Interact_Implementation()
 {
 	GLog->Log("Interact base class : Interact() YOU SHOULD NOT BE SEEING THIS");
+	//character -> getinventory() =this;
+	
 }
+
 

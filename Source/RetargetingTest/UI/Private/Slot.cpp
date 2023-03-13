@@ -3,6 +3,9 @@
 
 #include "RetargetingTest/UI/Public/Slot.h"
 
+#include "Components/Image.h"
+#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+
 
 void USlot::NativeConstruct()
 {
@@ -30,7 +33,12 @@ void USlot::Refresh()
 	case ESlotType::SLOT_INVENTORY:
 	case ESlotType::SLOT_QUICK:
 		{
-			//아이템이 소비될때 해야할 로직을 작성합니다.
+			UE_LOG(LogTemp,Warning,TEXT("Slot Index %d"),Index);
+			UTexture2D* Tex=Character->GetThumnailAtInventorySlot(Index);
+			if(Tex!=nullptr)
+			{
+				Img->SetBrushFromTexture(Tex);
+			}
 		}
 		break;
 	}
@@ -39,6 +47,11 @@ void USlot::Refresh()
 void USlot::SetType(ESlotType NewSlotType)
 {
 	SlotType=NewSlotType;
+}
+
+void USlot::SetCharacter(ARetargetingTestCharacter* NewCharacter)
+{
+	Character=NewCharacter;
 }
 
 int32 USlot::GetSlotNum() const

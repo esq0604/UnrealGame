@@ -25,7 +25,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/Object/Public/BaseStateObject.h"
 #include "RetargetingTest/Lib/GameTags.h"
-#include "RetargetingTest/Component/Public/Interactable.h"
+#include "RetargetingTest/Object/Public/Interactable.h"
+#include "RetargetingTest/Object/Public/PickUp.h"
 #include "RetargetingTest/UI/Public/Inventory.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -190,6 +191,7 @@ void ARetargetingTestCharacter::SprintEnd()
 }
 
 /**
+ *	TODO: 게임의 플레이어 HUD관련부분은 게임모드클래스에서 관리해야합니다. 
  *	인벤토리 토글 입력에 대한 매핑 함수 입니다. 
  */
 void ARetargetingTestCharacter::ToggleInventory()
@@ -217,6 +219,15 @@ void ARetargetingTestCharacter::Interact()
 	if(CurrentInteractable!=nullptr)
 	{
 		CurrentInteractable->Interact_Implementation();
+		if(Invenwidget!=nullptr)
+		{
+			Invenwidget->Refresh();
+		}
+		else
+		{
+			UE_LOG(LogTemp,Warning,TEXT("InvenWidget nullptr"));
+		}
+		
 	}
 }
 
@@ -260,13 +271,24 @@ void ARetargetingTestCharacter::CheckForInteractalbe()
 	}
 }
 
-void ARetargetingTestCharacter::UpdateGold(int32 Amount)
-{
-	
-}
-
+/**
+ * @param Item - 인벤토리에 들어갈 아이템이 들어옵니다.
+ */
 bool ARetargetingTestCharacter::AddItemToInventory(APickUp* Item)
 {
+	if(Item!=nullptr)
+	{
+		const int32 AvaliableSlot = Inventory.Find(nullptr);
+		if(AvaliableSlot!= INDEX_NONE)
+		{
+			Inventory[AvaliableSlot]=Item;
+			return true;
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red,TEXT("You cant carry any more items"));
+		}
+	}
 	return false;
 }
 
@@ -289,6 +311,45 @@ UBaseStateManagerComponent* ARetargetingTestCharacter::GetStateManagerComponent(
 {
 	return StateManagerComponent;
 }
+/**
+ * 슬롯에 있는 아이템의 썸네일을 반환합니다.
+ * @param Slot - 인벤토리 슬롯의 인덱스가 들어옵니다.
+ */
+UTexture2D* ARetargetingTestCharacter::GetThumnailAtInventorySlot(int32 Slot) const
+{
+	if(Inventory[Slot]!=nullptr)
+	{
+		if(Inventory[Slot]->PickupThumbnail!=nullptr)
+		{
+			return Inventory[Slot]->PickupThumbnail;
+		}
+	}
+	return nullptr;
+}
+/**
+ * 슬롯에 있는 아이템의 이름을 반환합니다.
+ * @param Slot - 인벤토리 슬롯의 인덱스가 들어옵니다.
+ */
+FString ARetargetingTestCharacter::GetItemNameAtInventorySlot(int32 Slot) const
+{
+	if(Inventory[Slot]!=nullptr)
+	{
+		return Inventory[Slot]->ItemName;
+	}
+	return FString("None");
+}
+/**
+ * TODO: 인벤토리의 UsealbeItem이 여러개일 경우를 생각해야합니다.
+ * @param Slot - 인벤토리 슬롯의 인덱스가 들어옵니다.
+ */
+void ARetargetingTestCharacter::UseItemAtInventorySlot(int32 Slot)
+{
+	if(Inventory[Slot] != nullptr)
+	{
+		Inventory[Slot]->Use_Implementation();
+		Inventory[Slot]=nullptr;
+	}
+}
 
 
 /**
@@ -299,10 +360,6 @@ void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
-		//Jumping
-		// EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
-		// EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ARetargetingTestCharacter::JumpAndDodge);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
@@ -310,7 +367,7 @@ void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ARetargetingTestCharacter::Move);
 
 		//Looking
-		//EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARetargetingTestCharacter::Look);
+		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARetargetingTestCharacter::Look);
 
 		//Attack
 		EnhancedInputComponent->BindAction(AttackAction,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::Attack);
@@ -366,13 +423,6 @@ void ARetargetingTestCharacter::Look(const FInputActionValue& Value)
 
 void ARetargetingTestCharacter::Attack(const FInputActionValue& Value)
 {
-	//어택 스테이트로 변환합니다.
-	// const FGameplayTag AttackingState = FGameplayTag::RequestGameplayTag(TEXT("State.Attack"));
-	// if(StateManagerComponent->GetCurrentActiveState()->StateGameplayTag!=AttackingState)
-	// {
-	// 	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(AttackingState));
-	// }
-	
 	IsMoving=false;
 	if(IsAttacking)
 	{

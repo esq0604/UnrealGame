@@ -41,6 +41,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	class UBasePlayerStatComponent* GetStatComponent() const;
 	class UBaseStateManagerComponent* GetStateManagerComponent() const;
+	UTexture2D* GetThumnailAtInventorySlot(int32 Slot) const;
+	FString GetItemNameAtInventorySlot(int32 Slot) const;
+	void UseItemAtInventorySlot(int32 Slot);
 protected:
 
 	//Input Action Bind Action 
@@ -78,13 +81,7 @@ public:
 	//플레이어가 소유한 골드양을 나타냅니다.
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="HUD")
 	int32 Gold;
-	/**
-	 * Update the coins
-	 * @param Amount - 골드의 양을 업데이트합니다.
-	 */
-	UFUNCTION(BlueprintCallable,Category="Inventory function")
-	void UpdateGold(int32 Amount);
-
+	 
 	UFUNCTION(BlueprintPure,Category="Inventory function")
 	bool AddItemToInventory(APickUp* Item);
 protected:
@@ -113,8 +110,9 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Inventory Test",meta=(AllowPrivateAccess=true))
 	TSubclassOf<UUserWidget> WidgetClass;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite,Category="Inventory Test",meta=(AllowPrivateAccess=true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="Inventory Test",meta=(AllowPrivateAccess=true))
 	class UInventory* Invenwidget;
+	
 private:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -145,6 +143,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* ToggleInventoryAction;
 
+	//PlayerComponent
 	UPROPERTY(VisibleInstanceOnly,Category="Component")
 	class UBasePlayerStatComponent* StatComponent;
 
@@ -170,10 +169,12 @@ private:
 	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	UAnimMontage* DodgeMontage;
 
-	float CheckInteractableReach=100.0f;
+	//Interact
+	const float CheckInteractableReach=100.0f;
 	
 	class AInteractable* CurrentInteractable;
 
-
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
+	TArray<APickUp*> Inventory;
 };
 

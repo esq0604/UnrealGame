@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RetargetingTest/Component/Public/PickUp.h"
+#include "RetargetingTest/Object/Public/PickUp.h"
 #include "ItemBase.generated.h"
 
 /**

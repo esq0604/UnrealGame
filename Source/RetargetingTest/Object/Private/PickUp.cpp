@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "RetargetingTest/Component/Public/PickUp.h"
+#include "RetargetingTest/Object/Public/PickUp.h"
 
 #include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
@@ -29,7 +29,8 @@ void APickUp::Interact_Implementation()
 {
 	Super::Interact_Implementation();
 	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(UGameplayStatics::GetPlayerCharacter(this,0));
-	
+
+	Character->AddItemToInventory(this);
 	OnPickup();
 }
 

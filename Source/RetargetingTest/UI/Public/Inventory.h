@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
 #include "Inventory.generated.h"
 
 /**
@@ -18,9 +19,10 @@ class RETARGETINGTEST_API UInventory : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 	void Init();
+	void Refresh();
 protected:
 	virtual void NativeConstruct() override; 
-	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+
+	ARetargetingTestCharacter* Character;
 	TArray<USlot*> Slots;
 };

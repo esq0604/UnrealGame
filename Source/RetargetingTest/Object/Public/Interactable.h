@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Interactable.generated.h"
 
+//TODO : 상호작용하는 행동을 인터페이스로 바꾸고, 각 물체에 인터페이스를 상속시킬것.
 UCLASS()
 class RETARGETINGTEST_API AInteractable : public AActor
 {
