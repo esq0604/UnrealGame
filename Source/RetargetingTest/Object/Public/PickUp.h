@@ -28,10 +28,14 @@ public:
 	
 	void OnPickup();
 
+	EItemType GetItemType() const;
 	UFUNCTION(BlueprintNativeEvent)
 	void Use();
 	virtual void Use_Implementation();
-	
+
+	void AddReferenceSlot(class USlot*& slot);
+	void RemoveReferenceSlot(class USlot*& slot);
+	void SwapReferenceSlot(APickUp* item, int32 fromIndex, int32 toIndex);
 protected:
 	virtual void BeginPlay() override;
 public:
@@ -47,4 +51,7 @@ public:
 private:
 	UPROPERTY(EditAnywhere,Category="PickupProperties",meta=(AllowPrivateAccess=true))
 	EItemType ItemType;
+
+	UPROPERTY()
+	TArray<class USlot*> ReferenceSlot;
 };

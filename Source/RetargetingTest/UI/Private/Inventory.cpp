@@ -33,7 +33,6 @@ void UInventory::Init()
 			slot->SetCharacter(this->Character);
 			slot->Init();
 			Slots[slot->GetSlotNum()]=slot;
-			UE_LOG(LogTemp,Warning,TEXT("Inventory Init Name : %s Index : %d"),*Slots[slot->GetSlotNum()]->GetName(),slot->GetSlotNum());
 			
 		}
 	}

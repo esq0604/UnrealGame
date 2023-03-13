@@ -31,13 +31,20 @@ public:
 	void SetType(ESlotType NewSlotType);
 	void SetCharacter(ARetargetingTestCharacter* NewCharacter);
 	int32 GetSlotNum() const;
+	ESlotType GetSlotType() const;
+	int32 GetSlotIndex() const;
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 public:
-
+	//드래그시 보일 SlotClass 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<USlot> DragVisualClass;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	int32 Count;
+	int32 Count; 
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(BindWidget))
 	class UImage* Img;

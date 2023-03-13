@@ -5,6 +5,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/UI/Public/Slot.h"
 #include "Engine/Texture2D.h"
 
 
@@ -45,11 +46,34 @@ void APickUp::OnPickup()
 	InteractableMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+EItemType APickUp::GetItemType() const
+{
+	return ItemType;
+}
+
 /**
  * 모든 아이템은 사용되기 때문에 자식에서 구현되어야 합니다.
- * ex) 포선 - 사용해서 체력을 채웁니다. , 총 - 사용하여 재장전하거나, 공격을 합니다 
+ * ex) 포선 - 사용해서 체력을 채웁니다. , 총 - 사용하여 재장전하거나, 공격을 합니다
+ * 아이템이 사용되면 현재 참조중인 슬롯에 변화가 생겨야합니다.
  */
 void APickUp::Use_Implementation()
 {
 	GLog->Log("Use() from pickup class : YOU SOULD NOT BE SEEING THIS");
+}
+
+void APickUp::AddReferenceSlot(USlot*& slot)
+{
+	ReferenceSlot.AddUnique(slot);
+}
+
+void APickUp::RemoveReferenceSlot(USlot*& slot)
+{
+	ReferenceSlot.RemoveSingle(slot);
+}
+
+void APickUp::SwapReferenceSlot(APickUp* item, int32 fromIndex, int32 toIndex)
+{
+	TArray<USlot*> from=ReferenceSlot;
+	ReferenceSlot = item->ReferenceSlot;
+	item->ReferenceSlot=from;
 }

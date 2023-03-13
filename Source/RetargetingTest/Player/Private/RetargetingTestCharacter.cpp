@@ -292,6 +292,16 @@ bool ARetargetingTestCharacter::AddItemToInventory(APickUp* Item)
 	return false;
 }
 
+APickUp* ARetargetingTestCharacter::GetItemAtInventory(int32 Index)
+{
+	return Inventory[Index];
+}
+
+TArray<APickUp*> ARetargetingTestCharacter::GetInventory() const
+{
+	return Inventory;
+}
+
 /**
  * 캐릭터의 IA_Sprint 와 바인딩된 함수입니다. SprintState로 진입합니다.
  * 해당 로직의 문제점은 SprintState로 진입할 수 없을때에도 스태미나를 사용하는것 입니다.
@@ -319,10 +329,7 @@ UTexture2D* ARetargetingTestCharacter::GetThumnailAtInventorySlot(int32 Slot) co
 {
 	if(Inventory[Slot]!=nullptr)
 	{
-		if(Inventory[Slot]->PickupThumbnail!=nullptr)
-		{
-			return Inventory[Slot]->PickupThumbnail;
-		}
+		return Inventory[Slot]->PickupThumbnail;
 	}
 	return nullptr;
 }

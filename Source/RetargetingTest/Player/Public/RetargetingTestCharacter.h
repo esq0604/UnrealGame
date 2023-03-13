@@ -35,6 +35,7 @@ public:
 
 
 	/* Setter */
+	
 	/* Getter */
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
@@ -84,6 +85,12 @@ public:
 	 
 	UFUNCTION(BlueprintPure,Category="Inventory function")
 	bool AddItemToInventory(APickUp* Item);
+	APickUp* GetItemAtInventory(int32 Index);
+	TArray<APickUp*> GetInventory() const;
+
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
+	TArray<APickUp*> Inventory;
 protected:
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category="Animation")
 	class UCharaterAnimInstance* mAnimInstance;
@@ -174,7 +181,5 @@ private:
 	
 	class AInteractable* CurrentInteractable;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
-	TArray<APickUp*> Inventory;
 };
 
