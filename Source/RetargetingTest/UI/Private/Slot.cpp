@@ -97,8 +97,10 @@ void USlot::Init()
 	switch (SlotType)
 	{
 	case ESlotType::SLOT_INVENTORY:
-	case ESlotType::SLOT_QUICK:
 		Index=SlotNum;
+		break;
+	case ESlotType::SLOT_QUICK:
+		Index=-1;
 		break;
 	}
 }
@@ -119,11 +121,18 @@ void USlot::Refresh()
 		}
 	case ESlotType::SLOT_QUICK:
 		{
-		
-			UTexture2D* Tex=Character->GetThumnailAtInventorySlot(Index);
-			Img->SetBrushFromTexture(Tex);
-			Text->SetVisibility(ESlateVisibility::Hidden);
-			break;
+			if(Index<0)
+			{
+				break;
+			}
+			else
+			{
+				UTexture2D* Tex=Character->GetThumnailAtInventorySlot(Index);
+				Img->SetBrushFromTexture(Tex);
+				Text->SetVisibility(ESlateVisibility::Hidden);
+				break;
+			}
+
 			
 
 		}

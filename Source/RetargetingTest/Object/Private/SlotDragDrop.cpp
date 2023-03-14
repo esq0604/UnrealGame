@@ -64,7 +64,10 @@ bool USlotDragDrop::SwapQuickSlot(USlot* To)
 		const int TempIndex = To->Index;
 		To->Index=From->Index;
 		From->Index=TempIndex;
-	
+
+		if(TempIndex<0)
+			From->SetImg(nullptr);
+		
 		To->Refresh();
 		From->Refresh();
 	}

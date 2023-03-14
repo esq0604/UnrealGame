@@ -29,7 +29,7 @@ void UQuickSlot::Init()
 		slot->SetType(ESlotType::SLOT_QUICK);
 		slot->SetCharacter(this->Character);
 		slot->Init();
-		Slots[slot->GetSlotIndex()]=slot;
+		Slots[slot->SlotNum]=slot;
 	}
 
 	
