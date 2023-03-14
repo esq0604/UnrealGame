@@ -30,7 +30,8 @@ public:
 
 	void SetType(ESlotType NewSlotType);
 	void SetCharacter(ARetargetingTestCharacter* NewCharacter);
-	int32 GetSlotNum() const;
+	void SetIndex(int32 NewIndex);
+	void SetImg(UTexture2D* NewImg);
 	ESlotType GetSlotType() const;
 	int32 GetSlotIndex() const;
 protected:
@@ -53,14 +54,18 @@ public:
 	class UTextBlock* Text;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	int32 SlotNum;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	int32 Index;
+
+
 protected:
 
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
-	int32 Index;
+
 
 	ARetargetingTestCharacter* Character;
 private:
 	ESlotType SlotType;
 
 };
+

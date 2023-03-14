@@ -33,9 +33,10 @@ public:
 	void Use();
 	virtual void Use_Implementation();
 
-	void AddReferenceSlot(class USlot*& slot);
-	void RemoveReferenceSlot(class USlot*& slot);
-	void SwapReferenceSlot(APickUp* item, int32 fromIndex, int32 toIndex);
+	void AddReferenceSlot(class USlot*& Slot);
+	void RemoveReferenceSlot(class USlot*& Slot);
+	void SwapReferenceSlot(APickUp* Item, int32 FromIndex, int32 ToIndex);
+
 protected:
 	virtual void BeginPlay() override;
 public:
@@ -48,10 +49,11 @@ public:
 	UPROPERTY(EditAnywhere,Category="PickupProperties")
 	FString ItemName;
 
+	UPROPERTY()
+	TArray<USlot*> ReferenceSlot;
 private:
 	UPROPERTY(EditAnywhere,Category="PickupProperties",meta=(AllowPrivateAccess=true))
 	EItemType ItemType;
 
-	UPROPERTY()
-	TArray<class USlot*> ReferenceSlot;
+
 };

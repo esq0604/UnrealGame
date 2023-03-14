@@ -15,7 +15,7 @@ APickUp::APickUp()
 	//픽업을 위한 메시를 설정하고 아이템 이름, 도움말 및 아이템 값을 설정합니다.
 	InteractableMesh = CreateDefaultSubobject<UStaticMeshComponent>("PickupMesh");
 	InteractableMesh->SetSimulatePhysics(true);
-
+	ReferenceSlot.Init(nullptr,4);
 	ItemName = FString("Enter an item name here...");
 	InteractableHelpText=FString("Press E to pick item up.");
 	Value=0;
@@ -61,19 +61,48 @@ void APickUp::Use_Implementation()
 	GLog->Log("Use() from pickup class : YOU SOULD NOT BE SEEING THIS");
 }
 
-void APickUp::AddReferenceSlot(USlot*& slot)
+void APickUp::AddReferenceSlot(USlot*& Slot)
 {
-	ReferenceSlot.AddUnique(slot);
+	ReferenceSlot.AddUnique(Slot);
 }
 
-void APickUp::RemoveReferenceSlot(USlot*& slot)
+void APickUp::RemoveReferenceSlot(USlot*& Slot)
 {
-	ReferenceSlot.RemoveSingle(slot);
+	ReferenceSlot.RemoveSingle(Slot);
 }
 
-void APickUp::SwapReferenceSlot(APickUp* item, int32 fromIndex, int32 toIndex)
+void APickUp::SwapReferenceSlot(APickUp* Item, int32 FromIndex, int32 ToIndex)
 {
-	TArray<USlot*> from=ReferenceSlot;
-	ReferenceSlot = item->ReferenceSlot;
-	item->ReferenceSlot=from;
+	const TArray<USlot*> From=ReferenceSlot;
+	ReferenceSlot = Item->ReferenceSlot;
+	Item->ReferenceSlot=From;
+
+	// TArray<USlot*> QuickSlotList;
+	// for(USlot* Slot : ReferenceSlot)
+	// {
+	// 	if(Slot->GetSlotType()==ESlotType::SLOT_QUICK)
+	// 		QuickSlotList.Add(Slot);
+	// }
+	//
+	// for(USlot* Slot : Item->ReferenceSlot)
+	// {
+	// 	if(Slot->GetSlotType()==ESlotType::SLOT_QUICK)
+	// 		QuickSlotList.Add(Slot);
+	// }
+	//
+	// for(USlot* Slot : QuickSlotList)
+	// {
+	// 	if(Slot->GetSlotIndex()==FromIndex)
+	// 	{
+	// 		this->ReferenceSlot.RemoveSingle(Slot);
+	// 		Slot->SetIndex(ToIndex);
+	// 		Item->ReferenceSlot.Add(Slot);
+	// 	}
+	// 	else
+	// 	{
+	// 		Item->ReferenceSlot.RemoveSingle(Slot);
+	// 		Slot->SetIndex(FromIndex);
+	// 		this->ReferenceSlot.Add(Slot);
+	// 	}
+	// }
 }

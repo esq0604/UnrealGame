@@ -5,6 +5,7 @@
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Image.h"
+#include "Components/TextBlock.h"
 #include "RetargetingTest/Object/Public/PickUp.h"
 #include "RetargetingTest/Object/Public/SlotDragDrop.h"
 #include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
@@ -23,10 +24,9 @@ void USlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEven
 	if(OutOperation ==nullptr)
 	{
 		USlotDragDrop* oper =NewObject<USlotDragDrop>();
-		OutOperation=oper;
-
 		oper->From =this;
-	
+		oper->Character=this->Character;
+		OutOperation=oper;
 
 		if (DragVisualClass != nullptr)
 		{
@@ -47,13 +47,12 @@ bool USlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDr
 	UDragDropOperation* InOperation)
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
-	USlotDragDrop* oper = Cast<USlotDragDrop>(InOperation);
-	
-	if (oper != nullptr)
+	USlotDragDrop* Operator = Cast<USlotDragDrop>(InOperation);
+
+	if (Operator != nullptr)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("NatvieOnDrop : oper != nullptr"));
-		oper->Character = this->Character;
-		oper->Drop(this);
+		Operator->Drop(this);
 		return true;
 	}
 	else
@@ -112,12 +111,22 @@ void USlot::Refresh()
 	switch(SlotType)
 	{
 	case ESlotType::SLOT_INVENTORY:
-	case ESlotType::SLOT_QUICK:
 		{
 			UTexture2D* Tex=Character->GetThumnailAtInventorySlot(Index);
 			Img->SetBrushFromTexture(Tex);
+			Text->SetVisibility(ESlateVisibility::Hidden);
+			break;
 		}
-		break;
+	case ESlotType::SLOT_QUICK:
+		{
+		
+			UTexture2D* Tex=Character->GetThumnailAtInventorySlot(Index);
+			Img->SetBrushFromTexture(Tex);
+			Text->SetVisibility(ESlateVisibility::Hidden);
+			break;
+			
+
+		}
 	}
 }
 
@@ -131,9 +140,14 @@ void USlot::SetCharacter(ARetargetingTestCharacter* NewCharacter)
 	Character=NewCharacter;
 }
 
-int32 USlot::GetSlotNum() const
+void USlot::SetIndex(int32 NewIndex)
 {
-	return SlotNum;
+	Index=NewIndex;
+}
+
+void USlot::SetImg(UTexture2D* NewImg)
+{
+	Img->SetBrushFromTexture(NewImg);
 }
 
 ESlotType USlot::GetSlotType() const

@@ -9,15 +9,20 @@
 /**
  * 
  */
+class USlot;
+
 UCLASS()
 class RETARGETINGTEST_API USlotDragDrop : public UDragDropOperation
 {
 	GENERATED_BODY()
-
 public:
-	bool Drop(class USlot* to);
-	bool SwapInven(class USlot* to);
+	bool Drop(USlot* To);
+	bool SwapInven(USlot* to);
+	bool SetQuickSlot(USlot* To);
+	bool SwapQuickSlot(USlot* To);
 public:
-	class USlot* From;
+	USlot* From;
 	class ARetargetingTestCharacter* Character;
 };
+
+
