@@ -355,6 +355,8 @@ void ARetargetingTestCharacter::UseItemAtInventorySlot(int32 Slot)
 	{
 		Inventory[Slot]->Use_Implementation();
 		Inventory[Slot]=nullptr;
+		Invenwidget->Refresh();
+		
 	}
 }
 

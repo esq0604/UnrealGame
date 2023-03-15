@@ -69,12 +69,11 @@ FReply USlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointe
 
 	if(InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton)==true)
 	{
-		// if(Index<0 || Character->GetItemAtInventory(Index)->GetItemType() !=EItemType::ITEM_None)
-		// {
-		// 	return reply.NativeReply;
-		// 	
-		// }
-		//아이템을 사용하는 함수가 나타납니다.
+		 if(Index<0 || Character->GetItemAtInventory(Index)->GetItemType() !=EItemType::ITEM_None)
+		 {
+		 	Character->UseItemAtInventorySlot(Index);
+		 	return reply.NativeReply;
+		 }
 	}
 	else if(InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton)==true)
 	{
@@ -157,6 +156,22 @@ void USlot::SetIndex(int32 NewIndex)
 void USlot::SetImg(UTexture2D* NewImg)
 {
 	Img->SetBrushFromTexture(NewImg);
+}
+
+void USlot::Action()
+{
+	switch(SlotType)
+	{
+	case ESlotType::SLOT_INVENTORY:
+	case ESlotType::SLOT_QUICK:
+		UE_LOG(LogTemp,Warning,TEXT("Slot Action"));
+		Character->Inventory[Index]->Use_Implementation();
+		break;
+		
+		default:
+		break;
+	}
+
 }
 
 ESlotType USlot::GetSlotType() const

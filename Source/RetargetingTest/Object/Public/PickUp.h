@@ -9,6 +9,8 @@
 /**
  * 
  */
+
+//TODO : APickUp 클래스는 아이템의 부모 클래스가 되어야합니다.
 UENUM()
 enum class EItemType : uint8
 {
@@ -39,7 +41,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-public:
+public:      
 	UPROPERTY(EditAnywhere,Category="PickupProperties")
 	UTexture2D* PickupThumbnail;
 	
@@ -48,7 +50,9 @@ public:
 
 	UPROPERTY(EditAnywhere,Category="PickupProperties")
 	FString ItemName;
-
+	
+	//소비 아이템의 경우 개수가 있고, 장비아이템의 경우 개수가 없습니다.
+	int Count;
 	UPROPERTY()
 	TArray<USlot*> ReferenceSlot;
 private:

@@ -59,6 +59,7 @@ EItemType APickUp::GetItemType() const
 void APickUp::Use_Implementation()
 {
 	GLog->Log("Use() from pickup class : YOU SOULD NOT BE SEEING THIS");
+	
 }
 
 void APickUp::AddReferenceSlot(USlot*& Slot)

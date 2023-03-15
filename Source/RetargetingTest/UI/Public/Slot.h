@@ -32,6 +32,7 @@ public:
 	void SetCharacter(ARetargetingTestCharacter* NewCharacter);
 	void SetIndex(int32 NewIndex);
 	void SetImg(UTexture2D* NewImg);
+	void Action();
 	ESlotType GetSlotType() const;
 	int32 GetSlotIndex() const;
 protected:
