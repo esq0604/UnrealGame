@@ -166,6 +166,8 @@ void USlot::Action()
 	case ESlotType::SLOT_QUICK:
 		UE_LOG(LogTemp,Warning,TEXT("Slot Action"));
 		Character->Inventory[Index]->Use_Implementation();
+		Character->UseItemAtInventorySlot(Index);
+
 		break;
 		
 		default:

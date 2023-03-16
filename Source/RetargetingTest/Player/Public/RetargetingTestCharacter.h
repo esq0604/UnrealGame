@@ -45,6 +45,11 @@ public:
 	UTexture2D* GetThumnailAtInventorySlot(int32 Slot) const;
 	FString GetItemNameAtInventorySlot(int32 Slot) const;
 	void UseItemAtInventorySlot(int32 Slot);
+
+	UFUNCTION(BlueprintPure,Category="Inventory function")
+	bool AddItemToInventory(APickUp* Item);
+	APickUp* GetItemAtInventory(int32 Index);
+	TArray<APickUp*> GetInventory() const;
 protected:
 
 	//Input Action Bind Action 
@@ -74,6 +79,8 @@ private:
 	void Interact();
 
 	void CheckForInteractalbe();
+
+	void UseQuickSlot1(int num);
 public:
 	//플레이어의 도움말입니다.
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="HUD")
@@ -83,10 +90,7 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="HUD")
 	int32 Gold;
 	 
-	UFUNCTION(BlueprintPure,Category="Inventory function")
-	bool AddItemToInventory(APickUp* Item);
-	APickUp* GetItemAtInventory(int32 Index);
-	TArray<APickUp*> GetInventory() const;
+
 
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
@@ -119,7 +123,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="Inventory Test",meta=(AllowPrivateAccess=true))
 	class UInventory* Invenwidget;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="Inventory Test",meta=(AllowPrivateAccess=true))
+	class UQuickSlot* QuickSlotWidget;
 private:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -149,7 +155,14 @@ private:
     class UInputAction* IteractionAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* ToggleInventoryAction;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* UseQuickSlot1Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* UseQuickSlot2Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* UseQuickSlot3Action;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* UseQuickSlot4Action;
 	//PlayerComponent
 	UPROPERTY(VisibleInstanceOnly,Category="Component")
 	class UBasePlayerStatComponent* StatComponent;

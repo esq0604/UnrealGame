@@ -36,8 +36,9 @@ void UQuickSlot::Init()
 }
 
 /**
- * 슬롯의 플레이어에 접근해 인벤토리에 있는 아이템을 사용합니다.
+ *  
  */
 void UQuickSlot::Use(int index)
 {
+	Slots[index-1]->Action();
 }
