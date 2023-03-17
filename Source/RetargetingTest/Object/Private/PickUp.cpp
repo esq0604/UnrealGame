@@ -17,7 +17,7 @@ APickUp::APickUp()
 	InteractableMesh->SetSimulatePhysics(true);
 	ReferenceSlot.Init(nullptr,4);
 	ItemName = FString("Enter an item name here...");
-	InteractableHelpText=FString("Press E to pick item up.");
+	//InteractableHelpText=FString("Press E to pick item up.");
 	Value=0;
 }
 
@@ -28,7 +28,6 @@ void APickUp::BeginPlay()
 
 void APickUp::Interact_Implementation()
 {
-	Super::Interact_Implementation();
 	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(UGameplayStatics::GetPlayerCharacter(this,0));
 
 	Character->AddItemToInventory(this);

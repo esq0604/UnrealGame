@@ -10,7 +10,7 @@
  * 
  */
 class USlot;
-
+class ARetargetingTestCharacter;
 UCLASS()
 class RETARGETINGTEST_API UQuickSlot : public UUserWidget
 {
@@ -20,9 +20,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Init();
 	void Use(int index);
+
+	void SetCharacter(ARetargetingTestCharacter* NewCharacter);
 protected:
 	TArray<USlot*> Slots;
-	class ARetargetingTestCharacter* Character;
+
+	UPROPERTY()
+	ARetargetingTestCharacter* Character;
 private:
 	const int MAX_QUICK_SLOT=4;
 };

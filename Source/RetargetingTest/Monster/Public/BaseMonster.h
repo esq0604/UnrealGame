@@ -45,7 +45,7 @@ protected:
 	//UWidgetComponent* HPWidgetComponent;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
-	class UMonsterStatWidget* HPBarWidget;
+	class UMonsterGauge* HPBarWidget;
 	
 private:
 

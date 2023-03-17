@@ -9,7 +9,7 @@
 #include "Components/WidgetComponent.h"
 #include "Engine/DamageEvents.h"
 
-#include "RetargetingTest/UI/Public/MonsterStatWidget.h"
+#include "RetargetingTest/UI/Public/MonsterGauge.h"
 #include "RetargetingTest/Component/Public/BaseMonsterStatComponent.h"
 
 ABaseMonster::ABaseMonster()

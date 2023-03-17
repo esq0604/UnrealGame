@@ -97,9 +97,11 @@ void USlot::Init()
 	{
 	case ESlotType::SLOT_INVENTORY:
 		Index=SlotNum;
+		CountText->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	case ESlotType::SLOT_QUICK:
 		Index=-1;
+		CountText->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	}
 }
@@ -115,7 +117,7 @@ void USlot::Refresh()
 		{
 			UTexture2D* Tex=Character->GetThumnailAtInventorySlot(Index);
 			Img->SetBrushFromTexture(Tex);
-			Text->SetVisibility(ESlateVisibility::Hidden);
+			CountText->SetVisibility(ESlateVisibility::Hidden);
 			break;
 		}
 	case ESlotType::SLOT_QUICK:
@@ -128,7 +130,7 @@ void USlot::Refresh()
 			{
 				UTexture2D* Tex=Character->GetThumnailAtInventorySlot(Index);
 				Img->SetBrushFromTexture(Tex);
-				Text->SetVisibility(ESlateVisibility::Hidden);
+				CountText->SetVisibility(ESlateVisibility::Hidden);
 				break;
 			}
 
@@ -164,13 +166,10 @@ void USlot::Action()
 	{
 	case ESlotType::SLOT_INVENTORY:
 	case ESlotType::SLOT_QUICK:
-		UE_LOG(LogTemp,Warning,TEXT("Slot Action"));
-		Character->Inventory[Index]->Use_Implementation();
 		Character->UseItemAtInventorySlot(Index);
-
 		break;
 		
-		default:
+	default:
 		break;
 	}
 

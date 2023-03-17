@@ -10,6 +10,7 @@
 /**
  * 
  */
+class ARetargetingTestCharacter;
 class USlot;
 
 UCLASS()
@@ -19,7 +20,10 @@ class RETARGETINGTEST_API UInventory : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 	void Init();
+	
 	void Refresh();
+	void SetCharacter(ARetargetingTestCharacter* NewCharacter);
+	
 protected:
 	virtual void NativeConstruct() override; 
 

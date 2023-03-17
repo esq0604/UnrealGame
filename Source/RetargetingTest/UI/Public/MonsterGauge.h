@@ -5,28 +5,28 @@
 #include "CoreMinimal.h"
 #include "BaseStatWidget.h"
 #include "Blueprint/UserWidget.h"
-#include "PlayerStatWidget.generated.h"
+#include "MonsterGauge.generated.h"
 
 /**
  * 
  */
-
 UCLASS()
-class RETARGETINGTEST_API UPlayerStatWidget : public UBaseStatWidget
+class RETARGETINGTEST_API UMonsterGauge : public UBaseStatWidget
 {
 	GENERATED_BODY()
 
 public:
-	
 	virtual void UpdateHPWidget() override;
-	void UpdateStaminaWidget();
-	virtual void BindActorStat(UBaseStatComponent* NewActorStat) override;
 protected:
 	virtual void NativeConstruct() override;
 
-protected:
-	UPROPERTY()
-	UProgressBar* Stamina;
+private:
 
+
+public:
+
+
+protected:
+	
 private:
 };

@@ -5,7 +5,6 @@
 
 #include "Blueprint/WidgetTree.h"
 #include "Kismet/GameplayStatics.h"
-#include "RetargetingTest/Player/Public/CharaterAnimInstance.h"
 #include "RetargetingTest/UI/Public/Slot.h"
 #include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
 #include "Widgets/Text/ISlateEditableTextWidget.h"
@@ -40,5 +39,10 @@ void UQuickSlot::Init()
  */
 void UQuickSlot::Use(int index)
 {
-	Slots[index-1]->Action();
+	Slots[index]->Action();
+}
+
+void UQuickSlot::SetCharacter(ARetargetingTestCharacter* NewCharacter)
+{
+	Character=NewCharacter;
 }

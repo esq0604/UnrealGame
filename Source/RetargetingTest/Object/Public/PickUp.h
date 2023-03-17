@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RetargetingTest/Object/Public/Interactable.h"
+#include "RetargetingTest/Interface/Public/Interactable.h"
 #include "PickUp.generated.h"
 
 /**
@@ -19,7 +19,7 @@ enum class EItemType : uint8
 	ITEM_Equipmentable
 };
 UCLASS()
-class RETARGETINGTEST_API APickUp : public AInteractable
+class RETARGETINGTEST_API APickUp : public AActor ,public IInteractable
 {
 	GENERATED_BODY()
 
@@ -41,7 +41,11 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-public:      
+public:
+	UPROPERTY(EditAnywhere, Category="InteractableProperties")
+	class UStaticMeshComponent* InteractableMesh;
+	UPROPERTY(EditAnywhere, Category="InteractableProperties")
+	FString InteractableHelpText;
 	UPROPERTY(EditAnywhere,Category="PickupProperties")
 	UTexture2D* PickupThumbnail;
 	

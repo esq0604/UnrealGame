@@ -13,7 +13,16 @@ class UAttackComponent;
 class UBaseStatComponent;
 class APlayerAttackComponent;
 class APlayerStatComponent;
+class UWidgetComponent;
+class UPlayerGauge;
+class UFloatingCombatTextComponent;
+class UCharaterAnimInstance;
+class UBasePlayerStatComponent;
+class UPlayerHUD;
+class UInputMappingContext;
+class UInputAction;
 struct FDamageEvent;
+
 UCLASS(config=Game)
 class ARetargetingTestCharacter : public ACharacter
 {
@@ -39,9 +48,11 @@ public:
 	/* Getter */
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	
 	UFUNCTION(BlueprintCallable)
-	class UBasePlayerStatComponent* GetStatComponent() const;
-	class UBaseStateManagerComponent* GetStateManagerComponent() const;
+	UBasePlayerStatComponent* GetStatComponent() const;
+	
+	UBaseStateManagerComponent* GetStateManagerComponent() const;
 	UTexture2D* GetThumnailAtInventorySlot(int32 Slot) const;
 	FString GetItemNameAtInventorySlot(int32 Slot) const;
 	void UseItemAtInventorySlot(int32 Slot);
@@ -50,6 +61,7 @@ public:
 	bool AddItemToInventory(APickUp* Item);
 	APickUp* GetItemAtInventory(int32 Index);
 	TArray<APickUp*> GetInventory() const;
+
 protected:
 
 	//Input Action Bind Action 
@@ -70,9 +82,9 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
-
-
+	
 	void SprintEnd();
+	
 private:
 	void ToggleInventory();
 
@@ -89,24 +101,16 @@ public:
 	//플레이어가 소유한 골드양을 나타냅니다.
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="HUD")
 	int32 Gold;
-	 
-
-
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	TArray<APickUp*> Inventory;
 protected:
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category="Animation")
-	class UCharaterAnimInstance* mAnimInstance;
+	UCharaterAnimInstance* mAnimInstance;
 
 	UPROPERTY(EditAnywhere,meta=(AllowPrivateAccess=true))
-	class UFloatingCombatTextComponent* FloatingTextComponent;
-
-	UPROPERTY(EditAnywhere)
-	class UWidgetComponent* mStatWidgetComponent;
-	UPROPERTY(EditAnywhere)
-	class UPlayerStatWidget* StatBarWidget;
-
+	UFloatingCombatTextComponent* FloatingTextComponent;
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Component")
 	UBaseStateManagerComponent* StateManagerComponent;
 
@@ -115,57 +119,52 @@ protected:
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category=Move,meta=(AllowPrivateAccess=true))
 	bool IsDodge;
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Inventory Test",meta=(AllowPrivateAccess=true))
-	bool bInventoryShow;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="HUD",meta=(AllowPrivateAccess=true))
+	TSubclassOf<UUserWidget> PlayerHUDClass;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Inventory Test",meta=(AllowPrivateAccess=true))
-	TSubclassOf<UUserWidget> WidgetClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="Inventory Test",meta=(AllowPrivateAccess=true))
-	class UInventory* Invenwidget;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="Inventory Test",meta=(AllowPrivateAccess=true))
-	class UQuickSlot* QuickSlotWidget;
+	UPROPERTY(VisibleAnywhere,Category="HUD",meta=(AllowPrivateAccess=true))
+	UPlayerHUD* PlayerHUD;
 private:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
+	USpringArmComponent* CameraBoom;
 
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class UCameraComponent* FollowCamera;
+	UCameraComponent* FollowCamera;
 	
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputMappingContext* DefaultMappingContext;
+	UInputMappingContext* DefaultMappingContext;
 
 
 	/*Input Action*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* JumpAction;
+	UInputAction* JumpAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* MoveAction;
+	UInputAction* MoveAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* LookAction;
+	UInputAction* LookAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* AttackAction;
+	UInputAction* AttackAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* SprintAction;
+	UInputAction* SprintAction;
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-    class UInputAction* IteractionAction;
+	UInputAction* IteractionAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* ToggleInventoryAction;
+	UInputAction* ToggleInventoryAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* UseQuickSlot1Action;
+	UInputAction* UseQuickSlot1Action;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* UseQuickSlot2Action;
+	UInputAction* UseQuickSlot2Action;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* UseQuickSlot3Action;
+	UInputAction* UseQuickSlot3Action;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* UseQuickSlot4Action;
+	UInputAction* UseQuickSlot4Action;
+
 	//PlayerComponent
 	UPROPERTY(VisibleInstanceOnly,Category="Component")
-	class UBasePlayerStatComponent* StatComponent;
+	UBasePlayerStatComponent* StatComponent;
 
 	/*Attack*/
 	UPROPERTY(VisibleAnywhere,Category="Weapon")
@@ -192,7 +191,7 @@ private:
 	//Interact
 	const float CheckInteractableReach=100.0f;
 	
-	class AInteractable* CurrentInteractable;
+	APickUp* CurrentInteractable;
 
 };
 

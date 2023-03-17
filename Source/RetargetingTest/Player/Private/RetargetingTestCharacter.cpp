@@ -20,14 +20,14 @@
 #include "Engine/EngineTypes.h"
 #include "RetargetingTest/Component/Public/FloatingCombatTextComponent.h"
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
-#include "RetargetingTest/UI/Public/PlayerStatWidget.h"
+#include "RetargetingTest/UI/Public/PlayerGauge.h"
 #include "GameplayTagContainer.h"
 #include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/Object/Public/BaseStateObject.h"
 #include "RetargetingTest/Lib/GameTags.h"
-#include "RetargetingTest/Object/Public/Interactable.h"
 #include "RetargetingTest/Object/Public/PickUp.h"
 #include "RetargetingTest/UI/Public/Inventory.h"
+#include "RetargetingTest/UI/Public/PlayerHUD.h"
 #include "RetargetingTest/UI/Public/QuickSlot.h"
 #include "RetargetingTest/UI/Public/Slot.h"
 
@@ -76,7 +76,6 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 	//사용자 정의 컴포넌트입니다.
 	StatComponent= CreateDefaultSubobject<UBasePlayerStatComponent>(TEXT("StatComponent"));
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));	
-	mStatWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("StatBarWidget"));
 	StateManagerComponent = CreateDefaultSubobject<UBaseStateManagerComponent>(TEXT("StateManager"));
 	StateManagerComponent->SetPerformingActor(this);
 
@@ -161,9 +160,6 @@ void ARetargetingTestCharacter::BeginPlay()
 	Super::BeginPlay();
 	//Add Input Mapping Context
 	
-	StatBarWidget = Cast<UPlayerStatWidget>(mStatWidgetComponent->GetWidget());
-	StatBarWidget->BindActorStat(StatComponent);
-	StatBarWidget->AddToViewport();
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -171,6 +167,14 @@ void ARetargetingTestCharacter::BeginPlay()
 			if(Subsystem ==nullptr)
 				UE_LOG(LogTemp,Warning,TEXT("Subsystem warning"));
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
+		}
+
+		PlayerHUD = CreateWidget<UPlayerHUD>(PlayerController, PlayerHUDClass);
+		if(PlayerHUD != nullptr)
+		{
+			PlayerHUD->SetCharacter(this);
+			PlayerHUD->Init();
+			PlayerHUD->AddToViewport();
 		}
 	}
 }
@@ -194,19 +198,13 @@ void ARetargetingTestCharacter::SprintEnd()
 
 /**
  *	TODO: 게임의 플레이어 HUD관련부분은 게임모드클래스에서 관리해야합니다. 
- *	인벤토리 토글 입력에 대한 매핑 함수 입니다. 
+ *	인벤토리 토글 입력에 대한 매핑 함수 입니다. I키를 통해 인벤토리를 열고 닫습니다.
  */
 void ARetargetingTestCharacter::ToggleInventory()
 {
-	if(!bInventoryShow)
+	if(PlayerHUD!=nullptr)
 	{
-		Invenwidget=Cast<UInventory>(CreateWidget(GetWorld(),WidgetClass));
-		if(Invenwidget!=nullptr)
-		{
-			Invenwidget->AddToViewport();
-			APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
-			PlayerController->SetShowMouseCursor(true);
-		}
+		PlayerHUD->ToggleInventory();
 	}
 }
 
@@ -221,9 +219,9 @@ void ARetargetingTestCharacter::Interact()
 	if(CurrentInteractable!=nullptr)
 	{
 		CurrentInteractable->Interact_Implementation();
-		if(Invenwidget!=nullptr)
+		if(PlayerHUD->GetInventory()!=nullptr)
 		{
-			Invenwidget->Refresh();
+			PlayerHUD->GetInventory()->Refresh();
 		}
 		else
 		{
@@ -249,7 +247,7 @@ void ARetargetingTestCharacter::CheckForInteractalbe()
 
 	GetWorld()->LineTraceSingleByChannel(HitResult,StartTrace,EndTrace,ECC_WorldDynamic,CQP);
 
-	AInteractable* PotentialInteractable = Cast<AInteractable>(HitResult.GetActor());
+	APickUp* PotentialInteractable = Cast<APickUp>(HitResult.GetActor());
 
 	DrawDebugLine(GetWorld(),
 		StartTrace,
@@ -279,7 +277,7 @@ void ARetargetingTestCharacter::CheckForInteractalbe()
  */
 void ARetargetingTestCharacter::UseQuickSlot1(int num)
 {
-	QuickSlotWidget->Use(num);
+	//QuickSlotWidget->Use(num);
 }
 
 /**
@@ -380,7 +378,7 @@ void ARetargetingTestCharacter::UseItemAtInventorySlot(int32 Slot)
 			if(eachSlot!=nullptr)
 				eachSlot->Refresh();
 		}
-		Invenwidget->Refresh();
+		PlayerHUD->GetInventory()->Refresh();
 		
 	}
 }

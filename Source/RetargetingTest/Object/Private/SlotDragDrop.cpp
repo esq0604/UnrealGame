@@ -30,10 +30,13 @@ bool USlotDragDrop::Drop(USlot* To)
 	return false;
 }
 
+/**
+ * 인벤토리에서 스왑할시, 퀵슬롯에서도 스왑된 정보를 통해 아이템을 사용할 수 있도록 해야합니다.
+ */
 bool USlotDragDrop::SwapInven(USlot* to)
 {
+	//From에 있는 ReferenceSlot을 지우고 스왑 후 To의 referenceSlot에 추가합니다.
 	Character->Inventory.Swap(From->GetSlotIndex(), to->GetSlotIndex());
-
 	From->Refresh();
 	to->Refresh();
 

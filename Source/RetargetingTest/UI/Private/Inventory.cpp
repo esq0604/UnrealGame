@@ -46,3 +46,8 @@ void UInventory::Refresh()
 	}
 }
 
+void UInventory::SetCharacter(ARetargetingTestCharacter* NewCharacter)
+{
+	Character= NewCharacter;
+}
+
