@@ -20,6 +20,7 @@ public:
 	bool SwapInven(USlot* to);
 	bool SetQuickSlot(USlot* To);
 	bool SwapQuickSlot(USlot* To);
+	bool MoveQuickSlot(USlot* To);
 public:
 	USlot* From;
 	class ARetargetingTestCharacter* Character;

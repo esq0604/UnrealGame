@@ -213,8 +213,6 @@ void ARetargetingTestCharacter::ToggleInventory()
  */
 void ARetargetingTestCharacter::Interact()
 {
-	UE_LOG(LogTemp,Warning,TEXT("Interact"));
-
 	CheckForInteractalbe();
 	if(CurrentInteractable!=nullptr)
 	{
@@ -223,11 +221,6 @@ void ARetargetingTestCharacter::Interact()
 		{
 			PlayerHUD->GetInventory()->Refresh();
 		}
-		else
-		{
-			UE_LOG(LogTemp,Warning,TEXT("InvenWidget nullptr"));
-		}
-		
 	}
 }
 
@@ -275,9 +268,9 @@ void ARetargetingTestCharacter::CheckForInteractalbe()
  * QuickSlot은 1,2,3,4번순으로 슬롯이 지정되어 있어. num을 넘겨줘 해당 슬롯을 사용하도록합니다
  *
  */
-void ARetargetingTestCharacter::UseQuickSlot1(int num)
+void ARetargetingTestCharacter::UseQuickSlot(int UsedSlotIdx)
 {
-	//QuickSlotWidget->Use(num);
+	PlayerHUD->GetQuickSlot()->Use(UsedSlotIdx-1);
 }
 
 /**
@@ -361,25 +354,31 @@ FString ARetargetingTestCharacter::GetItemNameAtInventorySlot(int32 Slot) const
  */
 void ARetargetingTestCharacter::UseItemAtInventorySlot(int32 Slot)
 {
-	if(Inventory[Slot] != nullptr)
+	if(Inventory[Slot] != nullptr && Slot!= -1)
 	{
 		TArray<USlot*> TempSlot;
 		Inventory[Slot]->Use_Implementation();
-
-		for(USlot* eachSlot : Inventory[Slot]->ReferenceSlot)
+		
+		if(Inventory[Slot]->ReferenceSlot.IsEmpty())
 		{
-			TempSlot.Add(eachSlot);
+			Inventory[Slot]=nullptr;
+			PlayerHUD->GetInventory()->Refresh();
 		}
-		
-		Inventory[Slot]=nullptr;
-		
-		for(USlot* eachSlot : TempSlot)
+		//있다면 레퍼런스 슬롯을 옮겨줍니다.
+		else
 		{
-			if(eachSlot!=nullptr)
-				eachSlot->Refresh();
+			for(USlot* eachSlot : Inventory[Slot]->ReferenceSlot)
+			{
+				TempSlot.Add(eachSlot);
+			}
+			Inventory[Slot]=nullptr;
+			for(USlot* eachSlot : TempSlot)
+			{
+				if(eachSlot!=nullptr)
+					eachSlot->Refresh();
+			}
+			PlayerHUD->GetInventory()->Refresh();
 		}
-		PlayerHUD->GetInventory()->Refresh();
-		
 	}
 }
 
@@ -412,10 +411,10 @@ void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 		EnhancedInputComponent->BindAction(ToggleInventoryAction,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::ToggleInventory);
 
 		//Quick Slot
-		EnhancedInputComponent->BindAction(UseQuickSlot1Action,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::UseQuickSlot1,1);
-		EnhancedInputComponent->BindAction(UseQuickSlot2Action,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::UseQuickSlot1,2);
-		EnhancedInputComponent->BindAction(UseQuickSlot3Action,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::UseQuickSlot1,3);
-		EnhancedInputComponent->BindAction(UseQuickSlot4Action,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::UseQuickSlot1,4);
+		EnhancedInputComponent->BindAction(UseQuickSlot1Action,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::UseQuickSlot,1);
+		EnhancedInputComponent->BindAction(UseQuickSlot2Action,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::UseQuickSlot,2);
+		EnhancedInputComponent->BindAction(UseQuickSlot3Action,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::UseQuickSlot,3);
+		EnhancedInputComponent->BindAction(UseQuickSlot4Action,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::UseQuickSlot,4);
 
 	}
 

@@ -83,16 +83,13 @@ protected:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
 	
-	void SprintEnd();
 	
 private:
+	void SprintEnd();
 	void ToggleInventory();
-
 	void Interact();
-
 	void CheckForInteractalbe();
-
-	void UseQuickSlot1(int num);
+	void UseQuickSlot(int UsedSlotIdx);
 public:
 	//플레이어의 도움말입니다.
     UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="HUD")

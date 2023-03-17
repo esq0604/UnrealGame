@@ -37,7 +37,7 @@ public:
 	void SetImg(UTexture2D* NewImg);
 	void Action();
 	ESlotType GetSlotType() const;
-	int32 GetSlotIndex() const;
+	int32 GetIndex() const;
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;

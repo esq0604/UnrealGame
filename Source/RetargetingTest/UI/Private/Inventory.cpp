@@ -32,7 +32,7 @@ void UInventory::Init()
 			slot->SetType(ESlotType::SLOT_INVENTORY);
 			slot->SetCharacter(this->Character);
 			slot->Init();
-			Slots[slot->GetSlotIndex()]=slot;
+			Slots[slot->GetIndex()]=slot;
 			
 		}
 	}
@@ -40,9 +40,9 @@ void UInventory::Init()
 
 void UInventory::Refresh()
 {
-	for(int i = 0; i<12; i++ )
+	for(USlot* slot : Slots)
 	{
-		Slots[i]->Refresh();
+		slot->Refresh();
 	}
 }
 

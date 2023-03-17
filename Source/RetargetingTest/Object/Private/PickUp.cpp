@@ -15,7 +15,6 @@ APickUp::APickUp()
 	//픽업을 위한 메시를 설정하고 아이템 이름, 도움말 및 아이템 값을 설정합니다.
 	InteractableMesh = CreateDefaultSubobject<UStaticMeshComponent>("PickupMesh");
 	InteractableMesh->SetSimulatePhysics(true);
-	ReferenceSlot.Init(nullptr,4);
 	ItemName = FString("Enter an item name here...");
 	//InteractableHelpText=FString("Press E to pick item up.");
 	Value=0;

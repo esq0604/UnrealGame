@@ -69,11 +69,14 @@ FReply USlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointe
 
 	if(InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton)==true)
 	{
-		 if(Index<0 || Character->GetItemAtInventory(Index)->GetItemType() !=EItemType::ITEM_None)
-		 {
-		 	Character->UseItemAtInventorySlot(Index);
-		 	return reply.NativeReply;
-		 }
+		if(Character->GetItemAtInventory(Index) !=nullptr)
+		{
+			if(Index<0 || Character->GetItemAtInventory(Index)->GetItemType() !=EItemType::ITEM_None)
+			{
+				Character->UseItemAtInventorySlot(Index);
+				return reply.NativeReply;
+			}
+		}
 	}
 	else if(InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton)==true)
 	{
@@ -124,6 +127,7 @@ void USlot::Refresh()
 		{
 			if(Index<0)
 			{
+				Img->SetBrushFromTexture(nullptr);
 				break;
 			}
 			else
@@ -180,7 +184,7 @@ ESlotType USlot::GetSlotType() const
 	return SlotType;
 }
 
-int32 USlot::GetSlotIndex() const
+int32 USlot::GetIndex() const
 {
 	return Index;
 }

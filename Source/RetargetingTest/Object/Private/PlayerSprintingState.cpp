@@ -30,9 +30,7 @@ void UPlayerSprintingState::StartState()
 {
 	Super::StartState();
 	HasTickState=true;
-	UE_LOG(LogTemp,Warning,TEXT("SprintStae Start"));
 	GetStateManagerComponent()->SetCanChangeState(false);
-	//GetStateManagerComponent()->SetCurrentActiveState(GetStateManagerComponent()->GetStateOfGameplayTag(StateGameplayTag));
 	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
 	Character->GetCharacterMovement()->MaxWalkSpeed=800.0f;
 }
