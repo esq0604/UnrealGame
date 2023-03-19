@@ -7,7 +7,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/UI/Public/Slot.h"
 #include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
-#include "Widgets/Text/ISlateEditableTextWidget.h"
 
 void UQuickSlot::Init()
 {
@@ -35,7 +34,7 @@ void UQuickSlot::Init()
 }
 
 /**
- *  현재 1번을 누르면 1번인덱스만 사용하게 됩니다. 연동된 인벤토리의 아이템을 사용하도록 해야합니다.
+ *  번호에 해당하는 퀵슬롯을 사용하도록 합니다.
  */
 void UQuickSlot::Use(int UsedSlotIdx)
 {

@@ -8,6 +8,7 @@
 #include "BasePlayerStatComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnStaminaChangedSignature);
+DECLARE_MULTICAST_DELEGATE(FOnHPChangedSignature);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RETARGETINGTEST_API UBasePlayerStatComponent : public UBaseStatComponent
@@ -18,6 +19,7 @@ public:
 	// Sets default values for this component's properties
 	UBasePlayerStatComponent();
 	void SetStamina(float NewStamina);
+	float GetCurrentHp() const;
 	float GetCurrentStamina() const;
 	float GetCurrentStaminaPercent() const;
 	float GetCalculateStaminaRatio(float ChangedStamina) const;

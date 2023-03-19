@@ -25,7 +25,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/Object/Public/BaseStateObject.h"
 #include "RetargetingTest/Lib/GameTags.h"
-#include "RetargetingTest/Object/Public/PickUp.h"
+#include "RetargetingTest/Object/Public/ItemBase.h"
 #include "RetargetingTest/UI/Public/Inventory.h"
 #include "RetargetingTest/UI/Public/PlayerHUD.h"
 #include "RetargetingTest/UI/Public/QuickSlot.h"
@@ -240,7 +240,7 @@ void ARetargetingTestCharacter::CheckForInteractalbe()
 
 	GetWorld()->LineTraceSingleByChannel(HitResult,StartTrace,EndTrace,ECC_WorldDynamic,CQP);
 
-	APickUp* PotentialInteractable = Cast<APickUp>(HitResult.GetActor());
+	AItemBase* PotentialInteractable = Cast<AItemBase>(HitResult.GetActor());
 
 	DrawDebugLine(GetWorld(),
 		StartTrace,
@@ -276,7 +276,7 @@ void ARetargetingTestCharacter::UseQuickSlot(int UsedSlotIdx)
 /**
  * @param Item - 인벤토리에 들어갈 아이템이 들어옵니다.
  */
-bool ARetargetingTestCharacter::AddItemToInventory(APickUp* Item)
+bool ARetargetingTestCharacter::AddItemToInventory(AItemBase* Item)
 {
 	if(Item!=nullptr)
 	{
@@ -294,12 +294,12 @@ bool ARetargetingTestCharacter::AddItemToInventory(APickUp* Item)
 	return false;
 }
 
-APickUp* ARetargetingTestCharacter::GetItemAtInventory(int32 Index)
+AItemBase* ARetargetingTestCharacter::GetItemAtInventory(int32 Index)
 {
 	return Inventory[Index];
 }
 
-TArray<APickUp*> ARetargetingTestCharacter::GetInventory() const
+TArray<AItemBase*> ARetargetingTestCharacter::GetInventory() const
 {
 	return Inventory;
 }
@@ -357,7 +357,8 @@ void ARetargetingTestCharacter::UseItemAtInventorySlot(int32 Slot)
 	if(Inventory[Slot] != nullptr && Slot!= -1)
 	{
 		TArray<USlot*> TempSlot;
-		Inventory[Slot]->Use_Implementation();
+		
+		Inventory[Slot]->UseItem(this);
 		
 		if(Inventory[Slot]->ReferenceSlot.IsEmpty())
 		{

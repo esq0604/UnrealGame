@@ -9,6 +9,10 @@
 #include "RetargetingTest/UI/Public/PlayerGauge.h"
 #include "RetargetingTest/UI/Public/QuickSlot.h"
 
+/**
+ * 플레이어 HUD의 초기화부분입니다.
+ * 플레이어의 체력,스태미나를 스탯과 바인딩하고, 퀵슬롯과 인벤토리를 초기화합니다.
+ */
 void UPlayerHUD::Init()
 {
 	if(Character!=nullptr)
@@ -46,7 +50,6 @@ void UPlayerHUD::SetCharacter(ARetargetingTestCharacter* NewCharater)
 
 /**
  * 인벤토리 토글함수입니다. 현재 보이고있으면 안보이게하고, 안보이고있다면 보이도록합니다.
- * 마우스의 
  */
 void UPlayerHUD::ToggleInventory()
 {

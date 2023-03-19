@@ -58,9 +58,9 @@ public:
 	void UseItemAtInventorySlot(int32 Slot);
 
 	UFUNCTION(BlueprintPure,Category="Inventory function")
-	bool AddItemToInventory(APickUp* Item);
-	APickUp* GetItemAtInventory(int32 Index);
-	TArray<APickUp*> GetInventory() const;
+	bool AddItemToInventory(AItemBase* Item);
+	AItemBase* GetItemAtInventory(int32 Index);
+	TArray<AItemBase*> GetInventory() const;
 
 protected:
 
@@ -100,7 +100,7 @@ public:
 	int32 Gold;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
-	TArray<APickUp*> Inventory;
+	TArray<AItemBase*> Inventory;
 protected:
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category="Animation")
 	UCharaterAnimInstance* mAnimInstance;
@@ -188,7 +188,7 @@ private:
 	//Interact
 	const float CheckInteractableReach=100.0f;
 	
-	APickUp* CurrentInteractable;
+	AItemBase* CurrentInteractable;
 
 };
 

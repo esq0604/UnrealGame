@@ -35,6 +35,11 @@ void UBasePlayerStatComponent::SetStamina(float NewStamina)
 	OnStaminaChangedDelegate.Broadcast();
 }
 
+float UBasePlayerStatComponent::GetCurrentHp() const
+{
+	return CurrentHp;
+}
+
 float UBasePlayerStatComponent::GetCurrentStamina() const
 {
 	return CurrentStamina;

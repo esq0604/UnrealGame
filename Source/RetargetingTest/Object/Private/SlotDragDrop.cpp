@@ -3,10 +3,9 @@
 
 #include "RetargetingTest/Object/Public/SlotDragDrop.h"
 
-#include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
 #include "RetargetingTest/UI/Public/Slot.h"
-#include "RetargetingTest/Object/Public/PickUp.h"
+#include "RetargetingTest/Object/Public/ItemBase.h"
 
 /**
  * 슬롯을 드래그 후 드랍시 호출되는 함수입니다. 
@@ -56,6 +55,10 @@ bool USlotDragDrop::SwapInven(USlot* to)
 	return true;
 }
 
+/**
+ * 퀵슬롯을 등록하는 함수입니다. 플레이어의 인벤토리(아이템)의 참조 슬롯에 등록하고 초기 인덱스를 참조하는 인벤토리의 인덱스로 변경합니다.
+ * @param To - 등록하게 될 슬롯이 들어옵니다.
+ */
 bool USlotDragDrop::SetQuickSlot(USlot* To)
 {
 	if(To!=nullptr && Character!=nullptr)
@@ -68,12 +71,17 @@ bool USlotDragDrop::SetQuickSlot(USlot* To)
 	return true;
 }
 
+/**
+ * 퀵슬롯이 서로 변경될때 호출되는 함수입니다.
+ * 등록되지 않은 옮기고, 이미 등록된 퀵슬롯이라면 아이템의 참조 슬롯을 변경하고 인덱스를 바꿉니다.
+ * @param To - 변경될 위치의 슬롯이 들어옵니다.
+ */
 bool USlotDragDrop::SwapQuickSlot(USlot* To)
 {
 	if(From->GetSlotType() == To->GetSlotType())
 	{
 		//-1 == 비어있다면 Swap이 아닌 Move입니다.
-		if(To->GetIndex() ==-1)
+		if(To->GetIndex() == -1)
 		{
 			MoveQuickSlot(To);
 		}
@@ -104,6 +112,10 @@ bool USlotDragDrop::SwapQuickSlot(USlot* To)
 	return true;
 }
 
+/**
+ * SwapQuickSlot에서 To Slot이 아직 퀵슬롯으로 등록되지 않았을때 호출됩니다.
+ * @param To - 변경될 위치의 슬롯이 들어옵니다.
+ */
 bool USlotDragDrop::MoveQuickSlot(USlot* To)
 {
 	int32 tempIdx = To->GetIndex();
