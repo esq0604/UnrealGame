@@ -15,7 +15,7 @@ class RETARGETINGTEST_API UBaseStatWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable)  
 	virtual void BindActorStat(class UBaseStatComponent* NewActorStat);
 
 protected:

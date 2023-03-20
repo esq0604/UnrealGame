@@ -8,9 +8,16 @@
 #include "BaseStateManagerComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUpdatedActiveState);
+
 struct FGameplayTag;
 class UBaseStateObject;
+class UPlayerIdleState;
+class UPlayerSprintingState;
 class UPlayerWalkingState;
+class UPlayerAttackState;
+class UPlayerDodgeState;
+class UPlayerWalkingState;
+class UPlayerJumpingState;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RETARGETINGTEST_API UBaseStateManagerComponent : public UActorComponent
@@ -21,7 +28,8 @@ public:
 	// Sets default values for this component's properties
 	UBaseStateManagerComponent();
 
-	UFUNCTION(BlueprintCallable)
+	
+	UFUNCTION(BlueprintCallable, Category = "Setters")
 	void SetCanChangeState(bool canChange);
 protected:
 	// Called when the game starts
@@ -40,7 +48,7 @@ public:
 	void SetCurrentActiveState(UBaseStateObject* NewCurrentActiveState);
 	
 	/* Getters */
-	UBaseStateObject* GetCurrentActiveState() {return CurrentActiveState;}
+	UBaseStateObject* GetCurrentActiveState() const; 
 
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Getters")
 	void GetStateOfClass(TSubclassOf<UBaseStateObject> StateToSearch, UBaseStateObject*& FoundState);
@@ -55,6 +63,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Base Variables")
 	TArray<UBaseStateObject*> ActiveAbleStates;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Base Variables")
+	TArray<TSubclassOf<UBaseStateObject>> ActiveAbleStatesClass;
+
 	UPROPERTY()
 	FOnUpdatedActiveState OnUpdatedDelegate;
 protected:
@@ -66,4 +77,17 @@ protected:
 
 private:
 	bool CanChangeState=true;
+
+	UPROPERTY()
+	UPlayerDodgeState* DodgeState;
+	UPROPERTY()
+	UPlayerIdleState* IdleState;
+	UPROPERTY()
+	UPlayerJumpingState* JumpingState;
+	UPROPERTY()
+	UPlayerSprintingState* SprintingState;
+	UPROPERTY()
+	UPlayerWalkingState* WalkingState;
+	UPROPERTY()
+	UPlayerAttackState* AttackState;
 };

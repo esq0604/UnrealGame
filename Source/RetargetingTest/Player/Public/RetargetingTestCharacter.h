@@ -109,7 +109,7 @@ protected:
 	UFloatingCombatTextComponent* FloatingTextComponent;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Component")
-	UBaseStateManagerComponent* StateManagerComponent;
+	UBaseStateManagerComponent* PlayerStateManagerComponent;
 
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category=Move,meta=(AllowPrivateAccess=true))
 	bool IsMoving;

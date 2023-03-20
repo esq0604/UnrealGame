@@ -12,6 +12,11 @@ UPlayerAttackState::UPlayerAttackState()
 
 bool UPlayerAttackState::CanPerformState()
 {
-	//TODO: AttackState CanPerform State 지정해줘야함.
-	return true;	
+	if(StateManagerComponent->GetCurrentActiveState()==nullptr)
+		return false;
+	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Walk"))
+	{
+		return true;
+	}
+	return false;
 }
