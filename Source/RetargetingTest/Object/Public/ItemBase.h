@@ -26,6 +26,7 @@ public:
 	void AddReferenceSlot(class USlot*& Slot);
 	void RemoveReferenceSlot(class USlot*& Slot);
 	virtual void UseItem(ARetargetingTestCharacter* Character) ;
+	virtual int GetCount() const;
 protected:
 	virtual void BeginPlay() override;
 public:
@@ -33,6 +34,9 @@ public:
 	class UStaticMeshComponent* InteractableMesh;
 	UPROPERTY(EditAnywhere, Category="InteractableProperties")
 	FString InteractableHelpText;
+	UPROPERTY(EditAnywhere, Category="InteractableProperties")
+	int32 Count;
+
 	UPROPERTY(EditAnywhere,Category="ItemProperties")
 	UTexture2D* PickupThumbnail;
 	
@@ -41,6 +45,7 @@ public:
 	
 	UPROPERTY()
 	TArray<USlot*> ReferenceSlot;
-
+	
+protected:
 
 };

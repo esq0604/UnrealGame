@@ -107,7 +107,6 @@ void UBaseStateManagerComponent::SetCurrentActiveState(UBaseStateObject* NewCurr
 		{
 			if(NewCurrentActiveState->CanPerformState())
 			{
-				UE_LOG(LogTemp,Warning,TEXT("NewActiveState %s"),*NewCurrentActiveState->GetName());
 				CurrentActiveState = NewCurrentActiveState;
 				CurrentActiveState->StartState();
 			}

@@ -211,7 +211,9 @@ void ARetargetingTestCharacter::ToggleInventory()
 }
 
 /**
+ *	TODO : 매번 전체 인벤토리를 Referesh하는건 비효율적입니다.
  *	현재 인터랙터블이 있는 경우 인터랙터블과 상호작용합니다.
+ *	
  */
 void ARetargetingTestCharacter::Interact()
 {
@@ -219,6 +221,7 @@ void ARetargetingTestCharacter::Interact()
 	if(CurrentInteractable!=nullptr)
 	{
 		CurrentInteractable->Interact_Implementation();
+		UE_LOG(LogTemp,Warning,TEXT("Item Count %d"), CurrentInteractable->GetCount());
 		if(PlayerHUD->GetInventory()!=nullptr)
 		{
 			PlayerHUD->GetInventory()->Refresh();
@@ -362,10 +365,14 @@ void ARetargetingTestCharacter::UseItemAtInventorySlot(int32 Slot)
 		
 		Inventory[Slot]->UseItem(this);
 		
+		//레퍼런스 슬롯이 없다면 인벤토리만 갱신합니다.
 		if(Inventory[Slot]->ReferenceSlot.IsEmpty())
 		{
-			Inventory[Slot]=nullptr;
-			PlayerHUD->GetInventory()->Refresh();
+			if(Inventory[Slot]->GetCount()==0)
+			{
+				Inventory[Slot]=nullptr;
+			}
+			PlayerHUD->GetInventory()->GetSlot(Slot)->Refresh();
 		}
 		//있다면 레퍼런스 슬롯을 옮겨줍니다.
 		else
@@ -374,11 +381,16 @@ void ARetargetingTestCharacter::UseItemAtInventorySlot(int32 Slot)
 			{
 				TempSlot.Add(eachSlot);
 			}
-			Inventory[Slot]=nullptr;
+			if(Inventory[Slot]->GetCount()==0)
+			{
+				Inventory[Slot]=nullptr;
+			}
 			for(USlot* eachSlot : TempSlot)
 			{
 				if(eachSlot!=nullptr)
+				{
 					eachSlot->Refresh();
+				}
 			}
 			PlayerHUD->GetInventory()->Refresh();
 		}

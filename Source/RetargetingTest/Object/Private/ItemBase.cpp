@@ -57,3 +57,8 @@ void AItemBase::UseItem(ARetargetingTestCharacter* Character)
 	UE_LOG(LogTemp,Warning,TEXT("UseItem In AItemBase"));
 }
 
+int32 AItemBase::GetCount() const
+{
+	return Count;
+}
+

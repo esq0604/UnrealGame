@@ -128,9 +128,22 @@ void USlot::Refresh()
 	{
 	case ESlotType::SLOT_INVENTORY:
 		{
+
+			if(Character->Inventory[Index]!=nullptr)
+			{
+				Count=Character->Inventory[Index]->GetCount();
+			}
 			UTexture2D* Tex=Character->GetThumnailAtInventorySlot(Index);
 			Img->SetBrushFromTexture(Tex);
-			CountText->SetVisibility(ESlateVisibility::Hidden);
+			if(Count >1)
+			{
+				CountText->SetText(FText::FromString(FString::FromInt(Count)));
+				CountText->SetVisibility(ESlateVisibility::Visible);
+			}
+			else
+			{
+				CountText->SetVisibility(ESlateVisibility::Hidden);
+			}
 			break;
 		}
 	case ESlotType::SLOT_QUICK:
@@ -138,13 +151,26 @@ void USlot::Refresh()
 			if(Index<0)
 			{
 				Img->SetBrushFromTexture(nullptr);
+				CountText->SetVisibility(ESlateVisibility::Hidden);
 				break;
 			}
 			else
 			{
+				if(Character->Inventory[Index]!=nullptr)
+				{
+					Count= Character->Inventory[Index]->GetCount();
+				}
 				UTexture2D* Tex=Character->GetThumnailAtInventorySlot(Index);
 				Img->SetBrushFromTexture(Tex);
-				CountText->SetVisibility(ESlateVisibility::Hidden);
+				if(Count >1)
+				{
+					CountText->SetText(FText::FromString(FString::FromInt(Count)));
+					CountText->SetVisibility(ESlateVisibility::Visible);
+				}
+				else
+				{
+					CountText->SetVisibility(ESlateVisibility::Hidden);
+				}
 				break;
 			}
 		}

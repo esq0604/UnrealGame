@@ -12,13 +12,13 @@ void APotion::UseItem(ARetargetingTestCharacter* Character)
 	Use(Character);
 }
 
+/**
+ * 아이템을 사용하고 개수를 차감합니다.
+ */
 void APotion::Use(ARetargetingTestCharacter* Character)
 {
 	const float CurrentCharacterHp=Character->GetStatComponent()->GetCurrentHp();
 	Character->GetStatComponent()->SetHP(CurrentCharacterHp+HpValue);
+	Count--;
 }
 
-int APotion::GetCount() const
-{
-	return Count;
-}

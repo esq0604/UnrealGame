@@ -23,7 +23,7 @@ public:
 	
 	void Refresh();
 	void SetCharacter(ARetargetingTestCharacter* NewCharacter);
-	
+	USlot* GetSlot(int32 Index) const;
 protected:
 	virtual void NativeConstruct() override; 
 

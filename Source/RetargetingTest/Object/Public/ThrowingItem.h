@@ -5,20 +5,18 @@
 #include "CoreMinimal.h"
 #include "RetargetingTest/Interface/Public/Useable.h"
 #include "RetargetingTest/Object/Public/ItemBase.h"
-#include "Potion.generated.h"
+#include "ThrowingItem.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RETARGETINGTEST_API APotion : public AItemBase, public IUseable
+class RETARGETINGTEST_API AThrowingItem : public AItemBase,public IUseable
 {
 	GENERATED_BODY()
 
-public:
 	virtual void UseItem(ARetargetingTestCharacter* Character) override;
 	virtual void Use(ARetargetingTestCharacter* Character) override;
-private:
-	float HpValue=10.0f;
 
+protected:
 };

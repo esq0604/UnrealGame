@@ -51,3 +51,8 @@ void UInventory::SetCharacter(ARetargetingTestCharacter* NewCharacter)
 	Character= NewCharacter;
 }
 
+USlot* UInventory::GetSlot(int32 Index) const
+{
+	return Slots[Index];
+}
+
