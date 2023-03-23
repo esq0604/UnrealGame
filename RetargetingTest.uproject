@@ -50,6 +50,10 @@
 		{
 			"Name": "EditorTests",
 			"Enabled": true
+		},
+		{
+			"Name": "MotionWarping",
+			"Enabled": true
 		}
 	]
 }

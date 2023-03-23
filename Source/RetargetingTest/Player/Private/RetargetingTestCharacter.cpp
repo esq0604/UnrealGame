@@ -213,7 +213,6 @@ void ARetargetingTestCharacter::ToggleInventory()
 /**
  *	TODO : 매번 전체 인벤토리를 Referesh하는건 비효율적입니다.
  *	현재 인터랙터블이 있는 경우 인터랙터블과 상호작용합니다.
- *	
  */
 void ARetargetingTestCharacter::Interact()
 {
@@ -221,7 +220,6 @@ void ARetargetingTestCharacter::Interact()
 	if(CurrentInteractable!=nullptr)
 	{
 		CurrentInteractable->Interact_Implementation();
-		UE_LOG(LogTemp,Warning,TEXT("Item Count %d"), CurrentInteractable->GetCount());
 		if(PlayerHUD->GetInventory()!=nullptr)
 		{
 			PlayerHUD->GetInventory()->Refresh();
