@@ -5,6 +5,7 @@
 
 #include "RetargetingTest/Object/Public/BaseStateObject.h"
 #include "RetargetingTest/Object/Public/PlayerAttackState.h"
+#include "RetargetingTest/Object/Public/PlayerBlockState.h"
 #include "RetargetingTest/Object/Public/PlayerDodgeState.h"
 #include "RetargetingTest/Object/Public/PlayerIdleState.h"
 #include "RetargetingTest/Object/Public/PlayerJumpingState.h"
@@ -23,14 +24,10 @@ UBaseStateManagerComponent::UBaseStateManagerComponent()
 	DodgeState=(CreateDefaultSubobject<UPlayerDodgeState>(TEXT("DodgeeState")));
 	IdleState=(CreateDefaultSubobject<UPlayerIdleState>(TEXT("IdleState")));
 	JumpingState=(CreateDefaultSubobject<UPlayerJumpingState>(TEXT("JumpingState")));
-
 	SprintingState=(CreateDefaultSubobject<UPlayerSprintingState>(TEXT("SprintingState")));
-	
-
 	WalkingState=(CreateDefaultSubobject<UPlayerWalkingState>(TEXT("WalkingState")));
-	
-
 	AttackState=CreateDefaultSubobject<UPlayerAttackState>(TEXT("AttackingState"));
+	BlockState=CreateDefaultSubobject<UPlayerBlockState>(TEXT("BlockingState"));
 	
 }
 
@@ -55,7 +52,7 @@ void UBaseStateManagerComponent::BeginPlay()
 	ActiveAbleStates.Add(SprintingState);
 	ActiveAbleStates.Add(WalkingState);
 	ActiveAbleStates.Add(AttackState);
-
+	ActiveAbleStates.Add(BlockState);
 	for(UBaseStateObject* state : ActiveAbleStates)
 	{
 		state->SetPerformingActor(PerformingActor);
@@ -166,7 +163,6 @@ UBaseStateObject* UBaseStateManagerComponent::GetStateOfGameplayTag(FGameplayTag
 			if(ActiveAbleStates[i]->GetGameplayTag()==StateGamePlayTag)
 			{
 				return ActiveAbleStates[i];
-				
 			}
 		}
 	}

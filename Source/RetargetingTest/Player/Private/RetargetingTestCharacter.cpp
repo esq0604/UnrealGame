@@ -84,13 +84,14 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 float ARetargetingTestCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
                                             AController* EventInstigator, AActor* DamageCauser)
 {
-	if(PlayerStateManagerComponent->GetCurrentActiveState()->GetGameplayTag()!=GameTags::Get().State_Dodge)
+	
+	if(bCanDamaged)
 	{
 		StatComponent->SufferDamage(DamageAmount);
-
+	
 		return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	}
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	 return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 }
 

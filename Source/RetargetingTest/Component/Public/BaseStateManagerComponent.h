@@ -18,6 +18,7 @@ class UPlayerAttackState;
 class UPlayerDodgeState;
 class UPlayerWalkingState;
 class UPlayerJumpingState;
+class UPlayerBlockState;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RETARGETINGTEST_API UBaseStateManagerComponent : public UActorComponent
@@ -90,4 +91,6 @@ private:
 	UPlayerWalkingState* WalkingState;
 	UPROPERTY()
 	UPlayerAttackState* AttackState;
+	UPROPERTY()
+	UPlayerBlockState* BlockState;
 };

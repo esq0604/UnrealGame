@@ -10,13 +10,13 @@
 UPlayerDodgeState::UPlayerDodgeState()
 {
 	StateGameplayTag.FromExportString("State.Dodge");
-
 }
 
 void UPlayerDodgeState::StartState()
 {
 	Super::StartState();
 	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
+	Character->SetbCanbeDamaged(false);
 	const float CharacterCurrentStamina=Character->GetStatComponent()->GetCurrentStamina();
 	Character->GetStatComponent()->SetStamina(CharacterCurrentStamina-10.0f);
 }
@@ -28,4 +28,11 @@ bool UPlayerDodgeState::CanPerformState()
 		return true;
 	}    
 	return false;
+}
+
+void UPlayerDodgeState::EndState()
+{
+	Super::EndState();
+	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
+	Character->SetbCanbeDamaged(true);
 }

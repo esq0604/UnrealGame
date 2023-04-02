@@ -44,7 +44,7 @@ public:
 
 
 	/* Setter */
-	
+	void SetbCanbeDamaged(bool canBeDamage) {bCanDamaged=canBeDamage;}
 	/* Getter */
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
@@ -185,6 +185,8 @@ private:
 	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	UAnimMontage* DodgeMontage;
 
+	UPROPERTY(VisibleAnywhere,meta=(AllowPrivateAccess=true))
+	bool bCanDamaged=true;
 	//Interact
 	const float CheckInteractableReach=100.0f;
 	
