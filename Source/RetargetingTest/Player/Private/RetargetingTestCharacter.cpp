@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+  // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
 
@@ -484,8 +484,8 @@ void ARetargetingTestCharacter::Attack(const FInputActionValue& Value)
 	}
 	else
 	{
-		PlayerStateManagerComponent->SetCurrentActiveState(PlayerStateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Walk")));
-		if(PlayerStateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Attack"))
+		//PlayerStateManagerComponent->SetCurrentActiveState(PlayerStateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Walk")));
+		//if(PlayerStateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Attack"))
 		{
 			AttackStartComboState();
 			mAnimInstance->PlayAttackMontage();

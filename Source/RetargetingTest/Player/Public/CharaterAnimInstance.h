@@ -53,7 +53,7 @@ public :
 	FOnNextAttackCheckDelegate OnNextAttackHitCheck;
 
 protected:
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	UAnimMontage* AttackMontage;
 protected:
 
