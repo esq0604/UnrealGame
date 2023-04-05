@@ -22,6 +22,7 @@ class UPlayerHUD;
 class UInputMappingContext;
 class UInputAction;
 struct FDamageEvent;
+class UMotionWarpingComponent;
 
 UCLASS(config=Game)
 class ARetargetingTestCharacter : public ACharacter
@@ -91,13 +92,6 @@ private:
 	void CheckForInteractalbe();
 	void UseQuickSlot(int UsedSlotIdx);
 public:
-	//플레이어의 도움말입니다.
-    UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="HUD")
-	FString HelpText;
-
-	//플레이어가 소유한 골드양을 나타냅니다.
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="HUD")
-	int32 Gold;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	TArray<AItemBase*> Inventory;
@@ -109,11 +103,12 @@ protected:
 	UFloatingCombatTextComponent* FloatingTextComponent;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Component")
-	UBaseStateManagerComponent* PlayerStateManagerComponent;
-
-	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category=Move,meta=(AllowPrivateAccess=true))
-	bool IsMoving;
-	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category=Move,meta=(AllowPrivateAccess=true))
+	UBaseStateManagerComponent* StateManagerComponent;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Component")
+	UMotionWarpingComponent* MotionWarpComponent;
+	
+	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category=Dodge,meta=(AllowPrivateAccess=true))
 	bool IsDodge;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="HUD",meta=(AllowPrivateAccess=true))
@@ -162,6 +157,7 @@ private:
 	//PlayerComponent
 	UPROPERTY(VisibleInstanceOnly,Category="Component")
 	UBasePlayerStatComponent* StatComponent;
+	
 
 	/*Attack*/
 	UPROPERTY(VisibleAnywhere,Category="Weapon")

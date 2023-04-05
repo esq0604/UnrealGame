@@ -114,6 +114,7 @@ void ABaseMonster::AttackCheck()
 	{
 		if(HitResult.GetActor()->ActorHasTag("Player"))
 		{
+			UE_LOG(LogTemp,Warning,TEXT("Monster Take Damage To Player"));
 			FDamageEvent DamageEvent;
 			HitResult.GetActor()->TakeDamage(StatComponent->GetAttackDamage(),DamageEvent,GetController(),this);
 			//플러팅텍스트를 스폰합니다.

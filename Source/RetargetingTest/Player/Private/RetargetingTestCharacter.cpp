@@ -27,6 +27,7 @@
 #include "RetargetingTest/UI/Public/PlayerHUD.h"
 #include "RetargetingTest/UI/Public/QuickSlot.h"
 #include "RetargetingTest/UI/Public/Slot.h"
+#include "MotionWarpingComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
@@ -73,8 +74,10 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 	//사용자 정의 컴포넌트입니다.
 	StatComponent= CreateDefaultSubobject<UBasePlayerStatComponent>(TEXT("StatComponent"));
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));	
-	PlayerStateManagerComponent = CreateDefaultSubobject<UBaseStateManagerComponent>(TEXT("StateManager"));
-	PlayerStateManagerComponent->SetPerformingActor(this);
+	StateManagerComponent = CreateDefaultSubobject<UBaseStateManagerComponent>(TEXT("StateManager"));
+	StateManagerComponent->SetPerformingActor(this);
+	
+	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
 }
 /**
  * 데미지 전달을 위한 함수입니다. 현재 상태가 Dodge State가 아니라면 데미지를 받습니다.
@@ -87,6 +90,7 @@ float ARetargetingTestCharacter::TakeDamage(float DamageAmount, FDamageEvent con
 	
 	if(bCanDamaged)
 	{
+	    UE_LOG(LogTemp,Warning,TEXT("Player Get Damage"));
 		StatComponent->SufferDamage(DamageAmount);
 	
 		return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
@@ -137,6 +141,7 @@ void ARetargetingTestCharacter::AttackCheck()
 	{
 		if(HitResult.GetActor()->ActorHasTag("Monster"))
 		{
+		    UE_LOG(LogTemp,Warning,TEXT("Player Attack Result Monster"));
 			FDamageEvent DamageEvent;
 			HitResult.GetActor()->TakeDamage(StatComponent->GetAttackDamage(),DamageEvent,GetController(),this);
 			//플러팅텍스트를 스폰합니다.
@@ -152,7 +157,7 @@ void ARetargetingTestCharacter::AttackCheck()
 void ARetargetingTestCharacter::BeginPlay()
 {
 	// Call the base class
-	PlayerStateManagerComponent->SetPerformingActor(this);
+	StateManagerComponent->SetPerformingActor(this);
 
 	Super::BeginPlay();
 	//Add Input Mapping Context
@@ -189,12 +194,11 @@ void ARetargetingTestCharacter::Tick(float DeltaSeconds)
  */
 void ARetargetingTestCharacter::SprintEnd()
 {
-	FGameplayTag Sprint = PlayerStateManagerComponent->GetCurrentActiveState()->GetGameplayTag();
-	if(PlayerStateManagerComponent->GetCurrentActiveState()!=nullptr)
+	if(StateManagerComponent->GetCurrentActiveState()!=nullptr)
 	{
-		if(Sprint==FGameplayTag::RequestGameplayTag("State.Sprint"))
+		if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Sprint"))
 		{
-			PlayerStateManagerComponent->GetCurrentActiveState()->EndState();
+			StateManagerComponent->GetCurrentActiveState()->EndState();
 		}
 	}
 }
@@ -257,14 +261,12 @@ void ARetargetingTestCharacter::CheckForInteractalbe()
 		);
 	if(PotentialInteractable ==nullptr)
 	{
-		HelpText=FString("");
 		CurrentInteractable=nullptr;
 		return;
 	}
 	else
 	{
 		CurrentInteractable=PotentialInteractable;
-		HelpText=PotentialInteractable->InteractableHelpText;
 	}
 }
 
@@ -315,7 +317,7 @@ TArray<AItemBase*> ARetargetingTestCharacter::GetInventory() const
  */
 void ARetargetingTestCharacter::Sprint(const FInputActionValue& Value)
 {
-	PlayerStateManagerComponent->SetCurrentActiveState(PlayerStateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Sprint")));
+	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Sprint")));
 }
 
 UBasePlayerStatComponent* ARetargetingTestCharacter::GetStatComponent() const
@@ -325,7 +327,7 @@ UBasePlayerStatComponent* ARetargetingTestCharacter::GetStatComponent() const
 
 UBaseStateManagerComponent* ARetargetingTestCharacter::GetStateManagerComponent() const
 {
-	return PlayerStateManagerComponent;
+	return StateManagerComponent;
 }
 /**
  * 슬롯에 있는 아이템의 썸네일을 반환합니다.
@@ -440,7 +442,7 @@ void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent*
 void ARetargetingTestCharacter::Move(const FInputActionValue& Value)
 {
 	
-	PlayerStateManagerComponent->SetCurrentActiveState(PlayerStateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Walk")));
+	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Walk")));
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	if (Controller != nullptr)
 	{
@@ -475,7 +477,6 @@ void ARetargetingTestCharacter::Look(const FInputActionValue& Value)
 
 void ARetargetingTestCharacter::Attack(const FInputActionValue& Value)
 {
-	IsMoving=false;
 	if(IsAttacking)
 	{
 		if(CanNextCombo)
@@ -557,13 +558,13 @@ void ARetargetingTestCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool
  */
 void ARetargetingTestCharacter::JumpAndDodge()
 {
-	if(PlayerStateManagerComponent->GetCurrentActiveState()!=nullptr)
+	if(StateManagerComponent->GetCurrentActiveState()!=nullptr)
 	{
 		// if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Walk"))
 		// {
 		// 	//StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Dodge")));
 		// }
-		if(PlayerStateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Sprint"))
+		if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Sprint"))
 		{
 			ACharacter::Jump();
 		}
