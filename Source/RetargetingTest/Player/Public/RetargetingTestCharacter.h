@@ -23,6 +23,7 @@ class UInputMappingContext;
 class UInputAction;
 struct FDamageEvent;
 class UMotionWarpingComponent;
+class UStaticMeshComponent;
 
 UCLASS(config=Game)
 class ARetargetingTestCharacter : public ACharacter
@@ -158,10 +159,6 @@ private:
 	UPROPERTY(VisibleInstanceOnly,Category="Component")
 	UBasePlayerStatComponent* StatComponent;
 	
-
-	/*Attack*/
-	UPROPERTY(VisibleAnywhere,Category="Weapon")
-	USkeletalMeshComponent* Weapon;
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Category="Attack",meta=(AllowPrivateAccess=true))
 	float AttackRange;
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadOnly,Category="Attack",meta=(AllowPrivateAccess=true))
