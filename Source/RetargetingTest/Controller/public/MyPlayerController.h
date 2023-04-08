@@ -31,7 +31,9 @@ public:
 	void JumpStop(const FInputActionValue& Value);
 	void Interact(const FInputActionValue& Value);
 	void ToggleInventory(const FInputActionValue& Value);
-	
+
+protected:
+	virtual void BeginPlay() override;
 private:
 	virtual void SetupInputComponent() override;
 	

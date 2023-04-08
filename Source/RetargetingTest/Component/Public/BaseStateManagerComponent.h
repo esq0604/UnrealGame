@@ -59,7 +59,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UBaseStateObject* GetStateOfGameplayTag(FGameplayTag StateGamePlayTag);
 
-
+	void Init();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Base Variables")
 	TArray<UBaseStateObject*> ActiveAbleStates;

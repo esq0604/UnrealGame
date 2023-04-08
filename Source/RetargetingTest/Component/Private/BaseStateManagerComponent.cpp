@@ -45,19 +45,6 @@ void UBaseStateManagerComponent::SetCanChangeState(bool canChange)
 void UBaseStateManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	ActiveAbleStates.Add(DodgeState);
-	ActiveAbleStates.Add(IdleState);
-	ActiveAbleStates.Add(JumpingState);
-	ActiveAbleStates.Add(SprintingState);
-	ActiveAbleStates.Add(WalkingState);
-	ActiveAbleStates.Add(AttackState);
-	ActiveAbleStates.Add(BlockState);
-	for(UBaseStateObject* state : ActiveAbleStates)
-	{
-		state->SetPerformingActor(PerformingActor);
-		state->SetStateManagerComponent(this);
-	}
 }
 
 void UBaseStateManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
@@ -83,6 +70,7 @@ void UBaseStateManagerComponent::PerformStateOfClass(TSubclassOf<UBaseStateObjec
  */
 void UBaseStateManagerComponent::SetPerformingActor(AActor* NewPerformingActor)
 {
+	UE_LOG(LogTemp,Warning,TEXT("SetPerformingActor"));
 	PerformingActor=NewPerformingActor;
 }
 
@@ -167,6 +155,23 @@ UBaseStateObject* UBaseStateManagerComponent::GetStateOfGameplayTag(FGameplayTag
 		}
 	}
 	return nullptr;
+}
+
+void UBaseStateManagerComponent::Init()
+{
+	ActiveAbleStates.Add(DodgeState);
+	ActiveAbleStates.Add(IdleState);
+	ActiveAbleStates.Add(JumpingState);
+	ActiveAbleStates.Add(SprintingState);
+	ActiveAbleStates.Add(WalkingState);
+	ActiveAbleStates.Add(AttackState);
+	ActiveAbleStates.Add(BlockState);
+	
+	for(UBaseStateObject* state : ActiveAbleStates)
+	{
+		state->SetPerformingActor(PerformingActor);
+		state->SetStateManagerComponent(this);
+	}
 }
 
 

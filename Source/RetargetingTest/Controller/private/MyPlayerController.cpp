@@ -8,10 +8,24 @@
 #include "GameFramework/Character.h"
 #include "RetargetingTest/Controller/public/InputDataAsset.h"
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
+#include "RetargetingTest/Lib/GameTags.h"
+#include "RetargetingTest/Object/Public/BaseStateObject.h"
+#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+
 AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
 	StateManagerComponent=CreateDefaultSubobject<UBaseStateManagerComponent>(TEXT("BaseStateManager"));
+}
+
+void AMyPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	UE_LOG(LogTemp,Warning,TEXT("BeginPlay"));
+
+	ARetargetingTestCharacter* NewCharacter=dynamic_cast<ARetargetingTestCharacter*>(GetCharacter());
+	StateManagerComponent->SetPerformingActor(NewCharacter);
+	StateManagerComponent->Init();
 }
 
 void AMyPlayerController::SetupInputComponent()
@@ -38,32 +52,44 @@ void AMyPlayerController::SetupInputComponent()
 
 void AMyPlayerController::Move(const FInputActionValue& Value)
 {
+
+	const FGameplayTag WalkTag=FGameplayTag::RequestGameplayTag("State.Walk");
+	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(WalkTag));
+
 	FVector2D MovementVector = Value.Get<FVector2D>();
-	
-		// find out which way is forward
-		const FRotator Rotation = GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+	// find out which way is forward
+	const FRotator Rotation = GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	// get forward vector
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	// get right vector 
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
-		GetCharacter()->AddMovementInput(ForwardDirection, MovementVector.Y);
-		GetCharacter()->AddMovementInput(RightDirection, MovementVector.X);
+	// add movement 
+	GetCharacter()->AddMovementInput(ForwardDirection, MovementVector.Y);
+	GetCharacter()->AddMovementInput(RightDirection, MovementVector.X);
 	
 }
 
 void AMyPlayerController::Sprint(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp,Warning,TEXT("Sprint"));
+
+	const FGameplayTag SprintTag=FGameplayTag::RequestGameplayTag("State.Sprint");
+	UE_LOG(LogTemp,Warning,TEXT("Sprint State Object : %s"),*StateManagerComponent->GetStateOfGameplayTag(SprintTag)->GetName());
+	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(SprintTag));
 }
 
 void AMyPlayerController::SprintEnd(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp,Warning,TEXT("SprintEnd"));
+	if(StateManagerComponent->GetCurrentActiveState()!=nullptr)
+	{
+		if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Sprint"))
+		{
+			StateManagerComponent->GetCurrentActiveState()->EndState();
+		}
+	}
 }
 
 void AMyPlayerController::Attack(const FInputActionValue& Value)
@@ -102,3 +128,5 @@ void AMyPlayerController::ToggleInventory(const FInputActionValue& Value)
 	UE_LOG(LogTemp,Warning,TEXT("Toggle Inventory"));
 
 }
+
+

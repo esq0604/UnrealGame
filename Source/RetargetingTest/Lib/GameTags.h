@@ -21,5 +21,5 @@ public:
 	FGameplayTag State_Dodge;
 	FGameplayTag State_Jump;
 	FGameplayTag State_Attack;
-	FGameplayTag State_Sprint;
+	FGameplayTag State_Sprints;
 };
