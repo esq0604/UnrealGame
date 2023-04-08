@@ -164,13 +164,7 @@ void ARetargetingTestCharacter::BeginPlay()
 	
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			if(Subsystem ==nullptr)
-				UE_LOG(LogTemp,Warning,TEXT("Subsystem warning"));
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
-		}
-
+		
 		PlayerHUD = CreateWidget<UPlayerHUD>(PlayerController, PlayerHUDClass);
 		if(PlayerHUD != nullptr)
 		{
@@ -395,83 +389,6 @@ void ARetargetingTestCharacter::UseItemAtInventorySlot(int32 Slot)
 			}
 			PlayerHUD->GetInventory()->Refresh();
 		}
-	}
-}
-
-
-/**
- * 플레이어의 입력에 대해 함수를 바인딩합니다.
- */
-void ARetargetingTestCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
-{
-	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ARetargetingTestCharacter::JumpAndDodge);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-
-		//Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ARetargetingTestCharacter::Move);
-
-		//Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARetargetingTestCharacter::Look);
-
-		//Attack
-		EnhancedInputComponent->BindAction(AttackAction,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::Attack);
-
-		EnhancedInputComponent->BindAction(SprintAction,ETriggerEvent::Triggered, this,&ARetargetingTestCharacter::Sprint);
-		EnhancedInputComponent->BindAction(SprintAction,ETriggerEvent::Completed, this,&ARetargetingTestCharacter::SprintEnd);
-
-		//InputComponent->BindAction("AttackAction",IE_Pressed, this, &ARetargetingTestCharacter::Attack);
-		EnhancedInputComponent->BindAction(IteractionAction,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::Interact);
-		EnhancedInputComponent->BindAction(ToggleInventoryAction,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::ToggleInventory);
-
-		//Quick Slot
-		EnhancedInputComponent->BindAction(UseQuickSlot1Action,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::UseQuickSlot,1);
-		EnhancedInputComponent->BindAction(UseQuickSlot2Action,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::UseQuickSlot,2);
-		EnhancedInputComponent->BindAction(UseQuickSlot3Action,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::UseQuickSlot,3);
-		EnhancedInputComponent->BindAction(UseQuickSlot4Action,ETriggerEvent::Triggered,this,&ARetargetingTestCharacter::UseQuickSlot,4);
-
-	}
-
-}
-/**
- * 플레이어가 wasd를 통해 움직일때 호출됩니다.
- * @param Value - InputAction에 정의된 값을 매개변수로 받아서 사용합니다.
- */
-void ARetargetingTestCharacter::Move(const FInputActionValue& Value)
-{
-	
-	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Walk")));
-	FVector2D MovementVector = Value.Get<FVector2D>();
-	if (Controller != nullptr)
-	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
-		// add movement 
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
-	}
-}
-
-void ARetargetingTestCharacter::Look(const FInputActionValue& Value)
-{
-	// input is a Vector2D
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
-	if (Controller != nullptr)
-	{
-		// add yaw and pitch input to controller
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
 	}
 }
 
