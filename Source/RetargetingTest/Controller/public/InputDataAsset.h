@@ -16,6 +16,8 @@ class RETARGETINGTEST_API UInputDataAsset : public UDataAsset
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Player Inputs")
+	TArray<UInputAction*> Inputs;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UInputAction* InputMove;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -42,4 +44,6 @@ public:
 	UInputAction* InputUseQuickSlot_Three;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UInputAction* InputUseQuickSlot_Four;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	UInputAction* InputEquipUnEquip;
 };

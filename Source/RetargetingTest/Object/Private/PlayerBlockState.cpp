@@ -5,12 +5,11 @@
 #include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
 UPlayerBlockState::UPlayerBlockState()
 {
-	StateGameplayTag.FromExportString("State.Block");
+	StateGameplayTag=GameTags::Get().State_Block;
 }
 
 bool UPlayerBlockState::CanPerformState()
 {
-	UE_LOG(LogTemp,Warning,TEXT("BlockState CanPerform State"));
 	return true;
 }
 

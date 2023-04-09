@@ -9,7 +9,7 @@
 
 UPlayerDodgeState::UPlayerDodgeState()
 {
-	StateGameplayTag.FromExportString("State.Dodge");
+	StateGameplayTag=GameTags::Get().State_Dodge;
 }
 
 void UPlayerDodgeState::StartState()
@@ -23,7 +23,7 @@ void UPlayerDodgeState::StartState()
 
 bool UPlayerDodgeState::CanPerformState()
 {
-	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Walk"))
+	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==GameTags::Get().State_Walk)
 	{
 		return true;
 	}    

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
 #include "GameFramework/PlayerController.h"
 #include "MyPlayerController.generated.h"
 
@@ -31,6 +32,7 @@ public:
 	void JumpStop(const FInputActionValue& Value);
 	void Interact(const FInputActionValue& Value);
 	void ToggleInventory(const FInputActionValue& Value);
+	void EquipUnEquip(const FInputActionValue& Value);
 
 protected:
 	virtual void BeginPlay() override;

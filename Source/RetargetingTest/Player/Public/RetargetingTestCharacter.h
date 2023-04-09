@@ -8,6 +8,7 @@
 #include "RetargetingTestCharacter.generated.h"
 
 
+class UBaseAbilityManagerComponent;
 class UBaseStateManagerComponent;
 class UAttackComponent;
 class UBaseStatComponent;
@@ -102,6 +103,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Component")
 	UMotionWarpingComponent* MotionWarpComponent;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Component")
+	UBaseAbilityManagerComponent* AbilityManagerComponent;
 	
 	UPROPERTY(VisibleInstanceOnly,BlueprintReadWrite,Category=Dodge,meta=(AllowPrivateAccess=true))
 	bool IsDodge;

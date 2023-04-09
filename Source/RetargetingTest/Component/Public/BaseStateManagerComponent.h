@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-
 #include "BaseStateManagerComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUpdatedActiveState);
@@ -28,8 +27,10 @@ class RETARGETINGTEST_API UBaseStateManagerComponent : public UActorComponent
 public:
 	// Sets default values for this component's properties
 	UBaseStateManagerComponent();
-
 	
+	UFUNCTION(BlueprintCallable, Category = "Setters")
+	bool TryPerformStateOfClass(TSubclassOf<UBaseStateObject> StateToSet,bool ConditionCheck);
+
 	UFUNCTION(BlueprintCallable, Category = "Setters")
 	void SetCanChangeState(bool canChange);
 protected:
@@ -54,7 +55,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Getters")
 	void GetStateOfClass(TSubclassOf<UBaseStateObject> StateToSearch, UBaseStateObject*& FoundState);
 
-	void ConstructStatebyClass(TSubclassOf<UBaseStateObject> StateToConstruct);
+	void ConstructStateOfClass(TSubclassOf<UBaseStateObject> StateToConstruct,UBaseStateObject*& ConstructedState);
 
 	UFUNCTION(BlueprintCallable)
 	UBaseStateObject* GetStateOfGameplayTag(FGameplayTag StateGamePlayTag);
@@ -86,7 +87,7 @@ private:
 	UPROPERTY()
 	UPlayerJumpingState* JumpingState;
 	UPROPERTY()
-	UPlayerSprintingState* SprintingState;
+	UPlayerSprintingState* SprintState;
 	UPROPERTY()
 	UPlayerWalkingState* WalkingState;
 	UPROPERTY()

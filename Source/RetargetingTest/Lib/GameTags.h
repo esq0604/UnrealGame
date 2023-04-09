@@ -21,5 +21,10 @@ public:
 	FGameplayTag State_Dodge;
 	FGameplayTag State_Jump;
 	FGameplayTag State_Attack;
-	FGameplayTag State_Sprints;
+	FGameplayTag State_Sprint;
+	FGameplayTag State_Equip;
+	FGameplayTag State_Block;
+
+	FGameplayTag Ability_Equip;
+	
 };

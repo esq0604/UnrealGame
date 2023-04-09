@@ -2,15 +2,8 @@
 
 
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
-
 #include "RetargetingTest/Object/Public/BaseStateObject.h"
-#include "RetargetingTest/Object/Public/PlayerAttackState.h"
 #include "RetargetingTest/Object/Public/PlayerBlockState.h"
-#include "RetargetingTest/Object/Public/PlayerDodgeState.h"
-#include "RetargetingTest/Object/Public/PlayerIdleState.h"
-#include "RetargetingTest/Object/Public/PlayerJumpingState.h"
-#include "RetargetingTest/Object/Public/PlayerSprintingState.h"
-#include "RetargetingTest/Object/Public/PlayerWalkingState.h"
 
 
 // Sets default values for this component's properties
@@ -19,16 +12,95 @@ UBaseStateManagerComponent::UBaseStateManagerComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+}
+
+bool UBaseStateManagerComponent::TryPerformStateOfClass(TSubclassOf<UBaseStateObject> StateToSet, bool ConditionCheck)
+{
+	if (StateToSet)
+	{
+		UBaseStateObject* LocalState = nullptr;
+		GetStateOfClass(StateToSet, LocalState);
 
 
-	DodgeState=(CreateDefaultSubobject<UPlayerDodgeState>(TEXT("DodgeeState")));
-	IdleState=(CreateDefaultSubobject<UPlayerIdleState>(TEXT("IdleState")));
-	JumpingState=(CreateDefaultSubobject<UPlayerJumpingState>(TEXT("JumpingState")));
-	SprintingState=(CreateDefaultSubobject<UPlayerSprintingState>(TEXT("SprintingState")));
-	WalkingState=(CreateDefaultSubobject<UPlayerWalkingState>(TEXT("WalkingState")));
-	AttackState=CreateDefaultSubobject<UPlayerAttackState>(TEXT("AttackingState"));
-	BlockState=CreateDefaultSubobject<UPlayerBlockState>(TEXT("BlockingState"));
-	
+		if (LocalState)
+		{
+
+			if (ConditionCheck)
+			{
+				if (LocalState->CanPerformState())
+				{
+					if (CurrentActiveState)
+					{
+
+						CurrentActiveState->EndState();
+
+					}
+
+					//LocalState->PrepareStateValues();
+					CurrentActiveState = LocalState;
+					CurrentActiveState->StartState();
+					//OnUpdatedActiveState.Broadcast();
+					return true;
+				}
+			}
+			else
+			{
+				if (CurrentActiveState)
+				{
+					CurrentActiveState->EndState();
+				}
+
+				//LocalState->PrepareStateValues();
+				CurrentActiveState = LocalState;
+				CurrentActiveState->StartState();
+				//OnUpdatedActiveState.Broadcast();
+				return true;
+			}
+
+			return false;
+		}
+		else
+		{
+			ConstructStateOfClass(StateToSet, LocalState);
+			
+			if (ConditionCheck)
+			{
+				if (LocalState->CanPerformState())
+				{
+					if (CurrentActiveState)
+					{
+
+						CurrentActiveState->EndState();
+
+					}
+
+					//LocalState->PrepareStateValues();
+					CurrentActiveState = LocalState;
+					CurrentActiveState->StartState();
+					//OnUpdatedActiveState.Broadcast();
+					return true;
+				}
+
+
+			}
+			else
+			{
+				if (CurrentActiveState)
+				{
+
+					CurrentActiveState->EndState();
+
+				}
+
+				//LocalState->PrepareStateValues();
+				CurrentActiveState = LocalState;
+				CurrentActiveState->StartState();
+				//OnUpdatedActiveState.Broadcast();
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 /**
@@ -63,14 +135,15 @@ void UBaseStateManagerComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 void UBaseStateManagerComponent::PerformStateOfClass(TSubclassOf<UBaseStateObject> StateToSet)
 {
+	
 }
+
 /**
  * 현재 수행중인 액터를 결정합니다. StateManagerComponent의 수행중인 액터는 캐릭터 입니다.
  * @param NewPerformingActor - StateManagerComponent를 사용하는 액터가 들어옵니다.
  */
 void UBaseStateManagerComponent::SetPerformingActor(AActor* NewPerformingActor)
 {
-	UE_LOG(LogTemp,Warning,TEXT("SetPerformingActor"));
 	PerformingActor=NewPerformingActor;
 }
 
@@ -120,12 +193,13 @@ void UBaseStateManagerComponent::GetStateOfClass(TSubclassOf<UBaseStateObject> S
 		}
 	}
 	FoundState=nullptr;
+	
 	return;
 }
 
-void UBaseStateManagerComponent::ConstructStatebyClass(TSubclassOf<UBaseStateObject> StateToConstruct)
+void UBaseStateManagerComponent::ConstructStateOfClass(TSubclassOf<UBaseStateObject> StateToConstruct,UBaseStateObject*& ConstructedState)
 {
-	//ConstructedState=nullptr;
+	ConstructedState=nullptr;
 
 	if(StateToConstruct)
 	{
@@ -134,6 +208,8 @@ void UBaseStateManagerComponent::ConstructStatebyClass(TSubclassOf<UBaseStateObj
 
 		ActiveAbleStates.AddUnique(LocalNewState);
 		LocalNewState->SetPerformingActor(PerformingActor);
+
+		ConstructedState = LocalNewState;
 	}
 }
 
@@ -143,7 +219,6 @@ void UBaseStateManagerComponent::ConstructStatebyClass(TSubclassOf<UBaseStateObj
  */
 UBaseStateObject* UBaseStateManagerComponent::GetStateOfGameplayTag(FGameplayTag StateGamePlayTag)
 {
-	 
 	for(int32 i=0; i<ActiveAbleStates.Num(); i++)
 	{
 		if(ActiveAbleStates[i])
@@ -159,14 +234,6 @@ UBaseStateObject* UBaseStateManagerComponent::GetStateOfGameplayTag(FGameplayTag
 
 void UBaseStateManagerComponent::Init()
 {
-	ActiveAbleStates.Add(DodgeState);
-	ActiveAbleStates.Add(IdleState);
-	ActiveAbleStates.Add(JumpingState);
-	ActiveAbleStates.Add(SprintingState);
-	ActiveAbleStates.Add(WalkingState);
-	ActiveAbleStates.Add(AttackState);
-	ActiveAbleStates.Add(BlockState);
-	
 	for(UBaseStateObject* state : ActiveAbleStates)
 	{
 		state->SetPerformingActor(PerformingActor);

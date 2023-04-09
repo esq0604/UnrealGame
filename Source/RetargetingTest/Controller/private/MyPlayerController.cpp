@@ -47,6 +47,7 @@ void AMyPlayerController::SetupInputComponent()
 	EnhancedInputComp->BindAction(InputAction->InputJumpAndDodge,ETriggerEvent::Completed,this,&AMyPlayerController::JumpStop);
 	EnhancedInputComp->BindAction(InputAction->InputInteract,ETriggerEvent::Triggered,this,&AMyPlayerController::Interact);
 	EnhancedInputComp->BindAction(InputAction->InputToggleInventory,ETriggerEvent::Triggered,this,&AMyPlayerController::ToggleInventory);
+	EnhancedInputComp->BindAction(InputAction->InputEquipUnEquip,ETriggerEvent::Triggered,this,&AMyPlayerController::EquipUnEquip);
 
 }
 
@@ -76,9 +77,10 @@ void AMyPlayerController::Move(const FInputActionValue& Value)
 void AMyPlayerController::Sprint(const FInputActionValue& Value)
 {
 
-	const FGameplayTag SprintTag=FGameplayTag::RequestGameplayTag("State.Sprint");
-	UE_LOG(LogTemp,Warning,TEXT("Sprint State Object : %s"),*StateManagerComponent->GetStateOfGameplayTag(SprintTag)->GetName());
-	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(SprintTag));
+	const FGameplayTag SprintTag = GameTags::Get().State_Sprint;
+
+	//UE_LOG(LogTemp,Warning,TEXT("Sprint State Object : %s"),*StateManagerComponent->GetStateOfGameplayTag(SprintTag)->GetName());
+	StateManagerComponent->TryPerformStateOfClass(StateManagerComponent->GetStateOfGameplayTag(SprintTag)->GetClass(),true);
 }
 
 void AMyPlayerController::SprintEnd(const FInputActionValue& Value)
@@ -127,6 +129,12 @@ void AMyPlayerController::ToggleInventory(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp,Warning,TEXT("Toggle Inventory"));
 
+}
+
+void AMyPlayerController::EquipUnEquip(const FInputActionValue& Value)
+{
+	//State를 Equip으로 변경합니다.
+	//State를 UnEquip으로 변경합니다.
 }
 
 

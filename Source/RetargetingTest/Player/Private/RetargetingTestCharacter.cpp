@@ -28,8 +28,9 @@
 #include "RetargetingTest/UI/Public/QuickSlot.h"
 #include "RetargetingTest/UI/Public/Slot.h"
 #include "MotionWarpingComponent.h"
+#include "RetargetingTest/Component/Public/BaseAbilityManagerComponent.h"
 
-//////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
 
 ARetargetingTestCharacter::ARetargetingTestCharacter()
@@ -74,10 +75,9 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 	//사용자 정의 컴포넌트입니다.
 	StatComponent= CreateDefaultSubobject<UBasePlayerStatComponent>(TEXT("StatComponent"));
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));	
-	StateManagerComponent = CreateDefaultSubobject<UBaseStateManagerComponent>(TEXT("StateManager"));
-	StateManagerComponent->SetPerformingActor(this);
 	
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
+	AbilityManagerComponent= CreateDefaultSubobject<UBaseAbilityManagerComponent>(TEXT("AbilityManagerComponent"));
 }
 /**
  * 데미지 전달을 위한 함수입니다. 현재 상태가 Dodge State가 아니라면 데미지를 받습니다.
@@ -157,8 +157,6 @@ void ARetargetingTestCharacter::AttackCheck()
 void ARetargetingTestCharacter::BeginPlay()
 {
 	// Call the base class
-	StateManagerComponent->SetPerformingActor(this);
-
 	Super::BeginPlay();
 	//Add Input Mapping Context
 	
