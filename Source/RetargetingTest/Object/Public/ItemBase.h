@@ -10,7 +10,7 @@
  * 
  */
 
-class ARetargetingTestCharacter;
+class ACharacterBase;
 UCLASS()
 class RETARGETINGTEST_API AItemBase : public AActor ,public IInteractable
 {
@@ -25,7 +25,7 @@ public:
 	
 	void AddReferenceSlot(class USlot*& Slot);
 	void RemoveReferenceSlot(class USlot*& Slot);
-	virtual void UseItem(ARetargetingTestCharacter* Character) ;
+	virtual void UseItem(ACharacterBase* Character) ;
 	virtual int GetCount() const;
 protected:
 	virtual void BeginPlay() override;

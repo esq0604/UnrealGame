@@ -6,7 +6,7 @@
 #include "Engine/UserInterfaceSettings.h"
 #include "RetargetingTest/UI/Public/FloatingDamageActor.h"
 #include "Kismet/GameplayStatics.h"
-#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/Player/Public/CharacterBase.h"
 
 // Sets default values for this component's properties
 UFloatingCombatTextComponent::UFloatingCombatTextComponent()
@@ -25,7 +25,7 @@ void UFloatingCombatTextComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	ARetargetingTestCharacter* Character = Cast<ARetargetingTestCharacter>(GetOwner());
+	ACharacterBase* Character = Cast<ACharacterBase>(GetOwner());
 
 	
 	

@@ -14,7 +14,7 @@ DECLARE_MULTICAST_DELEGATE(FOnNextAttackCheckDelegate);
 /**
  * 
  */
- class ARetargetingTestCharacter;
+ class ACharacterBase;
 UCLASS()
 class RETARGETINGTEST_API UCharaterAnimInstance : public UAnimInstance
 {
@@ -59,7 +59,7 @@ protected:
 
 private:
 	UPROPERTY()
-	ARetargetingTestCharacter* OwnerCharacter;
+	ACharacterBase* OwnerCharacter;
 
 
 

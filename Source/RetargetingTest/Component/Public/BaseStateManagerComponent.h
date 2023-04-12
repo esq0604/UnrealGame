@@ -55,12 +55,13 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Getters")
 	void GetStateOfClass(TSubclassOf<UBaseStateObject> StateToSearch, UBaseStateObject*& FoundState);
 
-	void ConstructStateOfClass(TSubclassOf<UBaseStateObject> StateToConstruct,UBaseStateObject*& ConstructedState);
+	UFUNCTION(BlueprintCallable, Category = "Getters")
+	void ConstructStateOfClass(TSubclassOf<UBaseStateObject> StateToConstruct);
 
 	UFUNCTION(BlueprintCallable)
 	UBaseStateObject* GetStateOfGameplayTag(FGameplayTag StateGamePlayTag);
 
-	void Init();
+	void StateManagerInit();
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Base Variables")
 	TArray<UBaseStateObject*> ActiveAbleStates;

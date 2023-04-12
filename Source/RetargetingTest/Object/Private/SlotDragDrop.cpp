@@ -3,7 +3,7 @@
 
 #include "RetargetingTest/Object/Public/SlotDragDrop.h"
 
-#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/Player/Public/CharacterBase.h"
 #include "RetargetingTest/UI/Public/Slot.h"
 #include "RetargetingTest/Object/Public/ItemBase.h"
 

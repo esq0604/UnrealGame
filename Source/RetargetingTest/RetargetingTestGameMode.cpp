@@ -1,7 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "RetargetingTestGameMode.h"
-#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/Player/Public/CharacterBase.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
@@ -88,7 +88,7 @@ bool ARetargetingTestGameMode::ApplyHUD(TSubclassOf<UUserWidget> WidgetToApply, 
 	bool EnableClickEvent)
 {
 	//플레이어와, 플레이어컨트롤러를 가져옵니다.
-	ARetargetingTestCharacter* MyCharacter = Cast<ARetargetingTestCharacter>(UGameplayStatics::GetPlayerCharacter(this,0));
+	ACharacterBase* MyCharacter = Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this,0));
 	APlayerController* MyController = GetWorld()->GetFirstPlayerController();
 
 	//WidgetToApply가 nullptr이 아닌지 체크합니다.

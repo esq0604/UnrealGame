@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "BaseWeapon.generated.h"
 
+class UPDAWeapon;
+class ACharacter;
 UCLASS()
 class RETARGETINGTEST_API ABaseWeapon : public AActor
 {
@@ -18,8 +20,15 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	virtual void PostInitializeComponents() override;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable)
+	void CreateWeaponStateAndAbility();
+protected:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Data Asset")
+	UPDAWeapon* WeaponDataAsset;
+
 };

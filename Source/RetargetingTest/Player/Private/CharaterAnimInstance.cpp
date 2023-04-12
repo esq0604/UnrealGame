@@ -3,9 +3,9 @@
 
 #include "RetargetingTest/Player/Public/CharaterAnimInstance.h"
 
-#include "../Public//RetargetingTestCharacter.h"
+#include "GameplayTagContainer.h"
+#include "../Public//CharacterBase.h"
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
-#include "RetargetingTest/Lib/GameTags.h"
 UCharaterAnimInstance::UCharaterAnimInstance(const FObjectInitializer& ObjectInitializer)
 {
 }
@@ -22,7 +22,7 @@ void UCharaterAnimInstance::PlayAttackMontage()
 void UCharaterAnimInstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
-	OwnerCharacter=Cast<ARetargetingTestCharacter>(GetOwningActor());
+	OwnerCharacter=Cast<ACharacterBase>(GetOwningActor());
 	//Montage_SetEndDelegate(OnMontageEnded);
 }
 
@@ -54,8 +54,8 @@ void UCharaterAnimInstance::AnimNotify_NextAttackCheck()
 void UCharaterAnimInstance::AnimNotify_StateStart()
 {
 	
-	OwnerCharacter->GetStateManagerComponent()->SetCurrentActiveState(OwnerCharacter->GetStateManagerComponent()->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Dodge")));
-	OwnerCharacter->GetStateManagerComponent()->SetCanChangeState(false);
+//	OwnerCharacter->GetStateManagerComponent()->SetCurrentActiveState(OwnerCharacter->GetStateManagerComponent()->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Dodge")));
+//	OwnerCharacter->GetStateManagerComponent()->SetCanChangeState(false);
 
 }
 
@@ -64,7 +64,7 @@ void UCharaterAnimInstance::AnimNotify_StateStart()
  */
 void UCharaterAnimInstance::AnimNotify_StateEnd()
 {
-	OwnerCharacter->GetStateManagerComponent()->SetCanChangeState(true);
+//	OwnerCharacter->GetStateManagerComponent()->SetCanChangeState(true);
 }
 
 /**

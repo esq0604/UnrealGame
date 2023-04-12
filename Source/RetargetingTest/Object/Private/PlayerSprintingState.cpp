@@ -6,18 +6,18 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "RetargetingTest/Component/Public/BasePlayerStatComponent.h"
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
-#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/Player/Public/CharacterBase.h"
 
 UPlayerSprintingState::UPlayerSprintingState()
 {
-	StateGameplayTag=GameTags::Get().State_Sprint;
+	StateGameplayTag.FromExportString("State.Sprint");
 }
 
 bool UPlayerSprintingState::CanPerformState()
 {
 	if(StateManagerComponent->GetCurrentActiveState()==nullptr)
 		return false;
-	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==GameTags::Get().State_Walk)
+	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Walk"))
 	{
 		return true;
 	}
@@ -31,7 +31,7 @@ void UPlayerSprintingState::StartState()
 	Super::StartState();
 	HasTickState=true;
 	GetStateManagerComponent()->SetCanChangeState(false);
-	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
+	ACharacterBase* Character=Cast<ACharacterBase>(PerformingActor);
 	Character->GetCharacterMovement()->MaxWalkSpeed=800.0f;
 }
 /**
@@ -41,7 +41,7 @@ void UPlayerSprintingState::EndState()
 {
 	Super::EndState();
 	
-	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
+	ACharacterBase* Character=Cast<ACharacterBase>(PerformingActor);
 	GetStateManagerComponent()->SetCanChangeState(true);
 	HasTickState=false;
 }
@@ -51,7 +51,7 @@ void UPlayerSprintingState::EndState()
 void UPlayerSprintingState::TickState()
 {
 	Super::TickState();
-	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
+	ACharacterBase* Character=Cast<ACharacterBase>(PerformingActor);
 	const float CharacterCurrentStamina=Character->GetStatComponent()->GetCurrentStamina();
 	Character->GetStatComponent()->SetStamina(CharacterCurrentStamina-0.1f);
 }

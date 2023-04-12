@@ -4,7 +4,7 @@
 #include "RetargetingTest/Object/Public/ItemBase.h"
 
 #include "Kismet/GameplayStatics.h"
-#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/Player/Public/CharacterBase.h"
 #include "RetargetingTest/UI/Public/Slot.h"
 #include "Engine/Texture2D.h"
 
@@ -25,7 +25,7 @@ void AItemBase::BeginPlay()
 
 void AItemBase::Interact_Implementation()
 {
-	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(UGameplayStatics::GetPlayerCharacter(this,0));
+	ACharacterBase* Character=Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this,0));
 
 	Character->AddItemToInventory(this);
 	OnPickup();
@@ -52,7 +52,7 @@ void AItemBase::RemoveReferenceSlot(USlot*& Slot)
 	ReferenceSlot.RemoveSingle(Slot);
 }
 
-void AItemBase::UseItem(ARetargetingTestCharacter* Character)
+void AItemBase::UseItem(ACharacterBase* Character)
 {
 	UE_LOG(LogTemp,Warning,TEXT("UseItem In AItemBase"));
 }

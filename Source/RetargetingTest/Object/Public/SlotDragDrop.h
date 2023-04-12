@@ -23,7 +23,7 @@ public:
 	bool MoveQuickSlot(USlot* To);
 public:
 	USlot* From;
-	class ARetargetingTestCharacter* Character;
+	class ACharacterBase* Character;
 };
 
 

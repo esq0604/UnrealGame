@@ -5,11 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
-#include "RetargetingTestCharacter.generated.h"
+#include "CharacterBase.generated.h"
 
 
+class ABaseWeapon;
 class UBaseAbilityManagerComponent;
-class UBaseStateManagerComponent;
 class UAttackComponent;
 class UBaseStatComponent;
 class APlayerAttackComponent;
@@ -27,12 +27,12 @@ class UMotionWarpingComponent;
 class UStaticMeshComponent;
 
 UCLASS(config=Game)
-class ARetargetingTestCharacter : public ACharacter
+class ACharacterBase : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	ARetargetingTestCharacter();
+	ACharacterBase();
 
 	UFUNCTION()
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
@@ -55,7 +55,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UBasePlayerStatComponent* GetStatComponent() const;
 	
-	UBaseStateManagerComponent* GetStateManagerComponent() const;
 	UTexture2D* GetThumnailAtInventorySlot(int32 Slot) const;
 	FString GetItemNameAtInventorySlot(int32 Slot) const;
 	void UseItemAtInventorySlot(int32 Slot);
@@ -99,9 +98,6 @@ protected:
 	UFloatingCombatTextComponent* FloatingTextComponent;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Component")
-	UBaseStateManagerComponent* StateManagerComponent;
-	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Component")
 	UMotionWarpingComponent* MotionWarpComponent;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Component")
@@ -115,6 +111,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere,Category="HUD",meta=(AllowPrivateAccess=true))
 	UPlayerHUD* PlayerHUD;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon")
+	TSubclassOf<ABaseWeapon> DefaultWeaponToSpawnClass;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon")
+	ABaseWeapon* DefaultWeaponToSpawn;
 private:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -153,6 +155,5 @@ private:
 	const float CheckInteractableReach=100.0f;
 	
 	AItemBase* CurrentInteractable;
-
 };
 

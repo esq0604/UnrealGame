@@ -2,10 +2,10 @@
 
 
 #include "RetargetingTest/Object/Public/PlayerBlockState.h"
-#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/Player/Public/CharacterBase.h"
 UPlayerBlockState::UPlayerBlockState()
 {
-	StateGameplayTag=GameTags::Get().State_Block;
+	StateGameplayTag.FromExportString("State.Block");
 }
 
 bool UPlayerBlockState::CanPerformState()
@@ -16,14 +16,14 @@ bool UPlayerBlockState::CanPerformState()
 void UPlayerBlockState::StartState()
 {
 	Super::StartState();
-	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
+	ACharacterBase* Character=Cast<ACharacterBase>(PerformingActor);
 	Character->SetbCanbeDamaged(false);
 }
 
 void UPlayerBlockState::EndState()
 {
 	Super::EndState();
-	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
+	ACharacterBase* Character=Cast<ACharacterBase>(PerformingActor);
 	Character->SetbCanbeDamaged(true);
 }
 

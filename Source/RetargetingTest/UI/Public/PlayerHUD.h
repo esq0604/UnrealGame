@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerHUD.generated.h"
 
-class ARetargetingTestCharacter;
+class ACharacterBase;
 /**
  * 
  */
@@ -27,7 +27,7 @@ public:
 	UQuickSlot* GetQuickSlot() const;
 	UInventory* GetInventory() const;
 
-	void SetCharacter(ARetargetingTestCharacter* NewCharater);
+	void SetCharacter(ACharacterBase* NewCharater);
 	void ToggleInventory();
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))
@@ -39,7 +39,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))
 	UInventory* Inventory;
 
-	ARetargetingTestCharacter* Character;
+	ACharacterBase* Character;
 };
 
 

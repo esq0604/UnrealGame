@@ -61,7 +61,7 @@ bool UBaseStateManagerComponent::TryPerformStateOfClass(TSubclassOf<UBaseStateOb
 		}
 		else
 		{
-			ConstructStateOfClass(StateToSet, LocalState);
+			ConstructStateOfClass(StateToSet);
 			
 			if (ConditionCheck)
 			{
@@ -144,6 +144,7 @@ void UBaseStateManagerComponent::PerformStateOfClass(TSubclassOf<UBaseStateObjec
  */
 void UBaseStateManagerComponent::SetPerformingActor(AActor* NewPerformingActor)
 {
+	UE_LOG(LogTemp,Warning,TEXT("SetPerformingActor : %s"),*NewPerformingActor->GetName())
 	PerformingActor=NewPerformingActor;
 }
 
@@ -155,6 +156,7 @@ void UBaseStateManagerComponent::SetPerformingActor(AActor* NewPerformingActor)
  */
 void UBaseStateManagerComponent::SetCurrentActiveState(UBaseStateObject* NewCurrentActiveState)
 {
+	UE_LOG(LogTemp,Warning,TEXT("NewState %s"),*NewCurrentActiveState->GetGameplayTag().ToString());
 	if(CanChangeState)
 	{
 		if(CurrentActiveState!=nullptr)
@@ -166,6 +168,7 @@ void UBaseStateManagerComponent::SetCurrentActiveState(UBaseStateObject* NewCurr
 			if(NewCurrentActiveState->CanPerformState())
 			{
 				CurrentActiveState = NewCurrentActiveState;
+				UE_LOG(LogTemp,Warning,TEXT("CurrentActivState %s"),*CurrentActiveState->GetGameplayTag().ToString());
 				CurrentActiveState->StartState();
 			}
 		}
@@ -197,19 +200,15 @@ void UBaseStateManagerComponent::GetStateOfClass(TSubclassOf<UBaseStateObject> S
 	return;
 }
 
-void UBaseStateManagerComponent::ConstructStateOfClass(TSubclassOf<UBaseStateObject> StateToConstruct,UBaseStateObject*& ConstructedState)
+void UBaseStateManagerComponent::ConstructStateOfClass(TSubclassOf<UBaseStateObject> StateToConstruct)
 {
-	ConstructedState=nullptr;
-
 	if(StateToConstruct)
 	{
 		UBaseStateObject* LocalNewState;
-		LocalNewState = NewObject<UBaseStateObject>(PerformingActor,StateToConstruct);
-
-		ActiveAbleStates.AddUnique(LocalNewState);
+		LocalNewState = NewObject<UBaseStateObject>(GetOwner(),StateToConstruct);
 		LocalNewState->SetPerformingActor(PerformingActor);
-
-		ConstructedState = LocalNewState;
+		LocalNewState->SetStateManagerComponent(this);
+		ActiveAbleStates.AddUnique(LocalNewState);
 	}
 }
 
@@ -223,6 +222,7 @@ UBaseStateObject* UBaseStateManagerComponent::GetStateOfGameplayTag(FGameplayTag
 	{
 		if(ActiveAbleStates[i])
 		{
+			UE_LOG(LogTemp,Warning,TEXT("%d ActiveAbleStates Tag :%s"),i,*ActiveAbleStates[i]->GetGameplayTag().ToString());
 			if(ActiveAbleStates[i]->GetGameplayTag()==StateGamePlayTag)
 			{
 				return ActiveAbleStates[i];
@@ -232,10 +232,11 @@ UBaseStateObject* UBaseStateManagerComponent::GetStateOfGameplayTag(FGameplayTag
 	return nullptr;
 }
 
-void UBaseStateManagerComponent::Init()
+void UBaseStateManagerComponent::StateManagerInit()
 {
 	for(UBaseStateObject* state : ActiveAbleStates)
 	{
+		UE_LOG(LogTemp,Warning,TEXT("Each State SetPerfomingActor %s"),*PerformingActor->GetName());
 		state->SetPerformingActor(PerformingActor);
 		state->SetStateManagerComponent(this);
 	}

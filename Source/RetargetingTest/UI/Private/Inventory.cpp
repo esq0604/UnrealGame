@@ -18,7 +18,7 @@ void UInventory::NativeConstruct()
  */
 void UInventory::Init()
 {
-	Character=Cast<ARetargetingTestCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
+	Character=Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
 	TArray<UWidget*> Widgets;
 	WidgetTree->GetAllWidgets(Widgets);
 	Slots.Init(nullptr,12);
@@ -46,7 +46,7 @@ void UInventory::Refresh()
 	}
 }
 
-void UInventory::SetCharacter(ARetargetingTestCharacter* NewCharacter)
+void UInventory::SetCharacter(ACharacterBase* NewCharacter)
 {
 	Character= NewCharacter;
 }

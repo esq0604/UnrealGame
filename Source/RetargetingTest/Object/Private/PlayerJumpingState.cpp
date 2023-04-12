@@ -4,7 +4,7 @@
 #include "RetargetingTest/Object/Public/PlayerJumpingState.h"
 
 #include "GameFramework/PawnMovementComponent.h"
-#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/Player/Public/CharacterBase.h"
 
 UPlayerJumpingState::UPlayerJumpingState()
 {

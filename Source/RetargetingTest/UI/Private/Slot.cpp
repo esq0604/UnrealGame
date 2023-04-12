@@ -8,7 +8,7 @@
 #include "Components/TextBlock.h"
 #include "RetargetingTest/Object/Public/ItemBase.h"
 #include "RetargetingTest/Object/Public/SlotDragDrop.h"
-#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/Player/Public/CharacterBase.h"
 
 
 void USlot::NativeConstruct()
@@ -182,7 +182,7 @@ void USlot::SetType(ESlotType NewSlotType)
 	SlotType=NewSlotType;
 }
 
-void USlot::SetCharacter(ARetargetingTestCharacter* NewCharacter)
+void USlot::SetCharacter(ACharacterBase* NewCharacter)
 {
 	Character=NewCharacter;
 }

@@ -5,17 +5,17 @@
 
 #include "RetargetingTest/Component/Public/BasePlayerStatComponent.h"
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
-#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/Player/Public/CharacterBase.h"
 
 UPlayerDodgeState::UPlayerDodgeState()
 {
-	StateGameplayTag=GameTags::Get().State_Dodge;
+	StateGameplayTag.FromExportString("State.Dodge");
 }
 
 void UPlayerDodgeState::StartState()
 {
 	Super::StartState();
-	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
+	ACharacterBase* Character=Cast<ACharacterBase>(PerformingActor);
 	Character->SetbCanbeDamaged(false);
 	const float CharacterCurrentStamina=Character->GetStatComponent()->GetCurrentStamina();
 	Character->GetStatComponent()->SetStamina(CharacterCurrentStamina-10.0f);
@@ -23,7 +23,7 @@ void UPlayerDodgeState::StartState()
 
 bool UPlayerDodgeState::CanPerformState()
 {
-	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==GameTags::Get().State_Walk)
+	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Walk"))
 	{
 		return true;
 	}    
@@ -33,6 +33,6 @@ bool UPlayerDodgeState::CanPerformState()
 void UPlayerDodgeState::EndState()
 {
 	Super::EndState();
-	ARetargetingTestCharacter* Character=Cast<ARetargetingTestCharacter>(PerformingActor);
+	ACharacterBase* Character=Cast<ACharacterBase>(PerformingActor);
 	Character->SetbCanbeDamaged(true);
 }

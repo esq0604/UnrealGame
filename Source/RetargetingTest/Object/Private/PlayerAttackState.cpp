@@ -7,16 +7,14 @@
 
 UPlayerAttackState::UPlayerAttackState()
 {
-	StateGameplayTag=GameTags::Get().State_Attack;
+	StateGameplayTag.FromExportString("State.Attack");
 }
 
 bool UPlayerAttackState::CanPerformState()
 {
-	if(StateManagerComponent->GetCurrentActiveState()==nullptr)
-		return false;
-	if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==GameTags::Get().State_Walk)
-	{
-		return true;
-	}
+	// if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==GameTags::Get().State_Walk)
+	// {
+	// 	return true;
+	// }
 	return false;
 }

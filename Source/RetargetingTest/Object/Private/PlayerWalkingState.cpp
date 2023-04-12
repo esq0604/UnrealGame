@@ -6,21 +6,22 @@
 #include "Chaos/Island/IslandGraph.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
-#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/Player/Public/CharacterBase.h"
 
 UPlayerWalkingState::UPlayerWalkingState()
 {
-	StateGameplayTag=GameTags::Get().State_Walk;
+	StateGameplayTag.FromExportString("State.Walk");
 }
 
 bool UPlayerWalkingState::CanPerformState()
 {
 	if(PerformingActor!= nullptr)
 	{
-		ARetargetingTestCharacter* PerformingCharacter=Cast<ARetargetingTestCharacter>(PerformingActor);
+		ACharacterBase* PerformingCharacter=Cast<ACharacterBase>(PerformingActor);
 		if(PerformingCharacter->GetVelocity().Size()>150 && !PerformingCharacter->GetMovementComponent()->IsFalling())
 			return true;
 	}
+	UE_LOG(LogTemp,Warning,TEXT("Performing Actor nullptr"));
 	return false;
 }
 

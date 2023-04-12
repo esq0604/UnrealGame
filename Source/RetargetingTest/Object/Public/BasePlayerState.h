@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "BaseStateObject.h"
-#include "RetargetingTest/Lib/GameTags.h"
 #include "BasePlayerState.generated.h"
 
 /**

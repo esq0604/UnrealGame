@@ -16,8 +16,8 @@ class RETARGETINGTEST_API APotion : public AItemBase, public IUseable
 	GENERATED_BODY()
 
 public:
-	virtual void UseItem(ARetargetingTestCharacter* Character) override;
-	virtual void Use(ARetargetingTestCharacter* Character) override;
+	virtual void UseItem(ACharacterBase* Character) override;
+	virtual void Use(ACharacterBase* Character) override;
 private:
 	float HpValue=10.0f;
 

@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/Player/Public/CharacterBase.h"
 #include "Inventory.generated.h"
 
 /**
  * 
  */
-class ARetargetingTestCharacter;
+class ACharacterBase;
 class USlot;
 
 UCLASS()
@@ -22,11 +22,11 @@ public:
 	void Init();
 	
 	void Refresh();
-	void SetCharacter(ARetargetingTestCharacter* NewCharacter);
+	void SetCharacter(ACharacterBase* NewCharacter);
 	USlot* GetSlot(int32 Index) const;
 protected:
 	virtual void NativeConstruct() override; 
 
-	ARetargetingTestCharacter* Character;
+	ACharacterBase* Character;
 	TArray<USlot*> Slots;
 };

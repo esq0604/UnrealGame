@@ -8,7 +8,6 @@
 #include "PDAWeapon.generated.h"
 
 
-class UPlayerEquipState;
 class UBaseStateObject;
 /**
  * 
@@ -19,8 +18,5 @@ class RETARGETINGTEST_API UPDAWeapon : public UPrimaryDataAsset
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="States")
-	TArray<UBaseStateObject*>  StatesToCreate;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="States")
-	UPlayerEquipState* EquipState;
+	TArray<TSubclassOf<UBaseStateObject>>  StatesToCreate;
 };

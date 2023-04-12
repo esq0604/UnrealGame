@@ -1,6 +1,6 @@
   // Copyright Epic Games, Inc. All Rights Reserved.
 
-#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/Player/Public/CharacterBase.h"
 
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -9,7 +9,6 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
 #include "RetargetingTest/Component/Public/BasePlayerStatComponent.h"
 #include "RetargetingTest/Player/Public/CharaterAnimInstance.h"
 #include "Components/SceneComponent.h"
@@ -21,7 +20,6 @@
 #include "RetargetingTest/UI/Public/PlayerGauge.h"
 #include "GameplayTagContainer.h"
 #include "RetargetingTest/Object/Public/BaseStateObject.h"
-#include "RetargetingTest/Lib/GameTags.h"
 #include "RetargetingTest/Object/Public/ItemBase.h"
 #include "RetargetingTest/UI/Public/Inventory.h"
 #include "RetargetingTest/UI/Public/PlayerHUD.h"
@@ -29,11 +27,12 @@
 #include "RetargetingTest/UI/Public/Slot.h"
 #include "MotionWarpingComponent.h"
 #include "RetargetingTest/Component/Public/BaseAbilityManagerComponent.h"
-
+#include "RetargetingTest/Controller/public/MyPlayerController.h"
+#include "RetargetingTest/Weapon/public/BaseWeapon.h"
   //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
 
-ARetargetingTestCharacter::ARetargetingTestCharacter()
+ACharacterBase::ACharacterBase()
 	:AttackRange(200.0f) , AttackRadius(50.0f),MaxCombo(4),IsAttacking(false)
 {
 	PrimaryActorTick.bCanEverTick=true;
@@ -78,13 +77,15 @@ ARetargetingTestCharacter::ARetargetingTestCharacter()
 	
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
 	AbilityManagerComponent= CreateDefaultSubobject<UBaseAbilityManagerComponent>(TEXT("AbilityManagerComponent"));
+
+	//DefaultWeaponToSpawn=CreateDefaultSubobject<ABaseWeapon>(TEXT("DefaultWeapon"));
 }
 /**
  * 데미지 전달을 위한 함수입니다. 현재 상태가 Dodge State가 아니라면 데미지를 받습니다.
  * @param DamageAmount - 받는 데미지의 양 입니다.
  *
  */
-float ARetargetingTestCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
                                             AController* EventInstigator, AActor* DamageCauser)
 {
 	
@@ -103,7 +104,7 @@ float ARetargetingTestCharacter::TakeDamage(float DamageAmount, FDamageEvent con
  * 플레이어가 공격을 할 시 범위를 확인하기 위해 호출됩니다.
  * @warning  플레이어애님인스턴스의 몽타주애님 노티파이 델리게이트에 바인딩되어 있습니다.
  */
-void ARetargetingTestCharacter::AttackCheck()
+void ACharacterBase::AttackCheck()
 {
 	FHitResult HitResult;
 	FCollisionQueryParams Params(NAME_None,false,this);
@@ -153,16 +154,19 @@ void ARetargetingTestCharacter::AttackCheck()
 /**
  * 게임플레이의 시작 전 초기화 단계입니다.
  * 플레이어의 HP Widget Component의 초기화 후에 뷰포트에 노출해야 하기 때문에 BeginPlay에 작성하였습니다.
+ * Default Weapon을 생성하고, 초기화합니다.
+ * PlayerController를 초기화합니다.
  */
-void ARetargetingTestCharacter::BeginPlay()
+void ACharacterBase::BeginPlay()
 {
 	// Call the base class
 	Super::BeginPlay();
-	//Add Input Mapping Context
+	DefaultWeaponToSpawn=NewObject<ABaseWeapon>(this,DefaultWeaponToSpawnClass);
+	DefaultWeaponToSpawn->CreateWeaponStateAndAbility();
 	
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (AMyPlayerController* PlayerController = Cast<AMyPlayerController>(Controller))
 	{
-		
+		PlayerController->Init();
 		PlayerHUD = CreateWidget<UPlayerHUD>(PlayerController, PlayerHUDClass);
 		if(PlayerHUD != nullptr)
 		{
@@ -176,7 +180,7 @@ void ARetargetingTestCharacter::BeginPlay()
 /**
  * 현재 속도가 0이면 Idle 상태로 전환합니다. 
  */
-void ARetargetingTestCharacter::Tick(float DeltaSeconds)
+void ACharacterBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 }
@@ -184,22 +188,16 @@ void ARetargetingTestCharacter::Tick(float DeltaSeconds)
 /**
  * Sprint입력이 끝날때 호출되는 함수입니다. EndState를 통해 다른 상태로 바뀔 수 있습니다.
  */
-void ARetargetingTestCharacter::SprintEnd()
+void ACharacterBase::SprintEnd()
 {
-	if(StateManagerComponent->GetCurrentActiveState()!=nullptr)
-	{
-		if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Sprint"))
-		{
-			StateManagerComponent->GetCurrentActiveState()->EndState();
-		}
-	}
+
 }
 
 /**
  *	TODO: 게임의 플레이어 HUD관련부분은 게임모드클래스에서 관리해야합니다. 
  *	인벤토리 토글 입력에 대한 매핑 함수 입니다. I키를 통해 인벤토리를 열고 닫습니다.
  */
-void ARetargetingTestCharacter::ToggleInventory()
+void ACharacterBase::ToggleInventory()
 {
 	if(PlayerHUD!=nullptr)
 	{
@@ -211,7 +209,7 @@ void ARetargetingTestCharacter::ToggleInventory()
  *	TODO : 매번 전체 인벤토리를 Referesh하는건 비효율적입니다.
  *	현재 인터랙터블이 있는 경우 인터랙터블과 상호작용합니다.
  */
-void ARetargetingTestCharacter::Interact()
+void ACharacterBase::Interact()
 {
 	CheckForInteractalbe();
 	if(CurrentInteractable!=nullptr)
@@ -228,7 +226,7 @@ void ARetargetingTestCharacter::Interact()
  * 라인트레이스를 이용해 인터렉터블 아이템이 있는지 확인합니다.
  * 
  */
-void ARetargetingTestCharacter::CheckForInteractalbe()
+void ACharacterBase::CheckForInteractalbe()
 {
 	FVector StartTrace = GetActorLocation();
 	FVector EndTrace = GetActorLocation()+GetActorForwardVector()*200.0f;
@@ -266,7 +264,7 @@ void ARetargetingTestCharacter::CheckForInteractalbe()
  * QuickSlot은 1,2,3,4번순으로 슬롯이 지정되어 있어. num을 넘겨줘 해당 슬롯을 사용하도록합니다
  *
  */
-void ARetargetingTestCharacter::UseQuickSlot(int UsedSlotIdx)
+void ACharacterBase::UseQuickSlot(int UsedSlotIdx)
 {
 	PlayerHUD->GetQuickSlot()->Use(UsedSlotIdx-1);
 }
@@ -274,7 +272,7 @@ void ARetargetingTestCharacter::UseQuickSlot(int UsedSlotIdx)
 /**
  * @param Item - 인벤토리에 들어갈 아이템이 들어옵니다.
  */
-bool ARetargetingTestCharacter::AddItemToInventory(AItemBase* Item)
+bool ACharacterBase::AddItemToInventory(AItemBase* Item)
 {
 	if(Item!=nullptr)
 	{
@@ -292,12 +290,12 @@ bool ARetargetingTestCharacter::AddItemToInventory(AItemBase* Item)
 	return false;
 }
 
-AItemBase* ARetargetingTestCharacter::GetItemAtInventory(int32 Index)
+AItemBase* ACharacterBase::GetItemAtInventory(int32 Index)
 {
 	return Inventory[Index];
 }
 
-TArray<AItemBase*> ARetargetingTestCharacter::GetInventory() const
+TArray<AItemBase*> ACharacterBase::GetInventory() const
 {
 	return Inventory;
 }
@@ -307,25 +305,19 @@ TArray<AItemBase*> ARetargetingTestCharacter::GetInventory() const
  * 해당 로직의 문제점은 SprintState로 진입할 수 없을때에도 스태미나를 사용하는것 입니다.
  * 이를 올바르게 처리하기 위해선 Sprint State에서 로직을 처리하는것 입니다.
  */
-void ARetargetingTestCharacter::Sprint(const FInputActionValue& Value)
-{
-	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Sprint")));
-}
 
-UBasePlayerStatComponent* ARetargetingTestCharacter::GetStatComponent() const
+
+UBasePlayerStatComponent* ACharacterBase::GetStatComponent() const
 {
 	return StatComponent;
 }
 
-UBaseStateManagerComponent* ARetargetingTestCharacter::GetStateManagerComponent() const
-{
-	return StateManagerComponent;
-}
+
 /**
  * 슬롯에 있는 아이템의 썸네일을 반환합니다.
  * @param Slot - 인벤토리 슬롯의 인덱스가 들어옵니다.
  */
-UTexture2D* ARetargetingTestCharacter::GetThumnailAtInventorySlot(int32 Slot) const
+UTexture2D* ACharacterBase::GetThumnailAtInventorySlot(int32 Slot) const
 {
 	if(Inventory[Slot]!=nullptr)
 	{
@@ -337,7 +329,7 @@ UTexture2D* ARetargetingTestCharacter::GetThumnailAtInventorySlot(int32 Slot) co
  * 슬롯에 있는 아이템의 이름을 반환합니다.
  * @param Slot - 인벤토리 슬롯의 인덱스가 들어옵니다.
  */
-FString ARetargetingTestCharacter::GetItemNameAtInventorySlot(int32 Slot) const
+FString ACharacterBase::GetItemNameAtInventorySlot(int32 Slot) const
 {
 	if(Inventory[Slot]!=nullptr)
 	{
@@ -350,7 +342,7 @@ FString ARetargetingTestCharacter::GetItemNameAtInventorySlot(int32 Slot) const
  * 아이템의 레퍼런스 슬롯을 받아 저장한 뒤, 사용 후 슬롯을 갱신합니다. 이때 인벤토리는 레퍼런스 슬롯에 들어가있지 않기때문에 인벤토리도 갱신합니다.
  * @param Slot - 인벤토리 슬롯의 인덱스가 들어옵니다.
  */
-void ARetargetingTestCharacter::UseItemAtInventorySlot(int32 Slot)
+void ACharacterBase::UseItemAtInventorySlot(int32 Slot)
 {
 	if(Inventory[Slot] != nullptr && Slot!= -1)
 	{
@@ -390,7 +382,7 @@ void ARetargetingTestCharacter::UseItemAtInventorySlot(int32 Slot)
 	}
 }
 
-void ARetargetingTestCharacter::Attack(const FInputActionValue& Value)
+void ACharacterBase::Attack(const FInputActionValue& Value)
 {
 	if(IsAttacking)
 	{
@@ -415,14 +407,14 @@ void ARetargetingTestCharacter::Attack(const FInputActionValue& Value)
  * 캐릭터가 보유한 컴포넌트들의 초기화 시점입니다.애님인스턴스에서 선언한 델리게이트들을 바인딩합니다.
  * 델리게이트에 Lamda를 사용해 다음 공격에 대한 노티파이가 발생한다면 콤보공격을 시작하도록 합니다.
  */
-void ARetargetingTestCharacter::PostInitializeComponents()
+void ACharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	mAnimInstance = Cast<UCharaterAnimInstance>(GetMesh()->GetAnimInstance());
 	if(mAnimInstance != nullptr)
 	{
-		mAnimInstance->OnAttackHitCheck.AddUObject(this,&ARetargetingTestCharacter::AttackCheck);
-		mAnimInstance->OnMontageEnded.AddDynamic(this,&ARetargetingTestCharacter::OnAttackMontageEnded);
+		mAnimInstance->OnAttackHitCheck.AddUObject(this,&ACharacterBase::AttackCheck);
+		mAnimInstance->OnMontageEnded.AddDynamic(this,&ACharacterBase::OnAttackMontageEnded);
 		mAnimInstance->OnNextAttackHitCheck.AddLambda([this]()->void
 		{
 			CanNextCombo=false;
@@ -440,7 +432,7 @@ void ARetargetingTestCharacter::PostInitializeComponents()
 /**
  * 콤보 공격을 시작하기 위한 함수입니다.
  */
-void ARetargetingTestCharacter::AttackStartComboState()
+void ACharacterBase::AttackStartComboState()
 {
 	CanNextCombo=true;
 	IsComboInputOn=false;
@@ -450,7 +442,7 @@ void ARetargetingTestCharacter::AttackStartComboState()
 /**
  * 몽타주가 끝나면 콤보공격에 대한 상태들을 초기화합니다.
  */
-void ARetargetingTestCharacter::AttackEndComboState()
+void ACharacterBase::AttackEndComboState()
 {
 	CanNextCombo=false;
 	IsComboInputOn=false;
@@ -460,7 +452,7 @@ void ARetargetingTestCharacter::AttackEndComboState()
 /**
  * 몽타주가 끝나면 콤보공격에 대한 상태들을 초기화합니다.
  */
-void ARetargetingTestCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+void ACharacterBase::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	IsAttacking=false;
 	AttackEndComboState();
@@ -471,19 +463,9 @@ void ARetargetingTestCharacter::OnAttackMontageEnded(UAnimMontage* Montage, bool
  * Space키에 매핑된 함수입니다. Walk 상태라면 Dodge를, Sprint 상태라면 점프를 수행합니다.
  * 현재 Dodge 입력 매핑은 Blueprint로 되어있습니다.
  */
-void ARetargetingTestCharacter::JumpAndDodge()
+void ACharacterBase::JumpAndDodge()
 {
-	if(StateManagerComponent->GetCurrentActiveState()!=nullptr)
-	{
-		// if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Walk"))
-		// {
-		// 	//StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Dodge")));
-		// }
-		if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Sprint"))
-		{
-			ACharacter::Jump();
-		}
-	}
+
 }
 
 

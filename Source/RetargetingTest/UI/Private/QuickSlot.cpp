@@ -6,11 +6,11 @@
 #include "Blueprint/WidgetTree.h"
 #include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/UI/Public/Slot.h"
-#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/Player/Public/CharacterBase.h"
 
 void UQuickSlot::Init()
 {
-	Character=Cast<ARetargetingTestCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));Slots.Init(nullptr,MAX_QUICK_SLOT);
+	Character=Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));Slots.Init(nullptr,MAX_QUICK_SLOT);
 	TArray<UWidget*> widgets;
 	WidgetTree->GetAllWidgets(widgets);
 
@@ -41,7 +41,7 @@ void UQuickSlot::Use(int UsedSlotIdx)
 	Slots[UsedSlotIdx]->Action();
 }
 
-void UQuickSlot::SetCharacter(ARetargetingTestCharacter* NewCharacter)
+void UQuickSlot::SetCharacter(ACharacterBase* NewCharacter)
 {
 	Character=NewCharacter;
 }

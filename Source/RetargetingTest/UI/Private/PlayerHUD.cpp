@@ -43,7 +43,7 @@ UInventory* UPlayerHUD::GetInventory() const
 	return Inventory;
 }
 
-void UPlayerHUD::SetCharacter(ARetargetingTestCharacter* NewCharater)
+void UPlayerHUD::SetCharacter(ACharacterBase* NewCharater)
 {
 	Character = NewCharater;
 }

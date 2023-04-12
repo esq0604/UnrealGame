@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Slot.generated.h"
 
-class ARetargetingTestCharacter;
+class ACharacterBase;
 class UTextBlock;
 class UImage;
 
@@ -32,7 +32,7 @@ public:
 	void Init();
 
 	void SetType(ESlotType NewSlotType);
-	void SetCharacter(ARetargetingTestCharacter* NewCharacter);
+	void SetCharacter(ACharacterBase* NewCharacter);
 	void SetIndex(int32 NewIndex);
 	void SetImg(UTexture2D* NewImg);
 	void Action();
@@ -64,7 +64,7 @@ public:
 
 
 protected:
-	ARetargetingTestCharacter* Character;
+	ACharacterBase* Character;
 private:
 	ESlotType SlotType;
 

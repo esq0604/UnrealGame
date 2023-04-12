@@ -33,7 +33,8 @@ public:
 	void Interact(const FInputActionValue& Value);
 	void ToggleInventory(const FInputActionValue& Value);
 	void EquipUnEquip(const FInputActionValue& Value);
-
+	void Init();
+	UBaseStateManagerComponent* GetStateManagerComponent() const {return StateManagerComponent;}
 protected:
 	virtual void BeginPlay() override;
 private:

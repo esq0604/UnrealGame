@@ -8,9 +8,8 @@
 #include "GameFramework/Character.h"
 #include "RetargetingTest/Controller/public/InputDataAsset.h"
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
-#include "RetargetingTest/Lib/GameTags.h"
 #include "RetargetingTest/Object/Public/BaseStateObject.h"
-#include "RetargetingTest/Player/Public/RetargetingTestCharacter.h"
+#include "RetargetingTest/Player/Public/CharacterBase.h"
 
 AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -21,11 +20,8 @@ AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitial
 void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp,Warning,TEXT("BeginPlay"));
 
-	ARetargetingTestCharacter* NewCharacter=dynamic_cast<ARetargetingTestCharacter*>(GetCharacter());
-	StateManagerComponent->SetPerformingActor(NewCharacter);
-	StateManagerComponent->Init();
+
 }
 
 void AMyPlayerController::SetupInputComponent()
@@ -53,9 +49,11 @@ void AMyPlayerController::SetupInputComponent()
 
 void AMyPlayerController::Move(const FInputActionValue& Value)
 {
-
-	const FGameplayTag WalkTag=FGameplayTag::RequestGameplayTag("State.Walk");
-	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(WalkTag));
+	UE_LOG(LogTemp,Warning,TEXT("Move State : %s"),*FGameplayTag::RequestGameplayTag("State.Walk").ToString());
+	if(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Walk"))==nullptr)
+		UE_LOG(LogTemp,Warning,TEXT("Can't Load State by GamePlayTag"));
+	
+	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Walk")));
 
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	// find out which way is forward
@@ -76,11 +74,8 @@ void AMyPlayerController::Move(const FInputActionValue& Value)
 
 void AMyPlayerController::Sprint(const FInputActionValue& Value)
 {
-
-	const FGameplayTag SprintTag = GameTags::Get().State_Sprint;
-
-	//UE_LOG(LogTemp,Warning,TEXT("Sprint State Object : %s"),*StateManagerComponent->GetStateOfGameplayTag(SprintTag)->GetName());
-	StateManagerComponent->TryPerformStateOfClass(StateManagerComponent->GetStateOfGameplayTag(SprintTag)->GetClass(),true);
+	//const FGameplayTag SprintTag = FGameplayTag::RequestGameplayTag("State.Sprint");
+	//StateManagerComponent->TryPerformStateOfClass(StateManagerComponent->GetStateOfGameplayTag(SprintTag)->GetClass(),true);
 }
 
 void AMyPlayerController::SprintEnd(const FInputActionValue& Value)
@@ -97,6 +92,8 @@ void AMyPlayerController::SprintEnd(const FInputActionValue& Value)
 void AMyPlayerController::Attack(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp,Warning,TEXT("Attack"));
+	//StateManagerComponent->TryPerformStateOfClass(StateManagerComponent->GetStateOfGameplayTag(GameTags::Get().State_Attack)->GetClass(),true);
+
 }
 
 void AMyPlayerController::Look(const FInputActionValue& Value)
@@ -105,8 +102,11 @@ void AMyPlayerController::Look(const FInputActionValue& Value)
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 	
 	// add yaw and pitch input to controller
-	GetCharacter()->AddControllerYawInput(LookAxisVector.X);
-	GetCharacter()->AddControllerPitchInput(LookAxisVector.Y);
+	if(GetCharacter()!=nullptr)
+	{
+		GetCharacter()->AddControllerYawInput(LookAxisVector.X);
+		GetCharacter()->AddControllerPitchInput(LookAxisVector.Y);
+	}
 }
 
 void AMyPlayerController::JumpAndDodge(const FInputActionValue& Value)
@@ -135,6 +135,20 @@ void AMyPlayerController::EquipUnEquip(const FInputActionValue& Value)
 {
 	//State를 Equip으로 변경합니다.
 	//State를 UnEquip으로 변경합니다.
+}
+
+void AMyPlayerController::Init()
+{
+	ACharacterBase* NewCharacter=dynamic_cast<ACharacterBase*>(GetCharacter());
+	if(NewCharacter!=nullptr)
+	{
+		StateManagerComponent->SetPerformingActor(NewCharacter);
+		StateManagerComponent->StateManagerInit();
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Init : NewCharacter nullptr"));
+	}
 }
 
 
