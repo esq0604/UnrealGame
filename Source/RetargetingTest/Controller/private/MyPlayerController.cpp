@@ -8,7 +8,7 @@
 #include "GameFramework/Character.h"
 #include "RetargetingTest/Controller/public/InputDataAsset.h"
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
-#include "RetargetingTest/Object/Public/BaseStateObject.h"
+#include "RetargetingTest/State/Public/BaseStateObject.h"
 #include "RetargetingTest/Player/Public/CharacterBase.h"
 
 AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitializer)
@@ -49,11 +49,9 @@ void AMyPlayerController::SetupInputComponent()
 
 void AMyPlayerController::Move(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp,Warning,TEXT("Move State : %s"),*FGameplayTag::RequestGameplayTag("State.Walk").ToString());
-	if(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Walk"))==nullptr)
-		UE_LOG(LogTemp,Warning,TEXT("Can't Load State by GamePlayTag"));
-	
-	StateManagerComponent->SetCurrentActiveState(StateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Walk")));
+	const FGameplayTag LocalWalkTag=FGameplayTag::RequestGameplayTag("State.Walk");	
+	UBaseStateObject* LocalWalkState=StateManagerComponent->GetStateOfGameplayTag(LocalWalkTag);
+	StateManagerComponent->TryPerformStateOfClass(LocalWalkState->GetClass(),true);
 
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	// find out which way is forward
@@ -91,7 +89,6 @@ void AMyPlayerController::SprintEnd(const FInputActionValue& Value)
 
 void AMyPlayerController::Attack(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp,Warning,TEXT("Attack"));
 	//StateManagerComponent->TryPerformStateOfClass(StateManagerComponent->GetStateOfGameplayTag(GameTags::Get().State_Attack)->GetClass(),true);
 
 }
@@ -133,8 +130,18 @@ void AMyPlayerController::ToggleInventory(const FInputActionValue& Value)
 
 void AMyPlayerController::EquipUnEquip(const FInputActionValue& Value)
 {
-	//State를 Equip으로 변경합니다.
-	//State를 UnEquip으로 변경합니다.
+	UE_LOG(LogTemp,Warning,TEXT("Do Equip UnEquip"));
+	const FGameplayTag LocalEquipTag = FGameplayTag::RequestGameplayTag("State.Equip");
+	
+	UBaseStateObject* LocalEquipState=StateManagerComponent->GetStateOfGameplayTag(LocalEquipTag);
+
+	TSubclassOf<UBaseStateObject> LocalEquipStateClass=LocalEquipState->GetClass();
+	//TSubclassOf<UBaseStateObject> LocalUnEquipStateClass=StateManagerComponent->GetStateOfGameplayTag(LocalUnEquipTag)->GetClass();
+	//StatesToSet.AddUnique(LocalUnEquipStateClass);
+
+	TArray<TSubclassOf<UBaseStateObject>> StatesToSet;
+	StatesToSet.AddUnique(LocalEquipStateClass);
+	StateManagerComponent->TryPerformStatesOfClass(StatesToSet,true);
 }
 
 void AMyPlayerController::Init()

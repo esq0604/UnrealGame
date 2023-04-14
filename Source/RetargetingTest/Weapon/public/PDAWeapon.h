@@ -4,14 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "RetargetingTest/Object/Public/BaseStateObject.h"
+#include "RetargetingTest/State/Public/BaseStateObject.h"
 #include "PDAWeapon.generated.h"
 
-
+class UBaseAbilityObject;
 class UBaseStateObject;
+class UAnimMontage;
+
 /**
  * 
  */
+USTRUCT(BlueprintType)
+struct FAbilityMontage
+{
+	GENERATED_BODY()
+	UPROPERTY(EditAnywhere,Category="Abilities")
+	TSubclassOf<UBaseAbilityObject> Ability;
+	UPROPERTY(EditAnywhere,Category="Montage")
+	TArray<UAnimMontage*> ListOfMontage;
+};
+
 UCLASS()
 class RETARGETINGTEST_API UPDAWeapon : public UPrimaryDataAsset
 {
@@ -19,4 +31,9 @@ class RETARGETINGTEST_API UPDAWeapon : public UPrimaryDataAsset
 public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="States")
 	TArray<TSubclassOf<UBaseStateObject>>  StatesToCreate;
+
+	UPROPERTY(EditAnywhere,Category="Abilities")
+	TArray<FAbilityMontage> Abilities;
+
+
 };

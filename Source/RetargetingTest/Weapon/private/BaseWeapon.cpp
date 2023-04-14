@@ -2,10 +2,12 @@
 
 
 #include "RetargetingTest/Weapon/public/BaseWeapon.h"
+
+#include "RetargetingTest/Ability/public/BaseAbilityObject.h"
+#include "RetargetingTest/Component/Public/BaseAbilityManagerComponent.h"
 #include "RetargetingTest/Player/Public/CharacterBase.h"
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
 #include "RetargetingTest/Controller/public/MyPlayerController.h"
-#include "RetargetingTest/Object/Public/BaseStateObject.h"
 #include "RetargetingTest/Weapon/public/PDAWeapon.h"
 
 // Sets default values
@@ -35,15 +37,28 @@ void ABaseWeapon::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+UPDAWeapon* ABaseWeapon::GetWeaponDataAsset() const
+{
+	return WeaponDataAsset;
+}
+
 void ABaseWeapon::CreateWeaponStateAndAbility()
 {
 	AMyPlayerController* LocalController = dynamic_cast<AMyPlayerController*>(GetWorld()->GetFirstPlayerController());
 	{
-		for(int i=0; i<WeaponDataAsset->StatesToCreate.Num();i++)
+		for(TSubclassOf<UBaseStateObject> StateToCreate: WeaponDataAsset->StatesToCreate)
 		{
-			LocalController->GetStateManagerComponent()->ConstructStateOfClass(WeaponDataAsset->StatesToCreate[i]);
+			LocalController->GetStateManagerComponent()->ConstructStateOfClass(StateToCreate);
 			
 		}
 	}
+
+	ACharacterBase* LocalCharacterBase = dynamic_cast<ACharacterBase*>(LocalController->GetCharacter());
+	UBaseAbilityManagerComponent* LocalAbilityComponent = LocalCharacterBase->GetAbilityManagerComponent();
+	for(FAbilityMontage AbilityMontage : WeaponDataAsset->Abilities)
+	{
+		LocalAbilityComponent->ConstructAbilityOfClass(AbilityMontage.Ability);
+	}
+	
 }
 

@@ -53,7 +53,6 @@ float UBasePlayerStatComponent::GetCurrentStaminaPercent() const
 float UBasePlayerStatComponent::GetCalculateStaminaRatio(float ChangedStamina) const
 {
 	return (MaxHp < KINDA_SMALL_NUMBER) ? 0.0f : (ChangedStamina / MaxStamina); 
-
 }
 
 

@@ -7,12 +7,13 @@
 #include "UObject/Object.h"
 #include "BaseAbilityObject.generated.h"
 
+class UBaseAbilityManagerComponent;
 /**
  * 
  */
 class UAnimMontage;
 
-UCLASS()
+UCLASS(Blueprintable)
 class RETARGETINGTEST_API UBaseAbilityObject : public UObject
 {
 	GENERATED_BODY()
@@ -20,21 +21,32 @@ public:
 	UBaseAbilityObject();
 
 	/* Ability Setters */
-	UFUNCTION(BlueprintCallable, Category = "Ability Setters")
+	UFUNCTION(BlueprintCallable, Category = "Setters")
 	void SetActiveAbilityMontage(UAnimMontage* NewActiveMontage);
 	
-	UFUNCTION(BlueprintCallable, Category = "Ability Setters")
+	UFUNCTION(BlueprintCallable, Category = "Setters")
 	void SetPerformingActor(AActor* NewPerformingActor);
 	
+	UFUNCTION(BlueprintCallable, Category = "Setters")
+	void SetAbilityManagerComponent(UBaseAbilityManagerComponent* NewAbilityManagerComponent) {AbilityManagerComponent=NewAbilityManagerComponent;}
 
+	UFUNCTION(BlueprintCallable,Category="Base Function")
+	virtual void StartAbility();
+
+	UFUNCTION(BlueprintCallable,Category="Base Function")
+	virtual bool CanPerformAbility() ;
+
+	void PlayAbilityMontage(UAnimMontage* Montage);
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Ability Properties")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")
 	FGameplayTag AbilityGameplayTag;
 
 protected:
-	UPROPERTY(BlueprintReadWrite, Category = "Ability Properties")
+	UPROPERTY(BlueprintReadWrite, Category = "Properties")
 	UAnimMontage* ActiveAbilityMontage;
 
 	UPROPERTY()
 	AActor* PerformingActor;
+
+	UBaseAbilityManagerComponent* AbilityManagerComponent;
 };

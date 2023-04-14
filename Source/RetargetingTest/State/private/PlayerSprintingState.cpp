@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "RetargetingTest/Object/Public/PlayerSprintingState.h"
+#include "RetargetingTest/State/Public/PlayerSprintingState.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
 #include "RetargetingTest/Component/Public/BasePlayerStatComponent.h"

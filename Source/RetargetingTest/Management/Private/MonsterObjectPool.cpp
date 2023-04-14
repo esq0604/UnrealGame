@@ -63,7 +63,6 @@ ABaseMonster* UMonsterObjectPool::GetMonsterObject() const
 void UMonsterObjectPool::InputMonsterToPool(ABaseMonster* Monster)
 {
 	MonsterPool.Push(Monster);
-	UE_LOG(LogTemp,Warning,TEXT("%s"),*Monster->GetName())
 	if(MonsterPool.Num()==mPoolSize)
 	{
 		bIsPoolFull=true;

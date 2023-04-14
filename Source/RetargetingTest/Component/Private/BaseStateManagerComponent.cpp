@@ -2,8 +2,9 @@
 
 
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
-#include "RetargetingTest/Object/Public/BaseStateObject.h"
-#include "RetargetingTest/Object/Public/PlayerBlockState.h"
+
+#include "RetargetingTest/Player/Public/CharacterBase.h"
+#include "RetargetingTest/State/Public/BaseStateObject.h"
 
 
 // Sets default values for this component's properties
@@ -20,8 +21,7 @@ bool UBaseStateManagerComponent::TryPerformStateOfClass(TSubclassOf<UBaseStateOb
 	{
 		UBaseStateObject* LocalState = nullptr;
 		GetStateOfClass(StateToSet, LocalState);
-
-
+		
 		if (LocalState)
 		{
 
@@ -103,6 +103,23 @@ bool UBaseStateManagerComponent::TryPerformStateOfClass(TSubclassOf<UBaseStateOb
 	return false;
 }
 
+bool UBaseStateManagerComponent::TryPerformStatesOfClass(TArray<TSubclassOf<UBaseStateObject>> StateToSet, bool ConditionCheck)
+{
+	bool LocalBool = false;
+	for(int i=0; i<StateToSet.Num(); i++)
+	{
+		if(StateToSet[i])
+		{
+			LocalBool = TryPerformStateOfClass(StateToSet[i], ConditionCheck);
+			if(LocalBool)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 /**
  * 스테이트가 변경이 가능한지에 대한 bool 변수인 CanChangeState를 수정합니다.
  * @param canChange - true시 스테이트 변경이 가능합니다. false시 불가능합니다.
@@ -144,7 +161,6 @@ void UBaseStateManagerComponent::PerformStateOfClass(TSubclassOf<UBaseStateObjec
  */
 void UBaseStateManagerComponent::SetPerformingActor(AActor* NewPerformingActor)
 {
-	UE_LOG(LogTemp,Warning,TEXT("SetPerformingActor : %s"),*NewPerformingActor->GetName())
 	PerformingActor=NewPerformingActor;
 }
 
@@ -156,7 +172,6 @@ void UBaseStateManagerComponent::SetPerformingActor(AActor* NewPerformingActor)
  */
 void UBaseStateManagerComponent::SetCurrentActiveState(UBaseStateObject* NewCurrentActiveState)
 {
-	UE_LOG(LogTemp,Warning,TEXT("NewState %s"),*NewCurrentActiveState->GetGameplayTag().ToString());
 	if(CanChangeState)
 	{
 		if(CurrentActiveState!=nullptr)
@@ -168,7 +183,6 @@ void UBaseStateManagerComponent::SetCurrentActiveState(UBaseStateObject* NewCurr
 			if(NewCurrentActiveState->CanPerformState())
 			{
 				CurrentActiveState = NewCurrentActiveState;
-				UE_LOG(LogTemp,Warning,TEXT("CurrentActivState %s"),*CurrentActiveState->GetGameplayTag().ToString());
 				CurrentActiveState->StartState();
 			}
 		}
@@ -204,10 +218,11 @@ void UBaseStateManagerComponent::ConstructStateOfClass(TSubclassOf<UBaseStateObj
 {
 	if(StateToConstruct)
 	{
-		UBaseStateObject* LocalNewState;
-		LocalNewState = NewObject<UBaseStateObject>(GetOwner(),StateToConstruct);
+		const ACharacterBase* LocalCharacterBase=dynamic_cast<ACharacterBase*>(PerformingActor);
+		UBaseStateObject* LocalNewState = NewObject<UBaseStateObject>(GetOwner(),StateToConstruct);
 		LocalNewState->SetPerformingActor(PerformingActor);
 		LocalNewState->SetStateManagerComponent(this);
+		LocalNewState->SetAbilityManagerComponent(LocalCharacterBase->GetAbilityManagerComponent());
 		ActiveAbleStates.AddUnique(LocalNewState);
 	}
 }
@@ -222,7 +237,6 @@ UBaseStateObject* UBaseStateManagerComponent::GetStateOfGameplayTag(FGameplayTag
 	{
 		if(ActiveAbleStates[i])
 		{
-			UE_LOG(LogTemp,Warning,TEXT("%d ActiveAbleStates Tag :%s"),i,*ActiveAbleStates[i]->GetGameplayTag().ToString());
 			if(ActiveAbleStates[i]->GetGameplayTag()==StateGamePlayTag)
 			{
 				return ActiveAbleStates[i];
@@ -236,7 +250,6 @@ void UBaseStateManagerComponent::StateManagerInit()
 {
 	for(UBaseStateObject* state : ActiveAbleStates)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Each State SetPerfomingActor %s"),*PerformingActor->GetName());
 		state->SetPerformingActor(PerformingActor);
 		state->SetStateManagerComponent(this);
 	}

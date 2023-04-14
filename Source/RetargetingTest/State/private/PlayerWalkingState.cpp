@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "RetargetingTest/Object/Public/PlayerWalkingState.h"
+#include "RetargetingTest/State/Public/PlayerWalkingState.h"
 
 #include "Chaos/Island/IslandGraph.h"
 #include "GameFramework/PawnMovementComponent.h"
@@ -21,7 +21,6 @@ bool UPlayerWalkingState::CanPerformState()
 		if(PerformingCharacter->GetVelocity().Size()>150 && !PerformingCharacter->GetMovementComponent()->IsFalling())
 			return true;
 	}
-	UE_LOG(LogTemp,Warning,TEXT("Performing Actor nullptr"));
 	return false;
 }
 

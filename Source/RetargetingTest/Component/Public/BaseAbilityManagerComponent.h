@@ -7,6 +7,8 @@
 #include "BaseAbilityManagerComponent.generated.h"
 
 
+class UBaseStateObject;
+struct FGameplayTag;
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RETARGETINGTEST_API UBaseAbilityManagerComponent : public UActorComponent
 {
@@ -27,11 +29,26 @@ public:
 	/* Getters */
 	UFUNCTION(BlueprintCallable, Category = "Getters")
 	UBaseAbilityObject* GetCurrentActiveAbility();
-	
+
+	UFUNCTION(BlueprintCallable, Category = "Getters")
+	UBaseAbilityObject* GetAbilityOfGameplayTag(FGameplayTag AbilityGameplayTag);
+
+	UFUNCTION(BlueprintCallable ,Category = "Getters")
+	UBaseAbilityObject* GetAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToSearch);
+
+	UFUNCTION(BlueprintCallable,Category="Construction")
+	void ConstructAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToConstruct);
+
+	void PerformAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToSet);
+
+	bool TryPerformAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToSet, bool ConditionCheck);
 public:
 	UPROPERTY(VisibleAnywhere, Category = "Base Variables")
 	UBaseAbilityObject* CurrentActiveAbility;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Base Variables")
 	TArray<UBaseAbilityObject*> ActivatableAbilities;
+
+private:
+	UBaseAbilityManagerComponent* AbilityManager;
 };

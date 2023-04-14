@@ -32,6 +32,9 @@ public:
 	bool TryPerformStateOfClass(TSubclassOf<UBaseStateObject> StateToSet,bool ConditionCheck);
 
 	UFUNCTION(BlueprintCallable, Category = "Setters")
+	bool TryPerformStatesOfClass(TArray<TSubclassOf<UBaseStateObject>> StateToSet,bool ConditionCheck);
+	
+	UFUNCTION(BlueprintCallable, Category = "Setters")
 	void SetCanChangeState(bool canChange);
 protected:
 	// Called when the game starts
@@ -80,19 +83,4 @@ protected:
 
 private:
 	bool CanChangeState=true;
-
-	UPROPERTY()
-	UPlayerDodgeState* DodgeState;
-	UPROPERTY()
-	UPlayerIdleState* IdleState;
-	UPROPERTY()
-	UPlayerJumpingState* JumpingState;
-	UPROPERTY()
-	UPlayerSprintingState* SprintState;
-	UPROPERTY()
-	UPlayerWalkingState* WalkingState;
-	UPROPERTY()
-	UPlayerAttackState* AttackState;
-	UPROPERTY()
-	UPlayerBlockState* BlockState;
 };

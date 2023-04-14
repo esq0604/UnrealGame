@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseAbilityObject.h"
+#include "BasePlayerAbility.h"
 #include "UObject/Object.h"
 #include "PlayerEquipAbility.generated.h"
 
@@ -11,7 +11,17 @@
  * 
  */
 UCLASS()
-class RETARGETINGTEST_API UPlayerEquipAbility : public UBaseAbilityObject
+class RETARGETINGTEST_API UPlayerEquipAbility : public UBasePlayerAbility
 {
 	GENERATED_BODY()
+
+public:
+	UPlayerEquipAbility();
+public:
+	virtual void StartAbility() override;
+
+
+protected:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Montage")
+	UAnimMontage* EquipMontage;
 };

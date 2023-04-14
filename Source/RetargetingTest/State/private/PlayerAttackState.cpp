@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "RetargetingTest/Object/Public/PlayerAttackState.h"
+#include "RetargetingTest/State/Public/PlayerAttackState.h"
 
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
 

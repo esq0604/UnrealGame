@@ -7,6 +7,7 @@
 #include "UObject/Object.h"
 #include "PlayerEquipState.generated.h"
 
+class UBaseAbilityObject;
 /**
  * 
  */
@@ -14,5 +15,15 @@ UCLASS()
 class RETARGETINGTEST_API UPlayerEquipState : public UBasePlayerState
 {
 	GENERATED_BODY()
-	
+
+public:
+	UPlayerEquipState();
+
+	virtual void StartState() override;
+	virtual bool CanPerformState() override;
+	virtual void EndState() override;
+
+protected:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Ability")
+	TSubclassOf<UBaseAbilityObject> EquipAbility;
 };

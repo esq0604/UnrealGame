@@ -36,39 +36,50 @@ public:
 
 	UFUNCTION()
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
-
-	UFUNCTION()
-	void AttackCheck();
-	void AttackStartComboState();
-	void AttackEndComboState();
-
+	
 	UFUNCTION()
 	void OnAttackMontageEnded(class UAnimMontage* Montage, bool bInterrupted);
 
+	UFUNCTION(BlueprintCallable,Category="Inventory function")
+	void UseItemAtInventorySlot(int32 Slot);
 
 	/* Setter */
+	UFUNCTION(BlueprintCallable,Category="Setter")
 	void SetbCanbeDamaged(bool canBeDamage) {bCanDamaged=canBeDamage;}
+	
+	UFUNCTION(BlueprintCallable,Category="Setter")
+	bool AddItemToInventory(AItemBase* Item);
+	
 	/* Getter */
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable,Category="Getter")
+	TArray<AItemBase*> GetInventory() const;
+
+	UFUNCTION(BlueprintCallable,Category="Getter")
+	AItemBase* GetItemAtInventory(int32 Index);
+	
+	UFUNCTION(BlueprintCallable,Category="Getter")
+	UTexture2D* GetThumnailAtInventorySlot(int32 Slot) const;
+
+	UFUNCTION(BlueprintCallable,Category="Getter")
+	FString GetItemNameAtInventorySlot(int32 Slot) const;
+
+	UFUNCTION(BlueprintCallable,Category="Getter")
 	UBasePlayerStatComponent* GetStatComponent() const;
 	
-	UTexture2D* GetThumnailAtInventorySlot(int32 Slot) const;
-	FString GetItemNameAtInventorySlot(int32 Slot) const;
-	void UseItemAtInventorySlot(int32 Slot);
+	UFUNCTION(BlueprintCallable,Category="Getter")
+	UBaseAbilityManagerComponent* GetAbilityManagerComponent() const;
 
-	UFUNCTION(BlueprintPure,Category="Inventory function")
-	bool AddItemToInventory(AItemBase* Item);
-	AItemBase* GetItemAtInventory(int32 Index);
-	TArray<AItemBase*> GetInventory() const;
+	UFUNCTION(BlueprintCallable,Category="Getter")
+	ABaseWeapon* GetEquipedWeapon() const;
 
 protected:
 
 	//Input Action Bind Action 
 	void Sprint(const FInputActionValue& Value);
-	void Attack(const FInputActionValue& Value);
+
 	
 	UFUNCTION(BlueprintCallable)
 	void JumpAndDodge();
@@ -78,7 +89,15 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
-	
+
+	UFUNCTION(BlueprintCallable,Category="Attack Function")
+	void Attack(const FInputActionValue& Value);
+	UFUNCTION(BlueprintCallable,Category="Attack Function")
+	void AttackCheck();
+	UFUNCTION(BlueprintCallable,Category="Attack Function")
+	void AttackStartComboState();
+	UFUNCTION(BlueprintCallable,Category="Attack Function")
+	void AttackEndComboState();
 	
 private:
 	void SprintEnd();
@@ -113,10 +132,10 @@ protected:
 	UPlayerHUD* PlayerHUD;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon")
-	TSubclassOf<ABaseWeapon> DefaultWeaponToSpawnClass;
+	TSubclassOf<ABaseWeapon> EquipedWeaponClass;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon")
-	ABaseWeapon* DefaultWeaponToSpawn;
+	ABaseWeapon* EquipedWeapon;
 private:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

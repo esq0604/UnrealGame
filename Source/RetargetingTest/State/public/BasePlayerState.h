@@ -13,5 +13,7 @@ UCLASS()
 class RETARGETINGTEST_API UBasePlayerState : public UBaseStateObject
 {
 	GENERATED_BODY()
+
+public:
 	
 };

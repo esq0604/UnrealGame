@@ -19,7 +19,6 @@
 #include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
 #include "RetargetingTest/UI/Public/PlayerGauge.h"
 #include "GameplayTagContainer.h"
-#include "RetargetingTest/Object/Public/BaseStateObject.h"
 #include "RetargetingTest/Object/Public/ItemBase.h"
 #include "RetargetingTest/UI/Public/Inventory.h"
 #include "RetargetingTest/UI/Public/PlayerHUD.h"
@@ -161,9 +160,6 @@ void ACharacterBase::BeginPlay()
 {
 	// Call the base class
 	Super::BeginPlay();
-	DefaultWeaponToSpawn=NewObject<ABaseWeapon>(this,DefaultWeaponToSpawnClass);
-	DefaultWeaponToSpawn->CreateWeaponStateAndAbility();
-	
 	if (AMyPlayerController* PlayerController = Cast<AMyPlayerController>(Controller))
 	{
 		PlayerController->Init();
@@ -175,6 +171,11 @@ void ACharacterBase::BeginPlay()
 			PlayerHUD->AddToViewport();
 		}
 	}
+	
+	EquipedWeapon=NewObject<ABaseWeapon>(this,EquipedWeaponClass);
+	EquipedWeapon->CreateWeaponStateAndAbility();
+	
+
 }
 
 /**
@@ -312,8 +313,18 @@ UBasePlayerStatComponent* ACharacterBase::GetStatComponent() const
 	return StatComponent;
 }
 
+  UBaseAbilityManagerComponent* ACharacterBase::GetAbilityManagerComponent() const
+  {
+	return AbilityManagerComponent;
+  }
 
-/**
+  ABaseWeapon* ACharacterBase::GetEquipedWeapon() const
+  {
+	return EquipedWeapon;
+  }
+
+
+  /**
  * 슬롯에 있는 아이템의 썸네일을 반환합니다.
  * @param Slot - 인벤토리 슬롯의 인덱스가 들어옵니다.
  */
