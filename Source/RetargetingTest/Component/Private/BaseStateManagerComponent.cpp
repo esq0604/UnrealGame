@@ -31,15 +31,14 @@ bool UBaseStateManagerComponent::TryPerformStateOfClass(TSubclassOf<UBaseStateOb
 				{
 					if (CurrentActiveState)
 					{
-
 						CurrentActiveState->EndState();
-
 					}
 
 					//LocalState->PrepareStateValues();
 					CurrentActiveState = LocalState;
 					CurrentActiveState->StartState();
 					//OnUpdatedActiveState.Broadcast();
+					UE_LOG(LogTemp,Warning,TEXT("LocalState CondictionCheck true , eturn true"));
 					return true;
 				}
 			}
@@ -56,7 +55,7 @@ bool UBaseStateManagerComponent::TryPerformStateOfClass(TSubclassOf<UBaseStateOb
 				//OnUpdatedActiveState.Broadcast();
 				return true;
 			}
-
+			UE_LOG(LogTemp,Warning,TEXT("LocalState CondictionCheck true, return false"));
 			return false;
 		}
 		else
@@ -74,14 +73,13 @@ bool UBaseStateManagerComponent::TryPerformStateOfClass(TSubclassOf<UBaseStateOb
 
 					}
 
-					//LocalState->PrepareStateValues();
+					//       LocalState->PrepareStateValues();
 					CurrentActiveState = LocalState;
 					CurrentActiveState->StartState();
 					//OnUpdatedActiveState.Broadcast();
+					UE_LOG(LogTemp,Warning,TEXT("LocalState null CondictionCheck true, return false"));
 					return true;
 				}
-
-
 			}
 			else
 			{
@@ -96,10 +94,12 @@ bool UBaseStateManagerComponent::TryPerformStateOfClass(TSubclassOf<UBaseStateOb
 				CurrentActiveState = LocalState;
 				CurrentActiveState->StartState();
 				//OnUpdatedActiveState.Broadcast();
+				UE_LOG(LogTemp,Warning,TEXT("LocalState null CondictionCheck false, return true"));
 				return true;
 			}
 		}
 	}
+	UE_LOG(LogTemp,Warning,TEXT("End of Function, return false"));
 	return false;
 }
 
@@ -172,21 +172,7 @@ void UBaseStateManagerComponent::SetPerformingActor(AActor* NewPerformingActor)
  */
 void UBaseStateManagerComponent::SetCurrentActiveState(UBaseStateObject* NewCurrentActiveState)
 {
-	if(CanChangeState)
-	{
-		if(CurrentActiveState!=nullptr)
-		{
-			CurrentActiveState->EndState();
-		}
-		if(NewCurrentActiveState!=nullptr)
-		{
-			if(NewCurrentActiveState->CanPerformState())
-			{
-				CurrentActiveState = NewCurrentActiveState;
-				CurrentActiveState->StartState();
-			}
-		}
-	}
+	CurrentActiveState = NewCurrentActiveState; 
 }
 
 UBaseStateObject* UBaseStateManagerComponent::GetCurrentActiveState() const

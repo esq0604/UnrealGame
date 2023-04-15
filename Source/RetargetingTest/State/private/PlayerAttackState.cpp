@@ -13,6 +13,8 @@ UPlayerAttackState::UPlayerAttackState()
 
 bool UPlayerAttackState::CanPerformState()
 {
+	UE_LOG(LogTemp,Warning,TEXT("AttackState CanPerform State"));
+
 	return CheckAbilitesToRun(AttackAbilites);
 }
 
@@ -22,6 +24,7 @@ void UPlayerAttackState::StartState()
 
 	for(TSubclassOf<UBaseAbilityObject> AttackAbility : AttackAbilites)
 	{
+		UE_LOG(LogTemp,Warning,TEXT("AttackState Start State"));
 		SetSelectedAbility(AttackAbility);
 		AbilityManagerComponent->PerformAbilityOfClass(GetSeletedAbility());
 	}

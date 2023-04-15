@@ -20,6 +20,7 @@ struct FAbilityMontage
 	GENERATED_BODY()
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Abilities")
 	TSubclassOf<UBaseAbilityObject> Ability;
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Montage")
 	TArray<UAnimMontage*> ListOfMontage;
 };
@@ -34,6 +35,4 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Abilities")
 	TArray<FAbilityMontage> Abilities;
-
-
 };

@@ -5,6 +5,7 @@
 
 #include "RetargetingTest/Ability/public/BaseAbilityObject.h"
 #include "RetargetingTest/Component/Public/BaseAbilityManagerComponent.h"
+#include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
 #include "RetargetingTest/Player/Public/CharacterBase.h"
 
 
@@ -27,7 +28,7 @@ void UBaseStateObject::TickState()
 
 void UBaseStateObject::EndState()
 {
-
+	StateManagerComponent->SetCurrentActiveState(nullptr);
 }
 
 /**
@@ -36,24 +37,23 @@ void UBaseStateObject::EndState()
  */
 bool UBaseStateObject::CheckAbilitesToRun(TArray<TSubclassOf<UBaseAbilityObject>> AbilitiesToCheck)
 {
-	ACharacterBase* LocalCharacter = dynamic_cast<ACharacterBase*>(PerformingActor);
-	UBaseAbilityManagerComponent* LocalAbilityManagerComponent=LocalCharacter->GetAbilityManagerComponent();
-
-	if(LocalAbilityManagerComponent !=nullptr)
+	if(AbilityManagerComponent !=nullptr)
 	{
 		for(TSubclassOf<UBaseAbilityObject> Ability : AbilitiesToCheck)
 		{
-			if(Ability==nullptr)
-				UE_LOG(LogTemp,Warning,TEXT("Ability nullptr"));
-			SelectedAbilityToTrigger=Ability;
-			if(LocalAbilityManagerComponent->GetAbilityOfClass(Ability))
+			if(AbilityManagerComponent->GetCanPerformAbilityOfClass(Ability))
 			{
-				UE_LOG(LogTemp,Warning,TEXT("Check Ability To Run Return True"));
-				return true;
+				SelectedAbilityToTrigger=Ability;
+				if(AbilityManagerComponent->GetAbilityOfClass(Ability))
+				{
+					return true;
+				}
+				
+				return false;
 			}
 		}
+		return false;
 	}
-	UE_LOG(LogTemp,Warning,TEXT("Check Ability To Run Return False"));
 	return false;
 }
 

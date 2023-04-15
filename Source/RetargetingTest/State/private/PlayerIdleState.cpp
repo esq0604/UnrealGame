@@ -8,14 +8,15 @@
 UPlayerIdleState::UPlayerIdleState()
 {
 	StateGameplayTag.FromExportString("State.Idle");
-
 }
 
+/**
+ * Idle State의 진입 조건입니다.
+ */
 bool UPlayerIdleState::CanPerformState()
 {
-	//Idle 스테이트를 위한 진입조건을 설정합니다.
-	//떨어지는 상태가 아니고, 속도가 0일때.
 	if(PerformingActor->GetVelocity()==FVector::ZeroVector)
 		return true;
-	return Super::CanPerformState();
+	
+	return false;
 }

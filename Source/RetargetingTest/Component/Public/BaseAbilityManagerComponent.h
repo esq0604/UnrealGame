@@ -36,8 +36,11 @@ public:
 	UFUNCTION(BlueprintCallable ,Category = "Getters")
 	UBaseAbilityObject* GetAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToSearch);
 
+	UFUNCTION(BlueprintCallable)
+	bool GetCanPerformAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToSearch);
+	
 	UFUNCTION(BlueprintCallable,Category="Construction")
-	void ConstructAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToConstruct);
+	UBaseAbilityObject* ConstructAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToConstruct);
 
 	void PerformAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToSet);
 

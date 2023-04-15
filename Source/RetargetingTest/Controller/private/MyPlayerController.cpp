@@ -20,8 +20,6 @@ AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitial
 void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
-
 }
 
 void AMyPlayerController::SetupInputComponent()
@@ -37,7 +35,7 @@ void AMyPlayerController::SetupInputComponent()
 	EnhancedInputComp->BindAction(InputAction->InputMove,ETriggerEvent::Triggered,this,&AMyPlayerController::Move);
 	EnhancedInputComp->BindAction(InputAction->InputSprint,ETriggerEvent::Triggered,this,&AMyPlayerController::Sprint);
 	EnhancedInputComp->BindAction(InputAction->InputSprint,ETriggerEvent::Completed,this,&AMyPlayerController::SprintEnd);
-	EnhancedInputComp->BindAction(InputAction->InputAttack,ETriggerEvent::Triggered,this,&AMyPlayerController::Attack);
+	EnhancedInputComp->BindAction(InputAction->InputAttack,ETriggerEvent::Started,this,&AMyPlayerController::Attack);
 	EnhancedInputComp->BindAction(InputAction->InputLook,ETriggerEvent::Triggered,this,&AMyPlayerController::Look);
 	EnhancedInputComp->BindAction(InputAction->InputJumpAndDodge,ETriggerEvent::Triggered,this,&AMyPlayerController::JumpAndDodge);
 	EnhancedInputComp->BindAction(InputAction->InputJumpAndDodge,ETriggerEvent::Completed,this,&AMyPlayerController::JumpStop);
@@ -86,13 +84,26 @@ void AMyPlayerController::SprintEnd(const FInputActionValue& Value)
 		}
 	}
 }
-
+/**
+ * TODO: 해당 함수에서 IsEquipWeapon 변수를 사용하지 않도록 상태시스템을 수정해야합니다.
+ * 
+ */
 void AMyPlayerController::Attack(const FInputActionValue& Value)
 {
 	const FGameplayTag AttackStateTag = FGameplayTag::RequestGameplayTag("State.Attack");
-	const UBaseStateObject* LocalAttackState=StateManagerComponent->GetStateOfGameplayTag(AttackStateTag);
-	StateManagerComponent->TryPerformStateOfClass(LocalAttackState->GetClass(),true);
+	const FGameplayTag EquipStateTag = FGameplayTag::RequestGameplayTag("State.Equip");
+	const UBaseStateObject* LocalAttackState = StateManagerComponent->GetStateOfGameplayTag(AttackStateTag);
+	const UBaseStateObject* LocalEquipState = StateManagerComponent->GetStateOfGameplayTag(EquipStateTag);
 
+	if(!IsEquipWeapon)
+	{
+		StateManagerComponent->TryPerformStateOfClass(LocalEquipState->GetClass(),true);
+		IsEquipWeapon=true;
+	}
+	if(IsEquipWeapon)
+	{
+		StateManagerComponent->TryPerformStateOfClass(LocalAttackState->GetClass(),true);
+	}
 }
 
 void AMyPlayerController::Look(const FInputActionValue& Value)
@@ -127,7 +138,6 @@ void AMyPlayerController::Interact(const FInputActionValue& Value)
 void AMyPlayerController::ToggleInventory(const FInputActionValue& Value)
 {
 	UE_LOG(LogTemp,Warning,TEXT("Toggle Inventory"));
-
 }
 
 void AMyPlayerController::EquipUnEquip(const FInputActionValue& Value)

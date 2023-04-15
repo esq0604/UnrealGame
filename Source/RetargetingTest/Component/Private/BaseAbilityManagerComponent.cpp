@@ -76,7 +76,28 @@ UBaseAbilityObject* UBaseAbilityManagerComponent::GetAbilityOfClass(TSubclassOf<
 	return nullptr;
 }
 
-void UBaseAbilityManagerComponent::ConstructAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToConstruct)
+bool UBaseAbilityManagerComponent::GetCanPerformAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToSearch)
+{
+	
+	if (AbilityToSearch)
+	{
+
+		UBaseAbilityObject* LocalAbility = GetAbilityOfClass(AbilityToSearch);
+
+		if (LocalAbility)
+		{
+			return LocalAbility->CanPerformAbility();
+		}
+		else
+		{
+			UBaseAbilityObject* LocalNewAbility=ConstructAbilityOfClass(AbilityToSearch);
+			return LocalNewAbility->CanPerformAbility();
+		}
+	}
+	return false;
+}
+
+UBaseAbilityObject* UBaseAbilityManagerComponent::ConstructAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToConstruct)
 {
 	if (AbilityToConstruct)
 	{
@@ -87,7 +108,10 @@ void UBaseAbilityManagerComponent::ConstructAbilityOfClass(TSubclassOf<UBaseAbil
 		LocalNewAbility->SetPerformingActor(GetOwner());
 		LocalNewAbility->SetAbilityManagerComponent(this);
 		LocalNewAbility->SetStateManagerComponent(LocalController->GetStateManagerComponent());
+		return LocalNewAbility;
 	}
+
+	return nullptr;
 }
 
 void UBaseAbilityManagerComponent::PerformAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToSet)

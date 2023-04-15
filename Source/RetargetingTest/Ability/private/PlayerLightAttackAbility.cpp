@@ -32,11 +32,13 @@ bool UPlayerLightAttackAbility::CanPerformAbility()
 		const FGameplayTag IdleStateTag = FGameplayTag::RequestGameplayTag("State.Idle");
 		const FGameplayTag SprintStateTag = FGameplayTag::RequestGameplayTag("State.Sprint");
 		const FGameplayTag WalkStateTag = FGameplayTag::RequestGameplayTag("State.Walk");
-		const FGameplayTag CurrentStateTag =StateManagerComponent->GetCurrentActiveState()->GetGameplayTag();
-		if(CurrentStateTag==IdleStateTag || CurrentStateTag==SprintStateTag || CurrentStateTag == WalkStateTag)
+		if(StateManagerComponent->GetCurrentActiveState())
 		{
-			StartAbility();
-			return true;
+			const FGameplayTag CurrentStateTag =StateManagerComponent->GetCurrentActiveState()->GetGameplayTag();
+			if(CurrentStateTag==IdleStateTag || CurrentStateTag==SprintStateTag || CurrentStateTag == WalkStateTag)
+			{
+				return true;
+			}
 		}
 	}
 	return false;

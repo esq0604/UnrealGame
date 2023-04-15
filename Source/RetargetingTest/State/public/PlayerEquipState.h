@@ -22,8 +22,10 @@ public:
 	virtual void StartState() override;
 	virtual bool CanPerformState() override;
 	virtual void EndState() override;
+	bool IsEquipWeapon= false;
 
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Ability")
 	TSubclassOf<UBaseAbilityObject> EquipAbility;
+
 };

@@ -3,6 +3,9 @@
 
 #include "RetargetingTest/Ability/Public/PlayerEquipAbility.h"
 
+#include "RetargetingTest/Component/Public/BaseStateManagerComponent.h"
+#include "RetargetingTest/State/Public/BaseStateObject.h"
+
 UPlayerEquipAbility::UPlayerEquipAbility()
 {
 }
@@ -22,4 +25,23 @@ void UPlayerEquipAbility::StartAbility()
 	{
 		PlayAbilityMontage(EquipMontage);
 	}
+}
+
+bool UPlayerEquipAbility::CanPerformAbility()
+{
+	if(StateManagerComponent->GetCurrentActiveState())
+	{
+		const FGameplayTag IdleStateTag = FGameplayTag::RequestGameplayTag("State.Idle");
+		const FGameplayTag SprintStateTag = FGameplayTag::RequestGameplayTag("State.Sprint");
+		const FGameplayTag WalkStateTag = FGameplayTag::RequestGameplayTag("State.Walk");
+		const FGameplayTag CurrentStateTag =StateManagerComponent->GetCurrentActiveState()->GetGameplayTag();
+		
+		const bool CanPerform=CurrentStateTag==IdleStateTag || CurrentStateTag==SprintStateTag || CurrentStateTag == WalkStateTag;
+
+		if(CanPerform && GetAbilityMontage(GetClass()).Num()>0)
+		{
+			return true;
+		}
+	}
+	return false;
 }
