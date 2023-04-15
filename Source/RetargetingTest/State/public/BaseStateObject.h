@@ -41,7 +41,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool CheckAbilitesToRun(TArray<TSubclassOf<UBaseAbilityObject>> AbilitiesToCheck);
-
 	
 	void SetStateManagerComponent(UBaseStateManagerComponent* NewStateManagerComponent) {StateManagerComponent=NewStateManagerComponent;}
 
@@ -55,6 +54,9 @@ public:
 	
 	void SetGameplayTag(const FGameplayTag& GameplayTag);
 
+	void SetSelectedAbility(TSubclassOf<UBaseAbilityObject> SelectedAbility) {SelectedAbilityToTrigger = SelectedAbility;}
+
+	TSubclassOf<UBaseAbilityObject> GetSeletedAbility() const {return SelectedAbilityToTrigger;} 
 protected:
 	UFUNCTION(BlueprintCallable,Category="Getter")
 	AActor* GetPerformingActor() const {return PerformingActor;}
@@ -72,6 +74,6 @@ protected:
 
 	bool HasTickState;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+private:
 	TSubclassOf<UBaseAbilityObject> SelectedAbilityToTrigger;
 };

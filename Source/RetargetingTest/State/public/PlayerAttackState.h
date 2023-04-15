@@ -17,4 +17,10 @@ public:
 	UPlayerAttackState();
 
 	virtual bool CanPerformState() override;
+
+	virtual void StartState() override;
+
+protected:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="Abilites")
+	TArray<TSubclassOf<UBaseAbilityObject>> AttackAbilites;
 };

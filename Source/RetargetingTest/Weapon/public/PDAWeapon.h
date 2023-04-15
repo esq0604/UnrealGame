@@ -18,9 +18,9 @@ USTRUCT(BlueprintType)
 struct FAbilityMontage
 {
 	GENERATED_BODY()
-	UPROPERTY(EditAnywhere,Category="Abilities")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Abilities")
 	TSubclassOf<UBaseAbilityObject> Ability;
-	UPROPERTY(EditAnywhere,Category="Montage")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Montage")
 	TArray<UAnimMontage*> ListOfMontage;
 };
 
@@ -32,7 +32,7 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="States")
 	TArray<TSubclassOf<UBaseStateObject>>  StatesToCreate;
 
-	UPROPERTY(EditAnywhere,Category="Abilities")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Abilities")
 	TArray<FAbilityMontage> Abilities;
 
 

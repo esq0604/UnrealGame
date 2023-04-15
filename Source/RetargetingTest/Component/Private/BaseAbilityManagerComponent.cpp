@@ -5,6 +5,7 @@
 
 #include "GameplayTagContainer.h"
 #include "RetargetingTest/Ability/Public/BaseAbilityObject.h"
+#include "RetargetingTest/Controller/public/MyPlayerController.h"
 
 
 // Sets default values for this component's properties
@@ -79,11 +80,13 @@ void UBaseAbilityManagerComponent::ConstructAbilityOfClass(TSubclassOf<UBaseAbil
 {
 	if (AbilityToConstruct)
 	{
+		AMyPlayerController* LocalController=dynamic_cast<AMyPlayerController*>(GetWorld()->GetFirstPlayerController());
 		UBaseAbilityObject* LocalNewAbility;
 		LocalNewAbility = NewObject<UBaseAbilityObject>(GetOwner(), AbilityToConstruct);
 		ActivatableAbilities.AddUnique(LocalNewAbility);
 		LocalNewAbility->SetPerformingActor(GetOwner());
 		LocalNewAbility->SetAbilityManagerComponent(this);
+		LocalNewAbility->SetStateManagerComponent(LocalController->GetStateManagerComponent());
 	}
 }
 

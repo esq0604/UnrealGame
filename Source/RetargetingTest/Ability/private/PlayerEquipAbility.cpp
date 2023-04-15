@@ -13,10 +13,10 @@ void UPlayerEquipAbility::StartAbility()
 	UE_LOG(LogTemp,Warning,TEXT("UPlayerEquipAbility::StartAbility"));
 	if(EquipMontage==nullptr)
 	{
-		TArray<UAnimMontage*> LocalMontage=GetAbilityMontage(this->GetClass());
-		const int32 LocalMontageSize = LocalMontage.Num();
+		TArray<UAnimMontage*> LocalMontageList=GetAbilityMontage(this->GetClass());
+		const int32 LocalMontageSize = LocalMontageList.Num();
 		const int32 RandomIdx=FMath::RandRange(0,LocalMontageSize-1);
-		PlayAbilityMontage(LocalMontage[RandomIdx]);
+		PlayAbilityMontage(LocalMontageList[RandomIdx]);
 	}
 	else
 	{

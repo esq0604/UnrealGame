@@ -7,6 +7,7 @@
 #include "UObject/Object.h"
 #include "BaseAbilityObject.generated.h"
 
+class UBaseStateManagerComponent;
 class UBaseAbilityManagerComponent;
 /**
  * 
@@ -30,6 +31,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Setters")
 	void SetAbilityManagerComponent(UBaseAbilityManagerComponent* NewAbilityManagerComponent) {AbilityManagerComponent=NewAbilityManagerComponent;}
 
+	UFUNCTION(BlueprintCallable, Category = "Setters")
+	void SetStateManagerComponent(UBaseStateManagerComponent* NewStateManagerComponent) {StateManagerComponent=NewStateManagerComponent;} 
 	UFUNCTION(BlueprintCallable,Category="Base Function")
 	virtual void StartAbility();
 
@@ -49,4 +52,5 @@ protected:
 	AActor* PerformingActor;
 
 	UBaseAbilityManagerComponent* AbilityManagerComponent;
+	UBaseStateManagerComponent* StateManagerComponent;
 };

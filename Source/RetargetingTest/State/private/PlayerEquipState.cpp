@@ -13,7 +13,7 @@ UPlayerEquipState::UPlayerEquipState()
 void UPlayerEquipState::StartState()
 {
 	Super::StartState();
-	AbilityManagerComponent->PerformAbilityOfClass(SelectedAbilityToTrigger);
+	AbilityManagerComponent->PerformAbilityOfClass(GetSeletedAbility());
 }
 
 bool UPlayerEquipState::CanPerformState()

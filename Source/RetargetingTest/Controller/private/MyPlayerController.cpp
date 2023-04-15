@@ -89,7 +89,9 @@ void AMyPlayerController::SprintEnd(const FInputActionValue& Value)
 
 void AMyPlayerController::Attack(const FInputActionValue& Value)
 {
-	//StateManagerComponent->TryPerformStateOfClass(StateManagerComponent->GetStateOfGameplayTag(GameTags::Get().State_Attack)->GetClass(),true);
+	const FGameplayTag AttackStateTag = FGameplayTag::RequestGameplayTag("State.Attack");
+	const UBaseStateObject* LocalAttackState=StateManagerComponent->GetStateOfGameplayTag(AttackStateTag);
+	StateManagerComponent->TryPerformStateOfClass(LocalAttackState->GetClass(),true);
 
 }
 
