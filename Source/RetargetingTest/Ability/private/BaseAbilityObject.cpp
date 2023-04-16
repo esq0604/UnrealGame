@@ -3,6 +3,7 @@
 
 #include "RetargetingTest/Ability/public/BaseAbilityObject.h"
 
+#include "RetargetingTest/Component/Public/BaseAbilityManagerComponent.h"
 #include "RetargetingTest/Player/Public/CharacterBase.h"
 
 UBaseAbilityObject::UBaseAbilityObject()
@@ -22,12 +23,20 @@ void UBaseAbilityObject::SetPerformingActor(AActor* NewPerformingActor)
 
 void UBaseAbilityObject::StartAbility()
 {
+	AbilityManagerComponent->SetCurrentActiveAbility(this);
 }
 
 bool UBaseAbilityObject::CanPerformAbility()
 {
 	return true;
 }
+
+void UBaseAbilityObject::EndAbility()
+{
+	UE_LOG(LogTemp,Warning,TEXT("BaseAbility EndAbility"));
+
+}
+
 
 void UBaseAbilityObject::PlayAbilityMontage(UAnimMontage* MontageToPlay)
 {

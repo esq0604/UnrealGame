@@ -39,6 +39,10 @@ public:
 	UFUNCTION(BlueprintCallable,Category="Base Function")
 	virtual bool CanPerformAbility() ;
 
+	UFUNCTION(BlueprintCallable,Category="Base Function")
+	virtual void EndAbility();
+
+	UFUNCTION(BlueprintCallable,Category="Base Function")
 	void PlayAbilityMontage(UAnimMontage* Montage);
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Properties")

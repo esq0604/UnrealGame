@@ -8,12 +8,12 @@
 
 UPlayerEquipAbility::UPlayerEquipAbility()
 {
+	AbilityGameplayTag.FromExportString("Ability.Equip");
 }
 
 void UPlayerEquipAbility::StartAbility()
 {
 	Super::StartAbility();
-	UE_LOG(LogTemp,Warning,TEXT("UPlayerEquipAbility::StartAbility"));
 	if(EquipMontage==nullptr)
 	{
 		TArray<UAnimMontage*> LocalMontageList=GetAbilityMontage(this->GetClass());
@@ -44,4 +44,12 @@ bool UPlayerEquipAbility::CanPerformAbility()
 		}
 	}
 	return false;
+}
+
+void UPlayerEquipAbility::EndAbility()
+{
+	Super::EndAbility();
+	const FGameplayTag IdleStateTag = FGameplayTag::RequestGameplayTag("State.Idle");
+	const UBaseStateObject* LocalIdleState=StateManagerComponent->GetStateOfGameplayTag(IdleStateTag);
+	StateManagerComponent->PerformStateOfClass(LocalIdleState->GetClass());
 }

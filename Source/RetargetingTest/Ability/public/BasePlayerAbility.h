@@ -17,7 +17,8 @@ class RETARGETINGTEST_API UBasePlayerAbility : public UBaseAbilityObject
 
 public:
 	UBasePlayerAbility();
-	
+
+	virtual void EndAbility() override;
 protected:
 	UFUNCTION(BlueprintCallable,Category="Getter")
 	TArray<UAnimMontage*> GetAbilityMontage(TSubclassOf<UBaseAbilityObject> AbilityToLookFor); 

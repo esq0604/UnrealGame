@@ -8,6 +8,7 @@
 
 UPlayerLightAttackAbility::UPlayerLightAttackAbility()
 {
+	AbilityGameplayTag.FromExportString("Ability.LightAttack");
 }
 
 void UPlayerLightAttackAbility::StartAbility()
@@ -42,4 +43,18 @@ bool UPlayerLightAttackAbility::CanPerformAbility()
 		}
 	}
 	return false;
+}
+
+void UPlayerLightAttackAbility::EndAbility()
+{
+	Super::EndAbility();
+	UE_LOG(LogTemp,Warning,TEXT("LightAttackEndAbility"));
+	const FGameplayTag IdleStateTag = FGameplayTag::RequestGameplayTag("State.Idle");
+	const UBaseStateObject* LocalIdleState=StateManagerComponent->GetStateOfGameplayTag(IdleStateTag);
+	if(LocalIdleState ==nullptr)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("EndAbility LocalIdleState nullptr "));
+
+	}
+	StateManagerComponent->PerformStateOfClass(LocalIdleState->GetClass());
 }

@@ -21,6 +21,8 @@ public:
 	virtual void StartAbility() override;
 
 	virtual bool CanPerformAbility() override;
+
+	virtual void EndAbility() override;
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Montage")
 	UAnimMontage* EquipMontage;

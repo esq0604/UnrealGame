@@ -97,8 +97,10 @@ void AMyPlayerController::Attack(const FInputActionValue& Value)
 
 	if(!IsEquipWeapon)
 	{
-		StateManagerComponent->TryPerformStateOfClass(LocalEquipState->GetClass(),true);
-		IsEquipWeapon=true;
+		if(StateManagerComponent->TryPerformStateOfClass(LocalEquipState->GetClass(),true))
+		{
+			IsEquipWeapon=true;
+		}
 	}
 	if(IsEquipWeapon)
 	{

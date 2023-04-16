@@ -21,6 +21,8 @@ public:
 
 	virtual bool CanPerformAbility() override;
 
+	virtual void EndAbility() override;
+
 private:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="Light Attack Ability")
 	TArray<UAnimMontage*> AnimMontages;

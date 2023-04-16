@@ -45,6 +45,9 @@ public:
 	void PerformAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToSet);
 
 	bool TryPerformAbilityOfClass(TSubclassOf<UBaseAbilityObject> AbilityToSet, bool ConditionCheck);
+
+	UFUNCTION(BlueprintCallable,Category="Setter")
+	void SetCurrentActiveAbility(UBaseAbilityObject* NewCurrentActiveAbility) {CurrentActiveAbility=NewCurrentActiveAbility;}
 public:
 	UPROPERTY(VisibleAnywhere, Category = "Base Variables")
 	UBaseAbilityObject* CurrentActiveAbility;

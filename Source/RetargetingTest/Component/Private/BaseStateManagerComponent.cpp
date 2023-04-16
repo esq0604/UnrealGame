@@ -38,7 +38,6 @@ bool UBaseStateManagerComponent::TryPerformStateOfClass(TSubclassOf<UBaseStateOb
 					CurrentActiveState = LocalState;
 					CurrentActiveState->StartState();
 					//OnUpdatedActiveState.Broadcast();
-					UE_LOG(LogTemp,Warning,TEXT("LocalState CondictionCheck true , eturn true"));
 					return true;
 				}
 			}
@@ -55,7 +54,6 @@ bool UBaseStateManagerComponent::TryPerformStateOfClass(TSubclassOf<UBaseStateOb
 				//OnUpdatedActiveState.Broadcast();
 				return true;
 			}
-			UE_LOG(LogTemp,Warning,TEXT("LocalState CondictionCheck true, return false"));
 			return false;
 		}
 		else
@@ -77,7 +75,6 @@ bool UBaseStateManagerComponent::TryPerformStateOfClass(TSubclassOf<UBaseStateOb
 					CurrentActiveState = LocalState;
 					CurrentActiveState->StartState();
 					//OnUpdatedActiveState.Broadcast();
-					UE_LOG(LogTemp,Warning,TEXT("LocalState null CondictionCheck true, return false"));
 					return true;
 				}
 			}
@@ -94,12 +91,10 @@ bool UBaseStateManagerComponent::TryPerformStateOfClass(TSubclassOf<UBaseStateOb
 				CurrentActiveState = LocalState;
 				CurrentActiveState->StartState();
 				//OnUpdatedActiveState.Broadcast();
-				UE_LOG(LogTemp,Warning,TEXT("LocalState null CondictionCheck false, return true"));
 				return true;
 			}
 		}
 	}
-	UE_LOG(LogTemp,Warning,TEXT("End of Function, return false"));
 	return false;
 }
 
@@ -152,7 +147,7 @@ void UBaseStateManagerComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 void UBaseStateManagerComponent::PerformStateOfClass(TSubclassOf<UBaseStateObject> StateToSet)
 {
-	
+	TryPerformStateOfClass(StateToSet,false);
 }
 
 /**
