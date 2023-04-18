@@ -172,8 +172,11 @@ void ACharacterBase::BeginPlay()
 		}
 	}
 	
-	EquipedWeapon=NewObject<ABaseWeapon>(this,EquipedWeaponClass);
-	EquipedWeapon->CreateWeaponStateAndAbility();
+	//EquipedWeapon=NewObject<ABaseWeapon>(this,EquipedWeaponClass);
+	//EquipedWeapon->SetOwner(this);
+	//EquipedWeapon->EquipWeapon();
+	//EquipedWeapon->AttachToComponent(GetMesh(),FAttachmentTransformRules(EAttachmentRule::SnapToTarget,true),"Weapon_Back");
+	//EquipedWeapon->CreateWeaponStateAndAbility();
 	
 
 }
@@ -236,7 +239,6 @@ void ACharacterBase::CheckForInteractalbe()
 
 	FCollisionQueryParams CQP;
 	CQP.AddIgnoredActor(this);
-
 	GetWorld()->LineTraceSingleByChannel(HitResult,StartTrace,EndTrace,ECC_WorldDynamic,CQP);
 
 	AItemBase* PotentialInteractable = Cast<AItemBase>(HitResult.GetActor());

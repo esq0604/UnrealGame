@@ -47,9 +47,9 @@ void AMyPlayerController::SetupInputComponent()
 
 void AMyPlayerController::Move(const FInputActionValue& Value)
 {
-	const FGameplayTag LocalWalkTag=FGameplayTag::RequestGameplayTag("State.Walk");	
-	UBaseStateObject* LocalWalkState=StateManagerComponent->GetStateOfGameplayTag(LocalWalkTag);
-	StateManagerComponent->TryPerformStateOfClass(LocalWalkState->GetClass(),true);
+	//const FGameplayTag LocalWalkTag=FGameplayTag::RequestGameplayTag("State.Walk");	
+	//UBaseStateObject* LocalWalkState=StateManagerComponent->GetStateOfGameplayTag(LocalWalkTag);
+	//StateManagerComponent->TryPerformStateOfClass(LocalWalkState->GetClass(),true);
 
 	FVector2D MovementVector = Value.Get<FVector2D>();
 	// find out which way is forward

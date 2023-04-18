@@ -30,8 +30,25 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void CreateWeaponStateAndAbility();
+
+	UFUNCTION(BlueprintCallable)
+	void EquipWeapon();
+	
+	UFUNCTION(BlueprintCallable)
+	UStaticMesh* GetWeaponMesh() const {return WeaponMesh;}
+
+	UFUNCTION(BlueprintCallable)
+	UStaticMeshComponent* GetWeaponStateMeshComponent() const {return WeaponMeshCompnent;}
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Data Asset")
 	UPDAWeapon* WeaponDataAsset;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=ture))
+	UStaticMeshComponent* WeaponMeshCompnent;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
+	UStaticMesh* WeaponMesh; 
+private:
+
 
 };

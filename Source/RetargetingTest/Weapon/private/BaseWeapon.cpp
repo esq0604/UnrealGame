@@ -14,16 +14,14 @@
 ABaseWeapon::ABaseWeapon()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	//PrimaryActorTick.bCanEverTick = true;
+	WeaponMeshCompnent=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
 }
 
 // Called when the game starts or when spawned
 void ABaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	//ACharacterBase* LocalCharacter = dynamic_cast<ACharacterBase*>(GetOwner());
-
-
 }
 
 void ABaseWeapon::PostInitializeComponents()
@@ -52,6 +50,8 @@ void ABaseWeapon::CreateWeaponStateAndAbility()
 			
 		}
 	}
+	FGameplayTag IdleStateTag = FGameplayTag::RequestGameplayTag("State.Idle");
+	LocalController->GetStateManagerComponent()->PerformStateOfClass(LocalController->GetStateManagerComponent()->GetStateOfGameplayTag(IdleStateTag)->GetClass());
 
 	ACharacterBase* LocalCharacterBase = dynamic_cast<ACharacterBase*>(LocalController->GetCharacter());
 	UBaseAbilityManagerComponent* LocalAbilityComponent = LocalCharacterBase->GetAbilityManagerComponent();
@@ -61,4 +61,17 @@ void ABaseWeapon::CreateWeaponStateAndAbility()
 	}
 	
 }
+
+void ABaseWeapon::EquipWeapon()
+{
+	const ACharacterBase* LocalCharacter = dynamic_cast<ACharacterBase*>(GetOwner());
+	CreateWeaponStateAndAbility();
+	if(LocalCharacter!= nullptr)
+	{
+		WeaponMeshCompnent->SetStaticMesh(WeaponMesh);
+		AttachToComponent(LocalCharacter->GetMesh(),FAttachmentTransformRules(EAttachmentRule::SnapToTarget,true),FName("Weapon_Back"));
+	}
+
+}
+
 
