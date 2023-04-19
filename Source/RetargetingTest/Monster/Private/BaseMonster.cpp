@@ -29,17 +29,17 @@ ABaseMonster::ABaseMonster()
 void ABaseMonster::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	mAnimInstacne = Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
-	mAnimInstacne->OnAttackHitCheckDelegate.AddUObject(this,&ABaseMonster::AttackCheck);
-	StatComponent->OnHPIsZeroDelegate.AddLambda([this]()->void
-	{
-		mAnimInstacne->PlayDeadMontage();
-		SetActorHiddenInGame(true);
-		SetActorEnableCollision(false);
-		SetActorTickEnabled(false);
-		
-		MonsterDieDelegate.ExecuteIfBound(this);
-	});
+	//mAnimInstacne = Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
+	//mAnimInstacne->OnAttackHitCheckDelegate.AddUObject(this,&ABaseMonster::AttackCheck);
+	// StatComponent->OnHPIsZeroDelegate.AddLambda([this]()->void
+	// {
+	// 	mAnimInstacne->PlayDeadMontage();
+	// 	SetActorHiddenInGame(true);
+	// 	SetActorEnableCollision(false);
+	// 	SetActorTickEnabled(false);
+	// 	
+	// 	MonsterDieDelegate.ExecuteIfBound(this);
+	// });
 }
 
 // Called when the game starts or when spawned
