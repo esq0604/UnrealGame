@@ -1,9 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "RetargetingTestGameMode.h"
-#include "RetargetingTest/Player/Public/CharacterBase.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Public/Player/CharacterBase.h"
 #include "UObject/ConstructorHelpers.h"
 
 void ARetargetingTestGameMode::BeginPlay()
