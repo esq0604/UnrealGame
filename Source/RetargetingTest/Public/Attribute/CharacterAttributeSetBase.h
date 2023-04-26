@@ -19,6 +19,10 @@ class RETARGETINGTEST_API UCharacterAttributeSetBase : public UAttributeSet
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintReadOnly, Category = "Level", ReplicatedUsing = OnRep_Level)
+	FGameplayAttributeData Level;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSetBase, Level)
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_Health)
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSetBase, Health)
@@ -42,6 +46,8 @@ public:
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSetBase, Damage)
 
 	//나의 경우에는 복제할것이 아니기때문에(멀티게임이 아니기때문에 아래 함수들이 필요가 없음)
+	UFUNCTION()
+	virtual void OnRep_Level(const FGameplayAttributeData& OldLevel);
 	UFUNCTION()
 	virtual void OnRep_Health(const FGameplayAttributeData& OldHealth);
 	UFUNCTION()

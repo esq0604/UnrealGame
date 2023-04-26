@@ -9,7 +9,7 @@
 #include "RetargetingTest/RetargetingTest.h"
 #include "AbilitySystemTestCharacter.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, AAbilitySystemTestCharacter*, character);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, AAbilitySystemTestCharacter*, Character);
 
 UCLASS()
 class RETARGETINGTEST_API AAbilitySystemTestCharacter : public ACharacter, public IAbilitySystemInterface
@@ -20,12 +20,8 @@ public:
 	// Sets default values for this character's properties
 	AAbilitySystemTestCharacter(const class FObjectInitializer& ObjectInitializer);
 	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:
@@ -34,7 +30,7 @@ protected:
 
 	virtual void AddCharacterAbilities();
 
-	virtual void InitilizeAttributes();
+	virtual void InitializeAttributes();
 
 	virtual void AddStartupEffects();
 
@@ -42,7 +38,7 @@ protected:
 
 	virtual void SetMana(float Mana);
 public:
-	UPROPERTY(BlueprintCallable, Category="Character")
+	UPROPERTY(BlueprintAssignable, Category="Character")
 	FCharacterDiedDelegate OnCharacterDied;
 
 	UFUNCTION(BlueprintCallable, Category="Character")
@@ -58,6 +54,8 @@ public:
 	UFUNCTION(BlueprintCallable,Category="Character") 
 	virtual void FinishDying();
 
+	UFUNCTION(BlueprintCallable, Category="Character|Attributes")
+	float GetCharacterLevel() const;
 	UFUNCTION(BlueprintCallable, Category="Character|Attributes")
 	float GetHealth() const;
 	UFUNCTION(BlueprintCallable, Category="Character|Attributes")

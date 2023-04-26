@@ -3,13 +3,15 @@
 
 #include "RetargetingTest/Public/Player/AbilitySystemTestCharacter.h"
 
+#include "Ability/CharacterGameplayAbility.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "RetargetingTest/Public/Ability/CharacterAbilitySystemComponent.h"
 #include "RetargetingTest/Public/Attribute/CharacterAttributeSetBase.h"
 
 // Sets default values
-AAbilitySystemTestCharacter::AAbilitySystemTestCharacter()
+AAbilitySystemTestCharacter::AAbilitySystemTestCharacter(const class FObjectInitializer& ObjectInitializer)
+	:Super(ObjectInitializer.SetDefaultSubobjectClass<UCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -24,6 +26,83 @@ void AAbilitySystemTestCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AAbilitySystemTestCharacter::AddCharacterAbilities()
+{
+	if(!AbilitySystemComponent.IsValid() || !AbilitySystemComponent->CharacterAbilitiesGiven)
+	{
+		return;
+	}
+
+	for(TSubclassOf<UCharacterGameplayAbility>& StartupAbility : CharacterAbilities)
+	{
+		AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility,GetAbilityLevel(StartupAbility.GetDefaultObject()->AbilityID),static_cast<int32>(StartupAbility.GetDefaultObject()->AbilityInputID),this));
+	}
+
+	AbilitySystemComponent->CharacterAbilitiesGiven=true;
+	
+}
+
+void AAbilitySystemTestCharacter::InitializeAttributes()
+{
+	if(!AbilitySystemComponent.IsValid())
+	{
+		return;
+	}
+
+	if(!DefaultAttributes)
+	{
+		UE_LOG(LogTemp,Error,TEXT("%s() Missing DefaultAttribute for %s. Please fill in the character's blueprint"),*FString(__FUNCTION__), *GetName());
+		return;
+	}
+
+	FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+
+	FGameplayEffectSpecHandle NewHandle = AbilitySystemComponent->MakeOutgoingSpec(DefaultAttributes,GetCharacterLevel(),EffectContext);
+	if(NewHandle.IsValid())
+	{
+		FActiveGameplayEffectHandle ActiveGEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent.Get());
+	}
+}
+
+//어트리뷰트를 추가하고, 새로운 Effect Context를  생성합니다.
+void AAbilitySystemTestCharacter::AddStartupEffects()
+{
+	if(!AbilitySystemComponent.IsValid() || !AbilitySystemComponent->StartupEffectApplied)
+	{
+		return;
+	}
+	FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+
+	for(TSubclassOf<UGameplayEffect> GameplayEffect : StartupEffects)
+	{
+		FGameplayEffectSpecHandle NewHandle = AbilitySystemComponent->MakeOutgoingSpec(GameplayEffect,GetCharacterLevel(),EffectContext);
+		if(NewHandle.IsValid())
+		{
+			FActiveGameplayEffectHandle ActiveGEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent.Get());
+		}
+	}
+
+	AbilitySystemComponent->StartupEffectApplied=true;
+}
+
+void AAbilitySystemTestCharacter::SetHealth(float Health)
+{
+	if(AttributeSetBase.IsValid())
+	{
+		AttributeSetBase->SetHealth(Health);
+	}
+}
+
+void AAbilitySystemTestCharacter::SetMana(float Mana)
+{
+	if(AttributeSetBase.IsValid())
+	{
+		AttributeSetBase->SetHealth(Mana);
+	}
 }
 
 bool AAbilitySystemTestCharacter::IsAlive() const
@@ -73,13 +152,34 @@ void AAbilitySystemTestCharacter::Die()
 	{
 		AbilitySystemComponent->CancelAbilities();
 
-		FGameplayTagContainer EFfects
+		FGameplayTagContainer EffectsTagsToRemove;
+		EffectsTagsToRemove.AddTag(EffectRemoveOnDeathTag);
+		int32 NumEffectsEremoved = AbilitySystemComponent->RemoveActiveEffectsWithTags(EffectsTagsToRemove);
+		AbilitySystemComponent->AddLooseGameplayTag(DeadTag);
+	}
+
+	if(DeathMontage)
+	{
+		PlayAnimMontage(DeathMontage);
+	}
+	else
+	{
+		FinishDying();
 	}
 }
 
 void AAbilitySystemTestCharacter::FinishDying()
 {
 	Destroy();
+}
+
+float AAbilitySystemTestCharacter::GetCharacterLevel() const
+{
+	if(AttributeSetBase.IsValid())
+	{
+		return AttributeSetBase->GetLevel();
+	}
+	return 0.0f;
 }
 
 float AAbilitySystemTestCharacter::GetHealth() const
@@ -93,6 +193,11 @@ float AAbilitySystemTestCharacter::GetHealth() const
 
 float AAbilitySystemTestCharacter::GetMaxHealth() const
 {
+	if(AttributeSetBase.IsValid())
+	{
+		return AttributeSetBase->GetMaxHealth();
+	}
+	return 0.0f;
 }
 
 float AAbilitySystemTestCharacter::GetMana() const
@@ -106,20 +211,11 @@ float AAbilitySystemTestCharacter::GetMana() const
 
 float AAbilitySystemTestCharacter::GetMaxMana() const
 {
-}
-
-// Called every frame
-void AAbilitySystemTestCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void AAbilitySystemTestCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	if(AttributeSetBase.IsValid())
+	{
+		return AttributeSetBase->GetMaxMana();
+	}
+	return 0.0f;
 }
 
 UAbilitySystemComponent* AAbilitySystemTestCharacter::GetAbilitySystemComponent() const
