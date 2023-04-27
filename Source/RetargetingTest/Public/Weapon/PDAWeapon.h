@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Ability/BaseAbilityObject.h"
 #include "PDAWeapon.generated.h"
 
 class UBaseAbilityObject;
