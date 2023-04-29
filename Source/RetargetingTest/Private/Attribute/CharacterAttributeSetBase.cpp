@@ -18,17 +18,17 @@ void UCharacterAttributeSetBase::OnRep_Health(const FGameplayAttributeData& OldH
 
 void UCharacterAttributeSetBase::OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSetBase, Health, MaxHealth);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSetBase, MaxHealth, OldMaxHealth);
 }
 
 void UCharacterAttributeSetBase::OnRep_Mana(const FGameplayAttributeData& OldMana)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSetBase, Health, Mana);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSetBase, Mana, OldMana);
 }
 
 void UCharacterAttributeSetBase::OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSetBase, Health, MaxMana);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSetBase, MaxMana, OldMaxMana);
 }
 
 void UCharacterAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

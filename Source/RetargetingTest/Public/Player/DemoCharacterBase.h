@@ -7,18 +7,18 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayTagContainer.h"
 #include "RetargetingTest/RetargetingTest.h"
-#include "AbilitySystemTestCharacter.generated.h"
+#include "DemoCharacterBase.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, AAbilitySystemTestCharacter*, Character);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterDiedDelegate, ADemoCharacterBase*, Character);
 
 UCLASS()
-class RETARGETINGTEST_API AAbilitySystemTestCharacter : public ACharacter, public IAbilitySystemInterface
+class RETARGETINGTEST_API ADemoCharacterBase : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	AAbilitySystemTestCharacter(const class FObjectInitializer& ObjectInitializer);
+	ADemoCharacterBase(const class FObjectInitializer& ObjectInitializer);
 	
 
 	

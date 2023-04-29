@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "RetargetingTest/Public/Player/AbilitySystemTestCharacter.h"
+#include "RetargetingTest/Public/Player/DemoCharacterBase.h"
 
 #include "Ability/CharacterGameplayAbility.h"
 #include "Components/CapsuleComponent.h"
@@ -10,7 +10,7 @@
 #include "RetargetingTest/Public/Attribute/CharacterAttributeSetBase.h"
 
 // Sets default values
-AAbilitySystemTestCharacter::AAbilitySystemTestCharacter(const class FObjectInitializer& ObjectInitializer)
+ADemoCharacterBase::ADemoCharacterBase(const class FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer.SetDefaultSubobjectClass<UCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -22,13 +22,13 @@ AAbilitySystemTestCharacter::AAbilitySystemTestCharacter(const class FObjectInit
 }
 
 // Called when the game starts or when spawned
-void AAbilitySystemTestCharacter::BeginPlay()
+void ADemoCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-void AAbilitySystemTestCharacter::AddCharacterAbilities()
+void ADemoCharacterBase::AddCharacterAbilities()
 {
 	if(!AbilitySystemComponent.IsValid() || !AbilitySystemComponent->CharacterAbilitiesGiven)
 	{
@@ -44,7 +44,7 @@ void AAbilitySystemTestCharacter::AddCharacterAbilities()
 	
 }
 
-void AAbilitySystemTestCharacter::InitializeAttributes()
+void ADemoCharacterBase::InitializeAttributes()
 {
 	if(!AbilitySystemComponent.IsValid())
 	{
@@ -68,9 +68,10 @@ void AAbilitySystemTestCharacter::InitializeAttributes()
 }
 
 //어트리뷰트를 추가하고, 새로운 Effect Context를  생성합니다.
-void AAbilitySystemTestCharacter::AddStartupEffects()
+void ADemoCharacterBase::AddStartupEffects()
 {
-	if(!AbilitySystemComponent.IsValid() || !AbilitySystemComponent->StartupEffectApplied)
+	UE_LOG(LogTemp,Warning,TEXT("StartupEffect , AddStartupEffect"));
+	if(!AbilitySystemComponent.IsValid() || AbilitySystemComponent->StartupEffectApplied)
 	{
 		return;
 	}
@@ -82,6 +83,7 @@ void AAbilitySystemTestCharacter::AddStartupEffects()
 		FGameplayEffectSpecHandle NewHandle = AbilitySystemComponent->MakeOutgoingSpec(GameplayEffect,GetCharacterLevel(),EffectContext);
 		if(NewHandle.IsValid())
 		{
+			UE_LOG(LogTemp,Warning,TEXT("StartupEffect , NewEffect Is Valid"));
 			FActiveGameplayEffectHandle ActiveGEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*NewHandle.Data.Get(), AbilitySystemComponent.Get());
 		}
 	}
@@ -89,7 +91,7 @@ void AAbilitySystemTestCharacter::AddStartupEffects()
 	AbilitySystemComponent->StartupEffectApplied=true;
 }
 
-void AAbilitySystemTestCharacter::SetHealth(float Health)
+void ADemoCharacterBase::SetHealth(float Health)
 {
 	if(AttributeSetBase.IsValid())
 	{
@@ -97,25 +99,25 @@ void AAbilitySystemTestCharacter::SetHealth(float Health)
 	}
 }
 
-void AAbilitySystemTestCharacter::SetMana(float Mana)
+void ADemoCharacterBase::SetMana(float Mana)
 {
 	if(AttributeSetBase.IsValid())
 	{
-		AttributeSetBase->SetHealth(Mana);
+		AttributeSetBase->SetMana(Mana);
 	}
 }
 
-bool AAbilitySystemTestCharacter::IsAlive() const
+bool ADemoCharacterBase::IsAlive() const
 {
 	return GetHealth()>0.0f;
 }
 
-int32 AAbilitySystemTestCharacter::GetAbilityLevel(AbilityID AbilityID) const
+int32 ADemoCharacterBase::GetAbilityLevel(AbilityID AbilityID) const
 {
 	return 1;
 }
 
-void AAbilitySystemTestCharacter::RemoveCharacterAbilities()
+void ADemoCharacterBase::RemoveCharacterAbilities()
 {
 	if(!AbilitySystemComponent.IsValid() || !AbilitySystemComponent->CharacterAbilitiesGiven)
 	{
@@ -139,7 +141,7 @@ void AAbilitySystemTestCharacter::RemoveCharacterAbilities()
 	AbilitySystemComponent->CharacterAbilitiesGiven=false;
 }
 
-void AAbilitySystemTestCharacter::Die()
+void ADemoCharacterBase::Die()
 {
 	RemoveCharacterAbilities();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -168,12 +170,12 @@ void AAbilitySystemTestCharacter::Die()
 	}
 }
 
-void AAbilitySystemTestCharacter::FinishDying()
+void ADemoCharacterBase::FinishDying()
 {
 	Destroy();
 }
 
-float AAbilitySystemTestCharacter::GetCharacterLevel() const
+float ADemoCharacterBase::GetCharacterLevel() const
 {
 	if(AttributeSetBase.IsValid())
 	{
@@ -182,7 +184,7 @@ float AAbilitySystemTestCharacter::GetCharacterLevel() const
 	return 0.0f;
 }
 
-float AAbilitySystemTestCharacter::GetHealth() const
+float ADemoCharacterBase::GetHealth() const
 {
 	if(AttributeSetBase.IsValid())
 	{
@@ -191,7 +193,7 @@ float AAbilitySystemTestCharacter::GetHealth() const
 	return 0.0f;
 }
 
-float AAbilitySystemTestCharacter::GetMaxHealth() const
+float ADemoCharacterBase::GetMaxHealth() const
 {
 	if(AttributeSetBase.IsValid())
 	{
@@ -200,7 +202,7 @@ float AAbilitySystemTestCharacter::GetMaxHealth() const
 	return 0.0f;
 }
 
-float AAbilitySystemTestCharacter::GetMana() const
+float ADemoCharacterBase::GetMana() const
 {
 	if(AttributeSetBase.IsValid())
 	{
@@ -209,7 +211,7 @@ float AAbilitySystemTestCharacter::GetMana() const
 	return 0.0f;
 }
 
-float AAbilitySystemTestCharacter::GetMaxMana() const
+float ADemoCharacterBase::GetMaxMana() const
 {
 	if(AttributeSetBase.IsValid())
 	{
@@ -218,7 +220,7 @@ float AAbilitySystemTestCharacter::GetMaxMana() const
 	return 0.0f;
 }
 
-UAbilitySystemComponent* AAbilitySystemTestCharacter::GetAbilitySystemComponent() const
+UAbilitySystemComponent* ADemoCharacterBase::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent.Get();
 }
