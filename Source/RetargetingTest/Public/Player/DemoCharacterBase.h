@@ -45,7 +45,7 @@ public:
 	virtual bool IsAlive() const;
 	
 	UFUNCTION(BlueprintCallable, Category="Character")
-	virtual int32 GetAbilityLevel(AbilityID AbilityID) const;
+	virtual int32 GetAbilityLevel(DemoAbilityID AbilityID) const;
 
 	virtual void RemoveCharacterAbilities();
 

@@ -53,6 +53,7 @@ void ADemoCharacter::PossessedBy(AController* NewController)
 	ADemoPlayerState* PS = GetPlayerState<ADemoPlayerState>();
 	if(PS)
 	{
+		UE_LOG(LogTemp,Warning,TEXT("PossessedBy , PS is valid"));
 		InitializeStartingValues(PS);
 		AddStartupEffects();
 		AddCharacterAbilities();
@@ -167,7 +168,7 @@ void ADemoCharacter::BindAscInput()
 {
 	if(!ASCInputBound && AbilitySystemComponent.IsValid() && IsValid(InputComponent))
 	{
-		AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent,FGameplayAbilityInputBinds(FString("ConfirmTarget"),FString("CancelTarget"),FString("AbilityID"),static_cast<int32>(AbilityID::Confirm),static_cast<int32>(AbilityID::Cancel)));
+		AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent,FGameplayAbilityInputBinds(FString("ConfirmTarget"),FString("CancelTarget"),FString("DemoAbilityID"),static_cast<int32>(DemoAbilityID::Confirm),static_cast<int32>(DemoAbilityID::Cancel)));
 
 		ASCInputBound=true;
 	}

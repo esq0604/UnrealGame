@@ -19,10 +19,10 @@ public:
 	UCharacterGameplayAbility();
 
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category="Ability")
-	AbilityID AbilityInputID = AbilityID::None;
+	DemoAbilityID DemoAbilityInputID = DemoAbilityID::None;
 
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category="Ability")
-	AbilityID AbilityID = AbilityID::None;
+	DemoAbilityID DemoAbilityID = DemoAbilityID::None;
 
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category="Ability")
 	bool ActivateAbilityOnGranted =false;

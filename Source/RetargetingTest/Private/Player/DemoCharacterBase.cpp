@@ -30,14 +30,16 @@ void ADemoCharacterBase::BeginPlay()
 
 void ADemoCharacterBase::AddCharacterAbilities()
 {
-	if(!AbilitySystemComponent.IsValid() || !AbilitySystemComponent->CharacterAbilitiesGiven)
+	if(!AbilitySystemComponent.IsValid() || AbilitySystemComponent->CharacterAbilitiesGiven)
 	{
 		return;
 	}
 
+	UE_LOG(LogTemp,Warning,TEXT("AddCharacterAbilities - StartupAbility For loop before"));
 	for(TSubclassOf<UCharacterGameplayAbility>& StartupAbility : CharacterAbilities)
 	{
-		AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility,GetAbilityLevel(StartupAbility.GetDefaultObject()->AbilityID),static_cast<int32>(StartupAbility.GetDefaultObject()->AbilityInputID),this));
+		UE_LOG(LogTemp,Warning,TEXT("AddCharacterAbilities - StartupAbility %d"),static_cast<int32>(StartupAbility.GetDefaultObject()->DemoAbilityInputID));
+		AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility,GetAbilityLevel(StartupAbility.GetDefaultObject()->DemoAbilityID),static_cast<int32>(StartupAbility.GetDefaultObject()->DemoAbilityInputID),this));
 	}
 
 	AbilitySystemComponent->CharacterAbilitiesGiven=true;
@@ -70,7 +72,6 @@ void ADemoCharacterBase::InitializeAttributes()
 //어트리뷰트를 추가하고, 새로운 Effect Context를  생성합니다.
 void ADemoCharacterBase::AddStartupEffects()
 {
-	UE_LOG(LogTemp,Warning,TEXT("StartupEffect , AddStartupEffect"));
 	if(!AbilitySystemComponent.IsValid() || AbilitySystemComponent->StartupEffectApplied)
 	{
 		return;
@@ -112,7 +113,7 @@ bool ADemoCharacterBase::IsAlive() const
 	return GetHealth()>0.0f;
 }
 
-int32 ADemoCharacterBase::GetAbilityLevel(AbilityID AbilityID) const
+int32 ADemoCharacterBase::GetAbilityLevel(DemoAbilityID AbilityID) const
 {
 	return 1;
 }
