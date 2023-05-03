@@ -1,4 +1,4 @@
-  // Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "RetargetingTest/Public/Player/CharacterBase.h"
 
@@ -14,11 +14,11 @@
 #include "DrawDebugHelpers.h"
 #include "Engine/DamageEvents.h"
 #include "Engine/EngineTypes.h"
-#
 #include "GameplayTagContainer.h"
-#
 #include "MotionWarpingComponent.h"
 
+#include "AbilitySystemComponent.h"
+#include "RetargetingTest/Public/Attribute/RuneAttributeSet.h"
 #include "RetargetingTest/Public/Component/BaseAbilityManagerComponent.h"
 #include "RetargetingTest/Public/Component/BasePlayerStatComponent.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
@@ -29,17 +29,17 @@
 #include "RetargetingTest/Public/UI/PlayerHUD.h"
 #include "RetargetingTest/Public/UI/QuickSlot.h"
 #include "RetargetingTest/Public/UI/Slot.h"
-  //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
 
 ACharacterBase::ACharacterBase()
-	:AttackRange(200.0f) , AttackRadius(50.0f),MaxCombo(4),IsAttacking(false)
+	: AttackRange(200.0f), AttackRadius(50.0f), MaxCombo(4), IsAttacking(false)
 {
-	PrimaryActorTick.bCanEverTick=true;
+	PrimaryActorTick.bCanEverTick = true;
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Character"));
-	
+
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -62,42 +62,51 @@ ACharacterBase::ACharacterBase()
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
-	
+
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	// Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 	//사용자 정의 컴포넌트입니다.
-	StatComponent= CreateDefaultSubobject<UBasePlayerStatComponent>(TEXT("StatComponent"));
-	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));	
-	
-	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
-	AbilityManagerComponent= CreateDefaultSubobject<UBaseAbilityManagerComponent>(TEXT("AbilityManagerComponent"));
+	StatComponent = CreateDefaultSubobject<UBasePlayerStatComponent>(TEXT("StatComponent"));
+	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));
 
-	//DefaultWeaponToSpawn=CreateDefaultSubobject<ABaseWeapon>(TEXT("DefaultWeapon"));
+	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
+	AbilityManagerComponent = CreateDefaultSubobject<UBaseAbilityManagerComponent>(TEXT("AbilityManagerComponent"));
+
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+
+	Attributes = CreateDefaultSubobject<URuneAttributeSet>(TEXT("Attribute"));
 }
-/**
- * 데미지 전달을 위한 함수입니다. 현재 상태가 Dodge State가 아니라면 데미지를 받습니다.
- * @param DamageAmount - 받는 데미지의 양 입니다.
- *
- */
-float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
-                                            AController* EventInstigator, AActor* DamageCauser)
+
+UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
 {
-	
-	if(bCanDamaged)
+	return AbilitySystemComponent;
+}
+
+/**
+* 데미지 전달을 위한 함수입니다. 현재 상태가 Dodge State가 아니라면 데미지를 받습니다.
+* @param DamageAmount - 받는 데미지의 양 입니다.
+*
+*/
+float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+                                 AController* EventInstigator, AActor* DamageCauser)
+{
+	if (bCanDamaged)
 	{
-	    UE_LOG(LogTemp,Warning,TEXT("Player Get Damage"));
+		UE_LOG(LogTemp, Warning, TEXT("Player Get Damage"));
 		StatComponent->SufferDamage(DamageAmount);
-	
+
 		return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	}
-	 return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
 /**
@@ -165,21 +174,19 @@ void ACharacterBase::BeginPlay()
 	{
 		PlayerController->Init();
 		PlayerHUD = CreateWidget<UPlayerHUD>(PlayerController, PlayerHUDClass);
-		if(PlayerHUD != nullptr)
+		if (PlayerHUD != nullptr)
 		{
 			PlayerHUD->SetCharacter(this);
 			PlayerHUD->Init();
 			PlayerHUD->AddToViewport();
 		}
 	}
-	
+
 	//EquipedWeapon=NewObject<ABaseWeapon>(this,EquipedWeaponClass);
 	//EquipedWeapon->SetOwner(this);
 	//EquipedWeapon->EquipWeapon();
 	//EquipedWeapon->AttachToComponent(GetMesh(),FAttachmentTransformRules(EAttachmentRule::SnapToTarget,true),"Weapon_Back");
 	//EquipedWeapon->CreateWeaponStateAndAbility();
-	
-
 }
 
 /**
@@ -195,7 +202,6 @@ void ACharacterBase::Tick(float DeltaSeconds)
  */
 void ACharacterBase::SprintEnd()
 {
-
 }
 
 /**
@@ -204,7 +210,7 @@ void ACharacterBase::SprintEnd()
  */
 void ACharacterBase::ToggleInventory()
 {
-	if(PlayerHUD!=nullptr)
+	if (PlayerHUD != nullptr)
 	{
 		PlayerHUD->ToggleInventory();
 	}
@@ -217,10 +223,10 @@ void ACharacterBase::ToggleInventory()
 void ACharacterBase::Interact()
 {
 	CheckForInteractalbe();
-	if(CurrentInteractable!=nullptr)
+	if (CurrentInteractable != nullptr)
 	{
 		CurrentInteractable->Interact_Implementation();
-		if(PlayerHUD->GetInventory()!=nullptr)
+		if (PlayerHUD->GetInventory() != nullptr)
 		{
 			PlayerHUD->GetInventory()->Refresh();
 		}
@@ -234,33 +240,33 @@ void ACharacterBase::Interact()
 void ACharacterBase::CheckForInteractalbe()
 {
 	FVector StartTrace = GetActorLocation();
-	FVector EndTrace = GetActorLocation()+GetActorForwardVector()*200.0f;
+	FVector EndTrace = GetActorLocation() + GetActorForwardVector() * 200.0f;
 
 	FHitResult HitResult;
 
 	FCollisionQueryParams CQP;
 	CQP.AddIgnoredActor(this);
-	GetWorld()->LineTraceSingleByChannel(HitResult,StartTrace,EndTrace,ECC_WorldDynamic,CQP);
+	GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_WorldDynamic, CQP);
 
 	AItemBase* PotentialInteractable = Cast<AItemBase>(HitResult.GetActor());
 
 	DrawDebugLine(GetWorld(),
-		StartTrace,
-		EndTrace,
-		FColor::Red,
-		true,
-		1,
-		0,
-		2
-		);
-	if(PotentialInteractable ==nullptr)
+	              StartTrace,
+	              EndTrace,
+	              FColor::Red,
+	              true,
+	              1,
+	              0,
+	              2
+	);
+	if (PotentialInteractable == nullptr)
 	{
-		CurrentInteractable=nullptr;
+		CurrentInteractable = nullptr;
 		return;
 	}
 	else
 	{
-		CurrentInteractable=PotentialInteractable;
+		CurrentInteractable = PotentialInteractable;
 	}
 }
 
@@ -270,7 +276,7 @@ void ACharacterBase::CheckForInteractalbe()
  */
 void ACharacterBase::UseQuickSlot(int UsedSlotIdx)
 {
-	PlayerHUD->GetQuickSlot()->Use(UsedSlotIdx-1);
+	PlayerHUD->GetQuickSlot()->Use(UsedSlotIdx - 1);
 }
 
 /**
@@ -278,17 +284,17 @@ void ACharacterBase::UseQuickSlot(int UsedSlotIdx)
  */
 bool ACharacterBase::AddItemToInventory(AItemBase* Item)
 {
-	if(Item!=nullptr)
+	if (Item != nullptr)
 	{
 		const int32 AvaliableSlot = Inventory.Find(nullptr);
-		if(AvaliableSlot!= INDEX_NONE)
+		if (AvaliableSlot != INDEX_NONE)
 		{
-			Inventory[AvaliableSlot]=Item;
+			Inventory[AvaliableSlot] = Item;
 			return true;
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Red,TEXT("You cant carry any more items"));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,TEXT("You cant carry any more items"));
 		}
 	}
 	return false;
@@ -316,41 +322,43 @@ UBasePlayerStatComponent* ACharacterBase::GetStatComponent() const
 	return StatComponent;
 }
 
-  UBaseAbilityManagerComponent* ACharacterBase::GetAbilityManagerComponent() const
-  {
+UBaseAbilityManagerComponent* ACharacterBase::GetAbilityManagerComponent() const
+{
 	return AbilityManagerComponent;
-  }
+}
 
-  ABaseWeapon* ACharacterBase::GetEquipedWeapon() const
-  {
+ABaseWeapon* ACharacterBase::GetEquipedWeapon() const
+{
 	return EquipedWeapon;
-  }
+}
 
 
-  /**
- * 슬롯에 있는 아이템의 썸네일을 반환합니다.
- * @param Slot - 인벤토리 슬롯의 인덱스가 들어옵니다.
- */
+/**
+* 슬롯에 있는 아이템의 썸네일을 반환합니다.
+* @param Slot - 인벤토리 슬롯의 인덱스가 들어옵니다.
+*/
 UTexture2D* ACharacterBase::GetThumnailAtInventorySlot(int32 Slot) const
 {
-	if(Inventory[Slot]!=nullptr)
+	if (Inventory[Slot] != nullptr)
 	{
 		return Inventory[Slot]->PickupThumbnail;
 	}
 	return nullptr;
 }
+
 /**
  * 슬롯에 있는 아이템의 이름을 반환합니다.
  * @param Slot - 인벤토리 슬롯의 인덱스가 들어옵니다.
  */
 FString ACharacterBase::GetItemNameAtInventorySlot(int32 Slot) const
 {
-	if(Inventory[Slot]!=nullptr)
+	if (Inventory[Slot] != nullptr)
 	{
 		return Inventory[Slot]->ItemName;
 	}
 	return FString("None");
 }
+
 /**
  * TODO: 인벤토리의 UsealbeItem이 여러개일 경우를 생각해야합니다, 아이템을 사용시마다 인벤토리 전체를 초기화 하는건 비효율적입니다.
  * 아이템의 레퍼런스 슬롯을 받아 저장한 뒤, 사용 후 슬롯을 갱신합니다. 이때 인벤토리는 레퍼런스 슬롯에 들어가있지 않기때문에 인벤토리도 갱신합니다.
@@ -358,40 +366,91 @@ FString ACharacterBase::GetItemNameAtInventorySlot(int32 Slot) const
  */
 void ACharacterBase::UseItemAtInventorySlot(int32 Slot)
 {
-	if(Inventory[Slot] != nullptr && Slot!= -1)
+	if (Inventory[Slot] != nullptr && Slot != -1)
 	{
 		TArray<USlot*> TempSlot;
-		
+
 		Inventory[Slot]->UseItem(this);
-		
+
 		//레퍼런스 슬롯이 없다면 인벤토리만 갱신합니다.
-		if(Inventory[Slot]->ReferenceSlot.IsEmpty())
+		if (Inventory[Slot]->ReferenceSlot.IsEmpty())
 		{
-			if(Inventory[Slot]->GetCount()==0)
+			if (Inventory[Slot]->GetCount() == 0)
 			{
-				Inventory[Slot]=nullptr;
+				Inventory[Slot] = nullptr;
 			}
 			PlayerHUD->GetInventory()->GetSlot(Slot)->Refresh();
 		}
 		//있다면 레퍼런스 슬롯을 옮겨줍니다.
 		else
 		{
-			for(USlot* eachSlot : Inventory[Slot]->ReferenceSlot)
+			for (USlot* eachSlot : Inventory[Slot]->ReferenceSlot)
 			{
 				TempSlot.Add(eachSlot);
 			}
-			if(Inventory[Slot]->GetCount()==0)
+			if (Inventory[Slot]->GetCount() == 0)
 			{
-				Inventory[Slot]=nullptr;
+				Inventory[Slot] = nullptr;
 			}
-			for(USlot* eachSlot : TempSlot)
+			for (USlot* eachSlot : TempSlot)
 			{
-				if(eachSlot!=nullptr)
+				if (eachSlot != nullptr)
 				{
 					eachSlot->Refresh();
 				}
 			}
 			PlayerHUD->GetInventory()->Refresh();
+		}
+	}
+}
+
+void ACharacterBase::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if(AbilitySystemComponent)
+	{
+		AbilitySystemComponent->InitAbilityActorInfo(this,this);
+	}
+
+	InitializeAttributes();
+	GiveDefaultAbilities();
+}
+
+void ACharacterBase::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	if(AbilitySystemComponent)
+	{
+		AbilitySystemComponent->InitAbilityActorInfo(this,this);
+	}
+
+	InitializeAttributes();
+}
+
+void ACharacterBase::InitializeAttributes()
+{
+	if(AbilitySystemComponent&&DefaultAttributeEffect)
+	{
+		FGameplayEffectContextHandle EffectContextHandle = AbilitySystemComponent->MakeEffectContext();
+		EffectContextHandle.AddSourceObject(this);
+		FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DefaultAttributeEffect,1,EffectContextHandle);
+
+		if(SpecHandle.IsValid())
+		{
+			FActiveGameplayEffectHandle GEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());  
+		}
+	}
+}
+
+void ACharacterBase::GiveDefaultAbilities()
+{
+	if(HasAuthority() && AbilitySystemComponent)
+	{
+		for(TSubclassOf<UGameplayAbility>& StartupAbility : DefaultAbilities)
+		{
+			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility.GetDefaultObject(),1,0));
 		}
 	}
 }
@@ -425,7 +484,7 @@ void ACharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	mAnimInstance = Cast<UCharaterAnimInstance>(GetMesh()->GetAnimInstance());
-	if(mAnimInstance != nullptr)
+	if (mAnimInstance != nullptr)
 	{
 		// mAnimInstance->OnAttackHitCheck.AddUObject(this,&ACharacterBase::AttackCheck);
 		// mAnimInstance->OnMontageEnded.AddDynamic(this,&ACharacterBase::OnAttackMontageEnded);
@@ -439,8 +498,6 @@ void ACharacterBase::PostInitializeComponents()
 		// 	}
 		// });
 	}
-
-	
 }
 
 /**
@@ -479,8 +536,4 @@ void ACharacterBase::PostInitializeComponents()
  */
 void ACharacterBase::JumpAndDodge()
 {
-
 }
-
-
-
