@@ -9,3 +9,4 @@ Inventory
 QuickSlot
 Vaulting
 Floating Damage
+GAS(GameplayAbilitySystem)
