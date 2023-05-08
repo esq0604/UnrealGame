@@ -8,7 +8,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "EnhancedInputComponent.h"
 
 #include "Components/SceneComponent.h"
 #include "DrawDebugHelpers.h"
@@ -19,7 +18,6 @@
 
 #include "AbilitySystemComponent.h"
 #include "RetargetingTest/Public/Attribute/RuneAttributeSet.h"
-#include "RetargetingTest/Public/Component/BaseAbilityManagerComponent.h"
 #include "RetargetingTest/Public/Component/BasePlayerStatComponent.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
 #include "RetargetingTest/Public/Controller/MyPlayerController.h"
@@ -77,7 +75,6 @@ ACharacterBase::ACharacterBase()
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));
 
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
-	AbilityManagerComponent = CreateDefaultSubobject<UBaseAbilityManagerComponent>(TEXT("AbilityManagerComponent"));
 
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
@@ -320,11 +317,6 @@ TArray<AItemBase*> ACharacterBase::GetInventory() const
 UBasePlayerStatComponent* ACharacterBase::GetStatComponent() const
 {
 	return StatComponent;
-}
-
-UBaseAbilityManagerComponent* ACharacterBase::GetAbilityManagerComponent() const
-{
-	return AbilityManagerComponent;
 }
 
 ABaseWeapon* ACharacterBase::GetEquipedWeapon() const

@@ -15,7 +15,7 @@ UCharacterGameplayAbility::UCharacterGameplayAbility()
 
 //ActivateAblityOnGround
 void UCharacterGameplayAbility::OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo,
-                                            const FGameplayAbilitySpec& Spec)
+											const FGameplayAbilitySpec& Spec)
 {
 	Super::OnAvatarSet(ActorInfo, Spec);
 

@@ -6,7 +6,6 @@
 #include "GameFramework/Actor.h"
 #include "BaseWeapon.generated.h"
 
-class UPDAWeapon;
 class ACharacter;
 UCLASS()
 class RETARGETINGTEST_API ABaseWeapon : public AActor
@@ -22,17 +21,6 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	UFUNCTION(BlueprintCallable,Category="Getter")
-	UPDAWeapon* GetWeaponDataAsset() const;
-
-	UFUNCTION(BlueprintCallable)
-	void CreateWeaponStateAndAbility();
-
-	UFUNCTION(BlueprintCallable)
-	void EquipWeapon();
 	
 	UFUNCTION(BlueprintCallable)
 	UStaticMesh* GetWeaponMesh() const {return WeaponMesh;}
@@ -40,8 +28,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UStaticMeshComponent* GetWeaponStateMeshComponent() const {return WeaponMeshCompnent;}
 protected:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Data Asset")
-	UPDAWeapon* WeaponDataAsset;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=ture))
 	UStaticMeshComponent* WeaponMeshCompnent;

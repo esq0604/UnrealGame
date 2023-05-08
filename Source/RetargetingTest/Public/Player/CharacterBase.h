@@ -40,6 +40,7 @@ class ACharacterBase : public ACharacter, public IAbilitySystemInterface
 public:
 	ACharacterBase();
 
+	UFUNCTION(BlueprintCallable)
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	UFUNCTION()
@@ -81,8 +82,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Getter")
 	UBasePlayerStatComponent* GetStatComponent() const;
 
-	UFUNCTION(BlueprintCallable, Category="Getter")
-	UBaseAbilityManagerComponent* GetAbilityManagerComponent() const;
 
 	UFUNCTION(BlueprintCallable, Category="Getter")
 	ABaseWeapon* GetEquipedWeapon() const;
@@ -131,10 +130,10 @@ public:
 	float MaxStat = 99;
 
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Abilities")
-	TSubclassOf<class UGameplayEffect> DefaultAttributeEffect;
+	TSubclassOf<UGameplayEffect> DefaultAttributeEffect;
 
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Abilities")
-	TArray<TSubclassOf<class UGameplayAbility>> DefaultAbilities;
+	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
 	
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category="Animation")
@@ -145,10 +144,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Component")
 	UMotionWarpingComponent* MotionWarpComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Component")
-	UBaseAbilityManagerComponent* AbilityManagerComponent;
-
+	
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category=Dodge, meta=(AllowPrivateAccess=true))
 	bool IsDodge;
 
@@ -204,10 +200,8 @@ private:
 	AItemBase* CurrentInteractable;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Abilities", meta=(AllowPrivateAccess="true"))
-	class UAbilitySystemComponent* AbilitySystemComponent;
+	UAbilitySystemComponent* AbilitySystemComponent;
 
 	UPROPERTY()
 	class URuneAttributeSet* Attributes;
-
-
 };

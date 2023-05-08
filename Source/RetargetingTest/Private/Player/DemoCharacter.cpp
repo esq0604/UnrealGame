@@ -166,10 +166,10 @@ void ADemoCharacter::InitializeStartingValues(ADemoPlayerState* PS)
 
 void ADemoCharacter::BindAscInput()
 {
-	if(!ASCInputBound && AbilitySystemComponent.IsValid() && IsValid(InputComponent))
-	{
-		AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent,FGameplayAbilityInputBinds(FString("ConfirmTarget"),FString("CancelTarget"),FString("DemoAbilityID"),static_cast<int32>(DemoAbilityID::Confirm),static_cast<int32>(DemoAbilityID::Cancel)));
-
-		ASCInputBound=true;
-	}
+	// if(!ASCInputBound && AbilitySystemComponent.IsValid() && IsValid(InputComponent))
+	// {
+	// 	AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent,FGameplayAbilityInputBinds(FString("ConfirmTarget"),FString("CancelTarget"),FString("DemoAbilityID"),static_cast<int32>(DemoAbilityID::Confirm),static_cast<int32>(DemoAbilityID::Cancel)));
+	//
+	// 	ASCInputBound=true;
+	// }
 }

@@ -38,7 +38,6 @@ public:
 	//bool 변수가 아닌 나중에 EquipState, Ability에서 수정되어야합니다.
 	bool IsEquipWeapon=false;
 	
-	UBaseStateManagerComponent* GetStateManagerComponent() const {return StateManagerComponent;}
 protected:
 	virtual void BeginPlay() override;
 private:
@@ -50,8 +49,5 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Enhanced Input")
 	UInputDataAsset* InputAction;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="State Manager")
-	UBaseStateManagerComponent* StateManagerComponent;
 };
 

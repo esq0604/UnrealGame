@@ -6,15 +6,12 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/Character.h"
-#include "RetargetingTest/Public/Component/BaseStateManagerComponent.h"
 #include "RetargetingTest/Public/Controller/InputDataAsset.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
-#include "RetargetingTest/Public/State/BaseStateObject.h"
 
 AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	StateManagerComponent=CreateDefaultSubobject<UBaseStateManagerComponent>(TEXT("BaseStateManager"));
 }
 
 void AMyPlayerController::BeginPlay()
@@ -76,13 +73,7 @@ void AMyPlayerController::Sprint(const FInputActionValue& Value)
 
 void AMyPlayerController::SprintEnd(const FInputActionValue& Value)
 {
-	if(StateManagerComponent->GetCurrentActiveState()!=nullptr)
-	{
-		if(StateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Sprint"))
-		{
-			StateManagerComponent->GetCurrentActiveState()->EndState();
-		}
-	}
+
 }
 /**
  * TODO: 해당 함수에서 IsEquipWeapon 변수를 사용하지 않도록 상태시스템을 수정해야합니다.
@@ -90,22 +81,7 @@ void AMyPlayerController::SprintEnd(const FInputActionValue& Value)
  */
 void AMyPlayerController::Attack(const FInputActionValue& Value)
 {
-	const FGameplayTag AttackStateTag = FGameplayTag::RequestGameplayTag("State.Attack");
-	const FGameplayTag EquipStateTag = FGameplayTag::RequestGameplayTag("State.Equip");
-	const UBaseStateObject* LocalAttackState = StateManagerComponent->GetStateOfGameplayTag(AttackStateTag);
-	const UBaseStateObject* LocalEquipState = StateManagerComponent->GetStateOfGameplayTag(EquipStateTag);
 
-	if(!IsEquipWeapon)
-	{
-		if(StateManagerComponent->TryPerformStateOfClass(LocalEquipState->GetClass(),true))
-		{
-			IsEquipWeapon=true;
-		}
-	}
-	if(IsEquipWeapon)
-	{
-		StateManagerComponent->TryPerformStateOfClass(LocalAttackState->GetClass(),true);
-	}
 }
 
 void AMyPlayerController::Look(const FInputActionValue& Value)
@@ -123,7 +99,7 @@ void AMyPlayerController::Look(const FInputActionValue& Value)
 
 void AMyPlayerController::JumpAndDodge(const FInputActionValue& Value)
 {
-	GetCharacter()->Jump();
+	//GetCharacter()->Jump();
 }
 
 void AMyPlayerController::JumpStop(const FInputActionValue& Value)
@@ -145,32 +121,12 @@ void AMyPlayerController::ToggleInventory(const FInputActionValue& Value)
 
 void AMyPlayerController::EquipUnEquip(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp,Warning,TEXT("Do Equip UnEquip"));
-	const FGameplayTag LocalEquipTag = FGameplayTag::RequestGameplayTag("State.Equip");
-	
-	UBaseStateObject* LocalEquipState=StateManagerComponent->GetStateOfGameplayTag(LocalEquipTag);
 
-	TSubclassOf<UBaseStateObject> LocalEquipStateClass=LocalEquipState->GetClass();
-	//TSubclassOf<UBaseStateObject> LocalUnEquipStateClass=StateManagerComponent->GetStateOfGameplayTag(LocalUnEquipTag)->GetClass();
-	//StatesToSet.AddUnique(LocalUnEquipStateClass);
-
-	TArray<TSubclassOf<UBaseStateObject>> StatesToSet;
-	StatesToSet.AddUnique(LocalEquipStateClass);
-	StateManagerComponent->TryPerformStatesOfClass(StatesToSet,true);
 }
 
 void AMyPlayerController::Init()
 {
-	ACharacterBase* NewCharacter=dynamic_cast<ACharacterBase*>(GetCharacter());
-	if(NewCharacter!=nullptr)
-	{
-		StateManagerComponent->SetPerformingActor(NewCharacter);
-		StateManagerComponent->StateManagerInit();
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Init : NewCharacter nullptr"));
-	}
+
 }
 
 
