@@ -167,17 +167,17 @@ void ACharacterBase::BeginPlay()
 {
 	// Call the base class
 	Super::BeginPlay();
-	if (AMyPlayerController* PlayerController = Cast<AMyPlayerController>(Controller))
-	{
-		PlayerController->Init();
-		PlayerHUD = CreateWidget<UPlayerHUD>(PlayerController, PlayerHUDClass);
-		if (PlayerHUD != nullptr)
-		{
-			PlayerHUD->SetCharacter(this);
-			PlayerHUD->Init();
-			PlayerHUD->AddToViewport();
-		}
-	}
+	// if (AMyPlayerController* PlayerController = Cast<AMyPlayerController>(Controller))
+	// {
+	// 	PlayerController->Init();
+	// 	PlayerHUD = CreateWidget<UPlayerHUD>(PlayerController, PlayerHUDClass);
+	// 	if (PlayerHUD != nullptr)
+	// 	{
+	// 		PlayerHUD->SetCharacter(this);
+	// 		PlayerHUD->Init();
+	// 		PlayerHUD->AddToViewport();
+	// 	}
+	// }
 
 	//EquipedWeapon=NewObject<ABaseWeapon>(this,EquipedWeaponClass);
 	//EquipedWeapon->SetOwner(this);
