@@ -16,8 +16,8 @@ void APotion::UseItem(ACharacterBase* Character)
  */
 void APotion::Use(ACharacterBase* Character)
 {
-	const float CurrentCharacterHp=Character->GetStatComponent()->GetCurrentHp();
-	Character->GetStatComponent()->SetHP(CurrentCharacterHp+HpValue);
-	Count--;
+	// const float CurrentCharacterHp=Character->GetStatComponent()->GetCurrentHp();
+	// Character->GetStatComponent()->SetHP(CurrentCharacterHp+HpValue);
+	// Count--;
 }
 

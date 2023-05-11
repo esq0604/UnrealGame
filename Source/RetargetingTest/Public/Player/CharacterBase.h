@@ -12,6 +12,7 @@
 #include "CharacterBase.generated.h"
 
 
+class UInventoryComponent;
 class ABaseWeapon;
 class UBaseAbilityManagerComponent;
 class UAttackComponent;
@@ -42,10 +43,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-
-	UFUNCTION()
-	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
-	                         AActor* DamageCauser) override;
 	
 	UFUNCTION(BlueprintCallable, Category="Inventory function")
 	void UseItemAtInventorySlot(int32 Slot);
@@ -56,9 +53,6 @@ public:
 	virtual void GiveDefaultAbilities();
 	
 	/* Setter */
-	UFUNCTION(BlueprintCallable, Category="Setter")
-	void SetbCanbeDamaged(bool canBeDamage) { bCanDamaged = canBeDamage; }
-
 	UFUNCTION(BlueprintCallable, Category="Setter")
 	bool AddItemToInventory(AItemBase* Item);
 
@@ -78,39 +72,17 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Getter")
 	FString GetItemNameAtInventorySlot(int32 Slot) const;
-
-	UFUNCTION(BlueprintCallable, Category="Getter")
-	UBasePlayerStatComponent* GetStatComponent() const;
-
-
+	
 	UFUNCTION(BlueprintCallable, Category="Getter")
 	ABaseWeapon* GetEquipedWeapon() const;
 
 protected:
-	//Input Action Bind Action 
-	void Sprint(const FInputActionValue& Value);
-
-
-	UFUNCTION(BlueprintCallable)
-	void JumpAndDodge();
-
 	virtual void PostInitializeComponents() override;
 
 	// To add mapping context
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
-
-	//UFUNCTION(BlueprintCallable,Category="Attack Function")
-	//void Attack(const FInputActionValue& Value);
-	//UFUNCTION(BlueprintCallable,Category="Attack Function")
-	//void AttackCheck();
-	//UFUNCTION(BlueprintCallable,Category="Attack Function")
-	//void AttackStartComboState();
-	//UFUNCTION(BlueprintCallable,Category="Attack Function")
-	//void AttackEndComboState();
-
 private:
-	void SprintEnd();
 	void ToggleInventory();
 	void Interact();
 	void CheckForInteractalbe();
@@ -119,16 +91,7 @@ private:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true))
 	TArray<AItemBase*> Inventory;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes")
-	float MaxHealth = 100;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes")
-	float MaxMana = 100;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes")
-	float MaxStamina = 100;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Attributes")
-	float MaxStat = 99;
-
+	
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Abilities")
 	TSubclassOf<UGameplayEffect> DefaultAttributeEffect;
 
@@ -172,28 +135,11 @@ private:
 	//PlayerComponent
 	UPROPERTY(VisibleInstanceOnly, Category="Component")
 	UBasePlayerStatComponent* StatComponent;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Attack", meta=(AllowPrivateAccess=true))
-	float AttackRange;
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Attack", meta=(AllowPrivateAccess=true))
-	float AttackRadius;
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category= Attack, meta=(AllowPrivateAccess=true))
-	bool CanNextCombo;
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category=Attack, meta=(AllowPrivateAccess=true))
-	bool IsComboInputOn;
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category=Attack, meta=(AllowPrivateAccess=true))
-	int32 CurrentCombo;
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category=Attack, meta=(AllowPrivateAccess=true))
-	int32 MaxCombo;
-	const int32 MAX_COMBO = 4;
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category=Attack, meta=(AllowPrivateAccess=true))
-	bool IsAttacking;
-
+	
 	UPROPERTY(BlueprintReadWrite, meta=(AllowPrivateAccess=true))
 	UAnimMontage* DodgeMontage;
 
-	UPROPERTY(VisibleAnywhere, meta=(AllowPrivateAccess=true))
-	bool bCanDamaged = true;
+
 	//Interact
 	const float CheckInteractableReach = 100.0f;
 
@@ -202,6 +148,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Abilities", meta=(AllowPrivateAccess="true"))
 	UAbilitySystemComponent* AbilitySystemComponent;
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Inventory",meta=(AllowPrivateAccess="true"))
+	UInventoryComponent* InventoryComponent;
+	
 	UPROPERTY()
 	class URuneAttributeSet* Attributes;
 };

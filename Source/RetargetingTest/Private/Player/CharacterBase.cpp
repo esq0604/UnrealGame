@@ -13,14 +13,12 @@
 #include "DrawDebugHelpers.h"
 #include "Engine/DamageEvents.h"
 #include "Engine/EngineTypes.h"
-#include "GameplayTagContainer.h"
 #include "MotionWarpingComponent.h"
 
 #include "AbilitySystemComponent.h"
+#include "Component/InventoryComponent.h"
 #include "RetargetingTest/Public/Attribute/RuneAttributeSet.h"
-#include "RetargetingTest/Public/Component/BasePlayerStatComponent.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
-#include "RetargetingTest/Public/Controller/MyPlayerController.h"
 #include "RetargetingTest/Public/Object/ItemBase.h"
 #include "RetargetingTest/Public/Player/CharaterAnimInstance.h"
 #include "RetargetingTest/Public/UI/Inventory.h"
@@ -31,7 +29,6 @@
 // ARetargetingTestCharacter
 
 ACharacterBase::ACharacterBase()
-	: AttackRange(200.0f), AttackRadius(50.0f), MaxCombo(4), IsAttacking(false)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	// Set size for collision capsule
@@ -71,7 +68,6 @@ ACharacterBase::ACharacterBase()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 
 	//사용자 정의 컴포넌트입니다.
-	StatComponent = CreateDefaultSubobject<UBasePlayerStatComponent>(TEXT("StatComponent"));
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));
 
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
@@ -81,6 +77,8 @@ ACharacterBase::ACharacterBase()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
 	Attributes = CreateDefaultSubobject<URuneAttributeSet>(TEXT("Attribute"));
+
+	InventoryComponent=CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 }
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
@@ -88,75 +86,6 @@ UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
-/**
-* 데미지 전달을 위한 함수입니다. 현재 상태가 Dodge State가 아니라면 데미지를 받습니다.
-* @param DamageAmount - 받는 데미지의 양 입니다.
-*
-*/
-float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
-                                 AController* EventInstigator, AActor* DamageCauser)
-{
-	if (bCanDamaged)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Player Get Damage"));
-		StatComponent->SufferDamage(DamageAmount);
-
-		return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	}
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-}
-
-/**
- * 플레이어가 공격을 할 시 범위를 확인하기 위해 호출됩니다.
- * @warning  플레이어애님인스턴스의 몽타주애님 노티파이 델리게이트에 바인딩되어 있습니다.
- */
-// void ACharacterBase::AttackCheck()
-// {
-// 	FHitResult HitResult;
-// 	FCollisionQueryParams Params(NAME_None,false,this);
-// 	
-// 	bool bResult=GetWorld()->SweepSingleByChannel(
-// 		HitResult,
-// 		GetActorLocation(),
-// 		GetActorLocation()+GetActorForwardVector()*200.0f,
-// 		FQuat::Identity,
-// 		ECC_GameTraceChannel1,
-// 		FCollisionShape::MakeSphere(50.0f),
-// 		Params
-// 	);
-//
-// #if ENABLE_DRAW_DEBUG
-// 	FVector TraceVec = GetActorForwardVector()*AttackRange;
-// 	FVector Center = GetActorLocation() + TraceVec*0.5f;
-// 	float HalfHeight = AttackRange* 0.5f +AttackRadius;
-// 	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
-// 	FColor DrawColor = bResult ? FColor::Green : FColor::Red;
-// 	float DebugLifeTime = 3.0f;
-//
-// 	DrawDebugCapsule(GetWorld()
-// 		,Center
-// 		,HalfHeight
-// 		,AttackRadius
-// 		,CapsuleRot
-// 		,DrawColor
-// 		,false
-// 		,DebugLifeTime
-// 		);
-// #endif
-// 	
-// 	if(bResult)
-// 	{
-// 		if(HitResult.GetActor()->ActorHasTag("Monster"))
-// 		{
-// 		    UE_LOG(LogTemp,Warning,TEXT("Player Attack Result Monster"));
-// 			FDamageEvent DamageEvent;
-// 			HitResult.GetActor()->TakeDamage(StatComponent->GetAttackDamage(),DamageEvent,GetController(),this);
-// 			//플러팅텍스트를 스폰합니다.
-// 			FText AttackDamage = FText::FromString(FString::SanitizeFloat(StatComponent->GetAttackDamage()));
-// 			FloatingTextComponent->AddFloatingActor(AttackDamage,HitResult.GetActor()->GetActorLocation());
-// 		}
-// 	}
-// }
 /**
  * 게임플레이의 시작 전 초기화 단계입니다.
  * 플레이어의 HP Widget Component의 초기화 후에 뷰포트에 노출해야 하기 때문에 BeginPlay에 작성하였습니다.
@@ -178,12 +107,7 @@ void ACharacterBase::BeginPlay()
 	// 		PlayerHUD->AddToViewport();
 	// 	}
 	// }
-
-	//EquipedWeapon=NewObject<ABaseWeapon>(this,EquipedWeaponClass);
-	//EquipedWeapon->SetOwner(this);
-	//EquipedWeapon->EquipWeapon();
-	//EquipedWeapon->AttachToComponent(GetMesh(),FAttachmentTransformRules(EAttachmentRule::SnapToTarget,true),"Weapon_Back");
-	//EquipedWeapon->CreateWeaponStateAndAbility();
+	
 }
 
 /**
@@ -192,13 +116,6 @@ void ACharacterBase::BeginPlay()
 void ACharacterBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-}
-
-/**
- * Sprint입력이 끝날때 호출되는 함수입니다. EndState를 통해 다른 상태로 바뀔 수 있습니다.
- */
-void ACharacterBase::SprintEnd()
-{
 }
 
 /**
@@ -305,18 +222,6 @@ AItemBase* ACharacterBase::GetItemAtInventory(int32 Index)
 TArray<AItemBase*> ACharacterBase::GetInventory() const
 {
 	return Inventory;
-}
-
-/**
- * 캐릭터의 IA_Sprint 와 바인딩된 함수입니다. SprintState로 진입합니다.
- * 해당 로직의 문제점은 SprintState로 진입할 수 없을때에도 스태미나를 사용하는것 입니다.
- * 이를 올바르게 처리하기 위해선 Sprint State에서 로직을 처리하는것 입니다.
- */
-
-
-UBasePlayerStatComponent* ACharacterBase::GetStatComponent() const
-{
-	return StatComponent;
 }
 
 ABaseWeapon* ACharacterBase::GetEquipedWeapon() const
@@ -447,27 +352,6 @@ void ACharacterBase::GiveDefaultAbilities()
 	}
 }
 
-// void ACharacterBase::Attack(const FInputActionValue& Value)
-// {
-// 	if(IsAttacking)
-// 	{
-// 		if(CanNextCombo)
-// 		{
-// 			IsComboInputOn=true;
-// 		}
-// 	}
-// 	else
-// 	{
-// 		//PlayerStateManagerComponent->SetCurrentActiveState(PlayerStateManagerComponent->GetStateOfGameplayTag(FGameplayTag::RequestGameplayTag("State.Walk")));
-// 		//if(PlayerStateManagerComponent->GetCurrentActiveState()->GetGameplayTag()==FGameplayTag::RequestGameplayTag("State.Attack"))
-// 		{
-// 			AttackStartComboState();
-// 			mAnimInstance->PlayAttackMontage();
-// 			IsAttacking=true;
-// 		}
-// 	}
-// }
-
 /**
  * 캐릭터가 보유한 컴포넌트들의 초기화 시점입니다.애님인스턴스에서 선언한 델리게이트들을 바인딩합니다.
  * 델리게이트에 Lamda를 사용해 다음 공격에 대한 노티파이가 발생한다면 콤보공격을 시작하도록 합니다.
@@ -475,57 +359,5 @@ void ACharacterBase::GiveDefaultAbilities()
 void ACharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	mAnimInstance = Cast<UCharaterAnimInstance>(GetMesh()->GetAnimInstance());
-	if (mAnimInstance != nullptr)
-	{
-		// mAnimInstance->OnAttackHitCheck.AddUObject(this,&ACharacterBase::AttackCheck);
-		// mAnimInstance->OnMontageEnded.AddDynamic(this,&ACharacterBase::OnAttackMontageEnded);
-		// mAnimInstance->OnNextAttackHitCheck.AddLambda([this]()->void
-		// {
-		// 	CanNextCombo=false;
-		// 	if(IsComboInputOn)
-		// 	{
-		// 		AttackStartComboState();
-		// 		mAnimInstance->JumpToAttackMontageSection(CurrentCombo);
-		// 	}
-		// });
-	}
-}
 
-/**
- * 콤보 공격을 시작하기 위한 함수입니다.
- */
-// void ACharacterBase::AttackStartComboState()
-// {
-// 	CanNextCombo=true;
-// 	IsComboInputOn=false;
-// 	CurrentCombo = FMath::Clamp<int32>(CurrentCombo+1,1,MaxCombo);
-// }
-
-/**
- * 몽타주가 끝나면 콤보공격에 대한 상태들을 초기화합니다.
- */
-// void ACharacterBase::AttackEndComboState()
-// {
-// 	CanNextCombo=false;
-// 	IsComboInputOn=false;
-// 	CurrentCombo=0;
-// }
-
-/**
- * 몽타주가 끝나면 콤보공격에 대한 상태들을 초기화합니다.
- */
-// void ACharacterBase::OnAttackMontageEnded(UAnimMontage* Montage, bool bInterrupted)
-// {
-// 	IsAttacking=false;
-// 	AttackEndComboState();
-// 	
-// }
-
-/**
- * Space키에 매핑된 함수입니다. Walk 상태라면 Dodge를, Sprint 상태라면 점프를 수행합니다.
- * 현재 Dodge 입력 매핑은 Blueprint로 되어있습니다.
- */
-void ACharacterBase::JumpAndDodge()
-{
 }
