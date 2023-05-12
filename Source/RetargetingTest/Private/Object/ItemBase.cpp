@@ -5,6 +5,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Engine/Texture2D.h"
+#include "Player/PlayerBase.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
 
 
@@ -24,7 +25,7 @@ void AItemBase::BeginPlay()
 
 void AItemBase::Interact_Implementation()
 {
-	ACharacterBase* Character=Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(this,0));
+	APlayerBase* Character=Cast<APlayerBase>(UGameplayStatics::GetPlayerCharacter(this,0));
 
 	Character->AddItemToInventory(this);
 	OnPickup();

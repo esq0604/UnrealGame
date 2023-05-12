@@ -12,25 +12,20 @@
 #include "CharacterBase.generated.h"
 
 
-class UInventoryComponent;
-class ABaseWeapon;
 class UBaseAbilityManagerComponent;
-class UAttackComponent;
-class UBaseStatComponent;
-class APlayerAttackComponent;
-class APlayerStatComponent;
 class UWidgetComponent;
 class UPlayerGauge;
 class UFloatingCombatTextComponent;
 class UCharaterAnimInstance;
 class UBasePlayerStatComponent;
-class UPlayerHUD;
 class UInputMappingContext;
 class UInputAction;
 struct FDamageEvent;
 class UMotionWarpingComponent;
 class UStaticMeshComponent;
 class UAbilitySystemComponent;
+class USpringArmComponent;
+class UCameraComponent;
 
 //TODO : CharacterBase 클래스이므로, 플레이어 클래스를 따로 나누어 CharacterBase에 존재하는 Player 속성들을 옮겨야합니다.
 UCLASS(config=Game)
@@ -44,35 +39,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
-	UFUNCTION(BlueprintCallable, Category="Inventory function")
-	void UseItemAtInventorySlot(int32 Slot);
-
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 	virtual void InitializeAttributes();
 	virtual void GiveDefaultAbilities();
-	
 	/* Setter */
-	UFUNCTION(BlueprintCallable, Category="Setter")
-	bool AddItemToInventory(AItemBase* Item);
-
-	/* Getter */
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-	
-	UFUNCTION(BlueprintCallable, Category="Getter")
-	TArray<AItemBase*> GetInventory() const;
-
-	UFUNCTION(BlueprintCallable, Category="Getter")
-	AItemBase* GetItemAtInventory(int32 Index);
-
-	UFUNCTION(BlueprintCallable, Category="Getter")
-	UTexture2D* GetThumnailAtInventorySlot(int32 Slot) const;
-
-	UFUNCTION(BlueprintCallable, Category="Getter")
-	FString GetItemNameAtInventorySlot(int32 Slot) const;
-	
 	UFUNCTION(BlueprintCallable, Category="Getter")
 	ABaseWeapon* GetEquipedWeapon() const;
 
@@ -82,48 +53,13 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
-private:
-	void ToggleInventory();
-	void Interact();
-	void CheckForInteractalbe();
-	void UseQuickSlot(int UsedSlotIdx);
-
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true))
-	TArray<AItemBase*> Inventory;
-	
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Abilities")
 	TSubclassOf<UGameplayEffect> DefaultAttributeEffect;
 
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
-	
-protected:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category="Animation")
-	UCharaterAnimInstance* mAnimInstance;
 
-	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess=true))
-	UFloatingCombatTextComponent* FloatingTextComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Component")
-	UMotionWarpingComponent* MotionWarpComponent;
-	
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category=Dodge, meta=(AllowPrivateAccess=true))
-	bool IsDodge;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HUD", meta=(AllowPrivateAccess=true))
-	TSubclassOf<UUserWidget> PlayerHUDClass;
-
-	UPROPERTY(VisibleAnywhere, Category="HUD", meta=(AllowPrivateAccess=true))
-	UPlayerHUD* PlayerHUD;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true), Category="Weapon")
-	TSubclassOf<ABaseWeapon> EquipedWeaponClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true), Category="Weapon")
-	ABaseWeapon* EquipedWeapon;
-
-private:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
@@ -131,26 +67,27 @@ private:
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
+protected:
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category="Animation")
+	UCharaterAnimInstance* mAnimInstance;
 
-	//PlayerComponent
-	UPROPERTY(VisibleInstanceOnly, Category="Component")
-	UBasePlayerStatComponent* StatComponent;
+	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess=true))
+	UFloatingCombatTextComponent* FloatingTextComponent;
 	
-	UPROPERTY(BlueprintReadWrite, meta=(AllowPrivateAccess=true))
-	UAnimMontage* DodgeMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true), Category="Weapon")
+	TSubclassOf<ABaseWeapon> EquipedWeaponClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true), Category="Weapon")
+	ABaseWeapon* EquipedWeapon;
 
-	//Interact
-	const float CheckInteractableReach = 100.0f;
-
-	AItemBase* CurrentInteractable;
-
+private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Abilities", meta=(AllowPrivateAccess="true"))
 	UAbilitySystemComponent* AbilitySystemComponent;
-
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Inventory",meta=(AllowPrivateAccess="true"))
-	UInventoryComponent* InventoryComponent;
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Component",meta=(AllowPrivateAccess="true"))
+	class UMotionWarpingComponent* MotionWarpComponent;
 	UPROPERTY()
 	class URuneAttributeSet* Attributes;
+
+	class UInventoryManagerComponent* InventoryManagerComponent;
+
 };

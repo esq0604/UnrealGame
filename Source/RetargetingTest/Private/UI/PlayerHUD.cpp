@@ -16,14 +16,14 @@
  */
 void UPlayerHUD::Init()
 {
-	if(Character!=nullptr)
+	if(Player!=nullptr)
 	{
 		//Gauge->BindActorStat(Character->GetStatComponent());
 
-		QuickSlot->SetCharacter(Character);
+		QuickSlot->SetCharacter(Player);
 		QuickSlot->Init();
 	
-		Inventory->SetCharacter(Character);
+		Inventory->SetCharacter(Player);
 		Inventory->SetVisibility(ESlateVisibility::Hidden);
 		Inventory->Init();
 	}
@@ -44,9 +44,9 @@ UInventory* UPlayerHUD::GetInventory() const
 	return Inventory;
 }
 
-void UPlayerHUD::SetCharacter(ACharacterBase* NewCharater)
+void UPlayerHUD::SetCharacter(APlayerBase* NewPlayer)
 {
-	Character = NewCharater;
+	Player = NewPlayer;
 }
 
 /**

@@ -10,7 +10,7 @@
  * 
  */
 class USlot;
-class ACharacterBase;
+class APlayerBase;
 
 UCLASS()
 class RETARGETINGTEST_API UQuickSlot : public UUserWidget
@@ -22,11 +22,11 @@ public:
 	void Init();
 	void Use(int index);
 
-	void SetCharacter(ACharacterBase* NewCharacter);
+	void SetCharacter(APlayerBase* NewPlayer);
 	
 protected:
 	TArray<USlot*> Slots;
-	ACharacterBase* Character;
+	APlayerBase* Player;
 private:
 	const int MAX_QUICK_SLOT=4;
 };

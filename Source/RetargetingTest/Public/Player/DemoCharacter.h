@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "DemoCharacterBase.h"
 #include "GameplayTagContainer.h"
-#include "Player/CharacterBase.h"
 #include "DemoCharacter.generated.h"
 
 struct FGameplayTag;
 class ADemoPlayerState;
+class USpringArmComponent;
+class UCameraComponent;
 /**
  * 
  */

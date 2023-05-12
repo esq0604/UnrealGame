@@ -20,8 +20,6 @@ public:
 	// Sets default values for this character's properties
 	ADemoCharacterBase(const class FObjectInitializer& ObjectInitializer);
 	
-
-	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:

@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Slot.generated.h"
 
+class APlayerBase;
 class ACharacterBase;
 class UTextBlock;
 class UImage;
@@ -32,7 +33,7 @@ public:
 	void Init();
 
 	void SetType(ESlotType NewSlotType);
-	void SetCharacter(ACharacterBase* NewCharacter);
+	void SetCharacter(APlayerBase* NewCharacter);
 	void SetIndex(int32 NewIndex);
 	void SetImg(UTexture2D* NewImg);
 	void Action();
@@ -64,7 +65,7 @@ public:
 
 
 protected:
-	ACharacterBase* Character;
+	APlayerBase* Player;
 private:
 	ESlotType SlotType;
 

@@ -110,7 +110,7 @@ void AMyPlayerController::JumpStop(const FInputActionValue& Value)
 
 void AMyPlayerController::Interact(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp,Warning,TEXT("Interact"));
+	//UE_LOG(LogTemp,Warning,TEXT("Interact"));
 }
 
 void AMyPlayerController::ToggleInventory(const FInputActionValue& Value)

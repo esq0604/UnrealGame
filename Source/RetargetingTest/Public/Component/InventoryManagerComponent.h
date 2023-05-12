@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "InventoryComponent.generated.h"
+#include "InventoryManagerComponent.generated.h"
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class RETARGETINGTEST_API UInventoryComponent : public UActorComponent
+class RETARGETINGTEST_API UInventoryManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this component's properties
-	UInventoryComponent();
+	UInventoryManagerComponent();
 
 protected:
 	// Called when the game starts

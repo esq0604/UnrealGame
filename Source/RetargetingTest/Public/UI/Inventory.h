@@ -9,7 +9,7 @@
 /**
  * 
  */
-class ACharacterBase;
+class APlayerBase;
 class USlot;
 
 UCLASS()
@@ -21,11 +21,11 @@ public:
 	void Init();
 	
 	void Refresh();
-	void SetCharacter(ACharacterBase* NewCharacter);
+	void SetCharacter(APlayerBase* NewCharacter);
 	USlot* GetSlot(int32 Index) const;
 protected:
 	virtual void NativeConstruct() override; 
 
-	ACharacterBase* Character;
+	APlayerBase* Player;
 	TArray<USlot*> Slots;
 };

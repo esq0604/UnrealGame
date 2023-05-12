@@ -6,6 +6,7 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Player/PlayerBase.h"
 #include "RetargetingTest/Public/Object/ItemBase.h"
 #include "RetargetingTest/Public/Object/SlotDragDrop.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
@@ -29,14 +30,14 @@ void USlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEven
 	{
 		USlotDragDrop* oper =NewObject<USlotDragDrop>();
 		oper->From =this;
-		oper->Character=this->Character;
+		oper->Player=this->Player;
 		OutOperation=oper;
 
 		if (DragVisualClass != nullptr)
 		{
-			USlot* visual = CreateWidget<USlot>(Cast<APlayerController>(Character->Controller), DragVisualClass);
+			USlot* visual = CreateWidget<USlot>(Cast<APlayerController>(Player->Controller), DragVisualClass);
 			visual->SlotType = this->SlotType;
-			visual->Character = this->Character;
+			visual->Player = this->Player;
 			visual->Index = this->Index;
 			visual->Refresh();
 			
@@ -78,20 +79,20 @@ FReply USlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointe
 
 	if(InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton)==true)
 	{
-		if(Character->GetItemAtInventory(Index) !=nullptr)
+		if(Player->GetItemAtInventory(Index) !=nullptr)
 		{
-			if(Index<0 || Character->GetItemAtInventory(Index)!=nullptr)
+			if(Index<0 || Player->GetItemAtInventory(Index)!=nullptr)
 			{
-				Character->UseItemAtInventorySlot(Index);
+				Player->UseItemAtInventorySlot(Index);
 				return reply.NativeReply;
 			}
 		}
 	}
 	else if(InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton)==true)
 	{
-		if(Character->GetItemAtInventory(Index)!=nullptr)
+		if(Player->GetItemAtInventory(Index)!=nullptr)
 		{
-			if(Character->GetItemAtInventory(Index)!=nullptr)
+			if(Player->GetItemAtInventory(Index)!=nullptr)
 			{
 				reply=UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent,this,EKeys::LeftMouseButton);
 			}
@@ -129,11 +130,11 @@ void USlot::Refresh()
 	case ESlotType::SLOT_INVENTORY:
 		{
 
-			if(Character->Inventory[Index]!=nullptr)
+			if(Player->Inventory[Index]!=nullptr)
 			{
-				Count=Character->Inventory[Index]->GetCount();
+				Count=Player->Inventory[Index]->GetCount();
 			}
-			UTexture2D* Tex=Character->GetThumnailAtInventorySlot(Index);
+			UTexture2D* Tex=Player->GetThumnailAtInventorySlot(Index);
 			Img->SetBrushFromTexture(Tex);
 			if(Count >1)
 			{
@@ -156,11 +157,11 @@ void USlot::Refresh()
 			}
 			else
 			{
-				if(Character->Inventory[Index]!=nullptr)
+				if(Player->Inventory[Index]!=nullptr)
 				{
-					Count= Character->Inventory[Index]->GetCount();
+					Count= Player->Inventory[Index]->GetCount();
 				}
-				UTexture2D* Tex=Character->GetThumnailAtInventorySlot(Index);
+				UTexture2D* Tex=Player->GetThumnailAtInventorySlot(Index);
 				Img->SetBrushFromTexture(Tex);
 				if(Count >1)
 				{
@@ -182,9 +183,9 @@ void USlot::SetType(ESlotType NewSlotType)
 	SlotType=NewSlotType;
 }
 
-void USlot::SetCharacter(ACharacterBase* NewCharacter)
+void USlot::SetCharacter(APlayerBase* NewCharacter)
 {
-	Character=NewCharacter;
+	Player=NewCharacter;
 }
 
 void USlot::SetIndex(int32 NewIndex)
@@ -206,7 +207,7 @@ void USlot::Action()
 	{
 	case ESlotType::SLOT_INVENTORY:
 	case ESlotType::SLOT_QUICK:
-		Character->UseItemAtInventorySlot(Index);
+		Player->UseItemAtInventorySlot(Index);
 		break;
 		
 	default:

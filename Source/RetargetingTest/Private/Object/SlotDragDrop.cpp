@@ -3,8 +3,8 @@
 
 #include "RetargetingTest/Public/Object/SlotDragDrop.h"
 
+#include "Player/PlayerBase.h"
 #include "RetargetingTest/Public/Object/ItemBase.h"
-#include "RetargetingTest/Public/Player/CharacterBase.h"
 #include "RetargetingTest/Public/UI/Slot.h"
 
 /**
@@ -36,17 +36,17 @@ bool USlotDragDrop::SwapInven(USlot* to)
 {
 	//From에 있는 ReferenceSlot을 지우고 스왑 후 To의 referenceSlot에 추가합니다.
 	//Reference 슬롯의 인덱스를 변경함으로써 퀵슬롯에서 사용할 인벤토리의 참조를 변경합니다.
-	if(!Character->Inventory[From->GetIndex()]->ReferenceSlot.IsEmpty())
+	if(!Player->Inventory[From->GetIndex()]->ReferenceSlot.IsEmpty())
 	{
-		USlot* TempSlot =Character->Inventory[From->GetIndex()]->ReferenceSlot.Top();
-		Character->Inventory[From->GetIndex()]->ReferenceSlot.Pop();
-		Character->Inventory.Swap(From->GetIndex(), to->GetIndex());
-		Character->Inventory[to->GetIndex()]->ReferenceSlot.Push(TempSlot);
-		Character->Inventory[to->GetIndex()]->ReferenceSlot.Top()->SetIndex(to->GetIndex());
+		USlot* TempSlot =Player->Inventory[From->GetIndex()]->ReferenceSlot.Top();
+		Player->Inventory[From->GetIndex()]->ReferenceSlot.Pop();
+		Player->Inventory.Swap(From->GetIndex(), to->GetIndex());
+		Player->Inventory[to->GetIndex()]->ReferenceSlot.Push(TempSlot);
+		Player->Inventory[to->GetIndex()]->ReferenceSlot.Top()->SetIndex(to->GetIndex());
 	}
 	else
 	{
-		Character->Inventory.Swap(From->GetIndex(), to->GetIndex());
+		Player->Inventory.Swap(From->GetIndex(), to->GetIndex());
 	}
 	
 	From->Refresh();
@@ -61,9 +61,9 @@ bool USlotDragDrop::SwapInven(USlot* to)
  */
 bool USlotDragDrop::SetQuickSlot(USlot* To)
 {
-	if(To!=nullptr && Character!=nullptr)
+	if(To!=nullptr && Player!=nullptr)
 	{
-		Character->Inventory[From->GetIndex()]->AddReferenceSlot(To);
+		Player->Inventory[From->GetIndex()]->AddReferenceSlot(To);
 		To->SetType(ESlotType::SLOT_QUICK);
 		To->Index=From->Index;
 		To->Refresh();
@@ -87,13 +87,13 @@ bool USlotDragDrop::SwapQuickSlot(USlot* To)
 		}
 		else
 		{
-			if(Character->Inventory[To->Index]!=nullptr)
+			if(Player->Inventory[To->Index]!=nullptr)
 			{
-				Character->Inventory[To->Index]->RemoveReferenceSlot(To);
-				Character->Inventory[To->Index]->AddReferenceSlot(From);
+				Player->Inventory[To->Index]->RemoveReferenceSlot(To);
+				Player->Inventory[To->Index]->AddReferenceSlot(From);
 			}
-			Character->Inventory[From->GetIndex()]->RemoveReferenceSlot(From);
-			Character->Inventory[From->GetIndex()]->AddReferenceSlot(To);
+			Player->Inventory[From->GetIndex()]->RemoveReferenceSlot(From);
+			Player->Inventory[From->GetIndex()]->AddReferenceSlot(To);
 
 			//2. 인덱스를 바꿉니다.(인덱스를 바꾸어 슬롯의 이미지를 변경함)
 			const int TempIndex = To->Index;
@@ -122,7 +122,7 @@ bool USlotDragDrop::MoveQuickSlot(USlot* To)
 	To->SetIndex(From->GetIndex());
 	From->SetIndex(tempIdx);
 	
-	Character->Inventory[To->GetIndex()]->AddReferenceSlot(To);
+	Player->Inventory[To->GetIndex()]->AddReferenceSlot(To);
 	
 	To->Refresh();
 	From->Refresh();

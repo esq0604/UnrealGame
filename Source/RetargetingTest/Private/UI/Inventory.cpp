@@ -5,6 +5,7 @@
 
 #include "Blueprint/WidgetTree.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/PlayerBase.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
 #include "RetargetingTest/Public/UI/Slot.h"
 
@@ -19,7 +20,7 @@ void UInventory::NativeConstruct()
  */
 void UInventory::Init()
 {
-	Character=Cast<ACharacterBase>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
+	Player=Cast<APlayerBase>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
 	TArray<UWidget*> Widgets;
 	WidgetTree->GetAllWidgets(Widgets);
 	Slots.Init(nullptr,12);
@@ -31,7 +32,7 @@ void UInventory::Init()
 		if(slot != nullptr)
 		{
 			slot->SetType(ESlotType::SLOT_INVENTORY);
-			slot->SetCharacter(this->Character);
+			slot->SetCharacter(this->Player);
 			slot->Init();
 			Slots[slot->GetIndex()]=slot;
 			
@@ -47,9 +48,9 @@ void UInventory::Refresh()
 	}
 }
 
-void UInventory::SetCharacter(ACharacterBase* NewCharacter)
+void UInventory::SetCharacter(APlayerBase* NewCharacter)
 {
-	Character= NewCharacter;
+	Player= NewCharacter;
 }
 
 USlot* UInventory::GetSlot(int32 Index) const
