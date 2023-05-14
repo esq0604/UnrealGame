@@ -29,7 +29,7 @@ public:
 	UInventory* GetInventory() const;
 
 	void SetCharacter(APlayerBase* NewPlayer);
-	void ToggleInventory();
+	void ToggleInventory(); 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))
 	UPlayerGauge* Gauge;
