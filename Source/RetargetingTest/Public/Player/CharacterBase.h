@@ -43,10 +43,7 @@ public:
 	virtual void OnRep_PlayerState() override;
 	virtual void InitializeAttributes();
 	virtual void GiveDefaultAbilities();
-	/* Setter */
-	UFUNCTION(BlueprintCallable, Category="Getter")
-	ABaseWeapon* GetEquipedWeapon() const;
-
+	TArray<AItemBase*> GetInventory() const;
 protected:
 	virtual void PostInitializeComponents() override;
 
@@ -73,12 +70,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess=true))
 	UFloatingCombatTextComponent* FloatingTextComponent;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true), Category="Weapon")
-	TSubclassOf<ABaseWeapon> EquipedWeaponClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true), Category="Weapon")
-	ABaseWeapon* EquipedWeapon;
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Abilities", meta=(AllowPrivateAccess="true"))
@@ -90,4 +81,6 @@ private:
 
 	class UInventoryManagerComponent* InventoryManagerComponent;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true))
+	TArray<AItemBase*> Inventory;
 };

@@ -73,17 +73,7 @@ AActor* APlayerBase::CheckForInteractalbe()
 	}
 }
 
-/**
- *	TODO: 게임의 플레이어 HUD관련부분은 게임모드클래스에서 관리해야합니다. 
- *	인벤토리 토글 입력에 대한 매핑 함수 입니다. I키를 통해 인벤토리를 열고 닫습니다.
- */
-void APlayerBase::ToggleInventory()
-{
-	if (PlayerHUD != nullptr)
-	{
-		PlayerHUD->ToggleInventory();
-	}
-}
+/
 
 /**
  *	TODO : 매번 전체 인벤토리를 Referesh하는건 비효율적입니다.

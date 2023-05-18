@@ -45,9 +45,7 @@ protected:
 private:
 	UFUNCTION(BlueprintCallable)
 	AActor* CheckForInteractalbe();
-
-	void ToggleInventory();
-
+	
 	UFUNCTION(BlueprintCallable)
 	void Interact();
 	
@@ -60,7 +58,7 @@ public:
 	class UPlayerHUD* PlayerHUD;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true))
-	TArray<class AItemBase*> Inventory;
+	TArray<AItemBase*> Inventory;
 	
 private:
 	class AItemBase* CurrentInteractable;

@@ -70,6 +70,7 @@ ACharacterBase::ACharacterBase()
 	Attributes = CreateDefaultSubobject<URuneAttributeSet>(TEXT("Attribute"));
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
 	InventoryManagerComponent =CreateDefaultSubobject<UInventoryManagerComponent>(TEXT("InventoryManagerComponent"));
+	InventoryManagerComponent->SetOwnerInventory(Inventory);
 }
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
@@ -87,18 +88,6 @@ void ACharacterBase::BeginPlay()
 {
 	// Call the base class
 	Super::BeginPlay();
-	// if (AMyPlayerController* PlayerController = Cast<AMyPlayerController>(Controller))
-	// {
-	// 	PlayerController->Init();
-	// 	PlayerHUD = CreateWidget<UPlayerHUD>(PlayerController, PlayerHUDClass);
-	// 	if (PlayerHUD != nullptr)
-	// 	{
-	// 		PlayerHUD->SetCharacter(this);
-	// 		PlayerHUD->Init();
-	// 		PlayerHUD->AddToViewport();
-	// 	}
-	// }
-	
 }
 
 /**
@@ -107,11 +96,6 @@ void ACharacterBase::BeginPlay()
 void ACharacterBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-}
-
-ABaseWeapon* ACharacterBase::GetEquipedWeapon() const
-{
-	return EquipedWeapon;
 }
 
 void ACharacterBase::PossessedBy(AController* NewController)
@@ -165,12 +149,12 @@ void ACharacterBase::GiveDefaultAbilities()
 	}
 }
 
-/**
- * 캐릭터가 보유한 컴포넌트들의 초기화 시점입니다.애님인스턴스에서 선언한 델리게이트들을 바인딩합니다.
- * 델리게이트에 Lamda를 사용해 다음 공격에 대한 노티파이가 발생한다면 콤보공격을 시작하도록 합니다.
- */
+TArray<AItemBase*> ACharacterBase::GetInventory() const
+{
+	return Inventory;
+}
+
 void ACharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
 }

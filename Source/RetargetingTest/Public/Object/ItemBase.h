@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Component/InventoryManagerComponent.h"
 #include "RetargetingTest/Public/Interface/Interactable.h"
 #include "ItemBase.generated.h"
 
@@ -27,6 +28,8 @@ public:
 	void RemoveReferenceSlot(class USlot*& Slot);
 	virtual void UseItem(ACharacterBase* Character) ;
 	virtual int GetCount() const;
+	void UseItem(UInventoryManagerComponent* Character);
+
 protected:
 	virtual void BeginPlay() override;
 public:
