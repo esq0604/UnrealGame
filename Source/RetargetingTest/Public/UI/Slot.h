@@ -33,7 +33,7 @@ public:
 	void Init();
 
 	void SetType(ESlotType NewSlotType);
-	void SetCharacter(APlayerBase* NewCharacter);
+	void SetCharacter(ACharacterBase* NewCharacter);
 	void SetIndex(int32 NewIndex);
 	void SetImg(UTexture2D* NewImg);
 	void Action();
@@ -65,7 +65,7 @@ public:
 
 
 protected:
-	APlayerBase* Player;
+	ACharacterBase* Player;
 private:
 	ESlotType SlotType;
 

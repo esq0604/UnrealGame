@@ -28,7 +28,8 @@ public:
 	UQuickSlot* GetQuickSlot() const;
 	UInventory* GetInventory() const;
 
-	void SetCharacter(APlayerBase* NewPlayer);
+	void SetCharacter(ACharacterBase* NewPlayer);
+	UFUNCTION(BlueprintCallable)
 	void ToggleInventory(); 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))
@@ -40,7 +41,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))
 	UInventory* Inventory;
 
-	APlayerBase* Player;
+	ACharacterBase* Player;
 };
 
 

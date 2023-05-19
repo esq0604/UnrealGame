@@ -6,8 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "InventoryManagerComponent.generated.h"
 
+class UInventory;
 class AItemBase;
-class CharacterBase;
+class ACharacterBase;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RETARGETINGTEST_API UInventoryManagerComponent : public UActorComponent
@@ -29,4 +30,5 @@ protected:
 private:
 	ACharacterBase* ComponentOwner;
 	TArray<AItemBase*> OwnerInventory;
+	UInventory* InventoryUI;
 };

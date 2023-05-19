@@ -5,18 +5,32 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "InterchangeResult.h"
+#include "Blueprint/UserWidget.h"
 #include "GameFramework/Character.h"
 #include "RetargetingTest/Public/Controller/InputDataAsset.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
+#include "UI/PlayerHUD.h"
 
 AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	//PlayerHUDClass = UPlayerHUD::StaticClass();
 }
 
 void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(LogTemp,Warning,TEXT("PlayerController BeginPlay"));
+	const FInputModeGameOnly InputModeGameOnly;
+	SetInputMode(InputModeGameOnly);
+	
+	if(PlayerHUD!=nullptr)
+	{
+		PlayerHUD->SetCharacter(Cast<ACharacterBase>(GetOwner()));
+		PlayerHUD->Init();
+	}
+
 }
 
 void AMyPlayerController::SetupInputComponent()
@@ -115,8 +129,8 @@ void AMyPlayerController::Interact(const FInputActionValue& Value)
 
 void AMyPlayerController::ToggleInventory(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp,Warning,TEXT("Toggle Inventory"));
-	//GetHUD()->
+	UE_LOG(LogTemp,Warning,TEXT("ToggleInven"));
+	PlayerHUD->ToggleInventory();
 }
 
 void AMyPlayerController::EquipUnEquip(const FInputActionValue& Value)
@@ -127,6 +141,19 @@ void AMyPlayerController::EquipUnEquip(const FInputActionValue& Value)
 void AMyPlayerController::Init()
 {
 
+}
+
+UPlayerHUD* AMyPlayerController::GetPlayerHUD() const
+{
+	if(PlayerHUD!=nullptr)
+	{
+		return PlayerHUD;
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("PlayerController GetPlayerHUD nullptr"));
+		return nullptr;
+	}
 }
 
 

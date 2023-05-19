@@ -14,7 +14,6 @@
 
 class UBaseAbilityManagerComponent;
 class UWidgetComponent;
-class UPlayerGauge;
 class UFloatingCombatTextComponent;
 class UCharaterAnimInstance;
 class UBasePlayerStatComponent;
@@ -26,6 +25,7 @@ class UStaticMeshComponent;
 class UAbilitySystemComponent;
 class USpringArmComponent;
 class UCameraComponent;
+class AItemBase;
 
 //TODO : CharacterBase 클래스이므로, 플레이어 클래스를 따로 나누어 CharacterBase에 존재하는 Player 속성들을 옮겨야합니다.
 UCLASS(config=Game)
@@ -64,6 +64,9 @@ public:
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true))
+	TArray<AItemBase*> Inventory;
 protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category="Animation")
 	UCharaterAnimInstance* mAnimInstance;
@@ -81,6 +84,5 @@ private:
 
 	class UInventoryManagerComponent* InventoryManagerComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true))
-	TArray<AItemBase*> Inventory;
+
 };

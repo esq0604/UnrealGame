@@ -23,7 +23,7 @@ public:
 	bool MoveQuickSlot(USlot* To);
 public:
 	USlot* From;
-	class APlayerBase* Player;
+	class ACharacterBase* Player;
 };
 
 

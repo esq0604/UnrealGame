@@ -3,8 +3,11 @@
 
 #include "Component/InventoryManagerComponent.h"
 
+#include "Controller/MyPlayerController.h"
 #include "Object/ItemBase.h"
 #include "Player/CharacterBase.h"
+#include "UI/Inventory.h"
+#include "UI/PlayerHUD.h"
 #include "UI/Slot.h"
 
 // Sets default values for this component's properties
@@ -39,7 +42,7 @@ void UInventoryManagerComponent::UseItemAtInventorySlot(int32 SlotNum)
 	{
 		TArray<USlot*> TempSlot;
 
-		OwnerInventory[SlotNum]->UseItem(this);
+		OwnerInventory[SlotNum]->UseItem(ComponentOwner);
 
 		//레퍼런스 슬롯이 없다면 인벤토리만 갱신합니다.
 		if (OwnerInventory[SlotNum]->ReferenceSlot.IsEmpty())
@@ -49,7 +52,7 @@ void UInventoryManagerComponent::UseItemAtInventorySlot(int32 SlotNum)
 				OwnerInventory[SlotNum] = nullptr;
 			}
 			//TODO : 인벤토리를 사용 후 갱신해야할때, 너무 경로가 긴거같음.
-			//PlayerHUD->GetInventory()->GetSlot(SlotNum)->Refresh();
+			InventoryUI->RefreshAllSlot();
 		}
 		//있다면 레퍼런스 슬롯을 옮겨줍니다.
 		else
@@ -70,7 +73,7 @@ void UInventoryManagerComponent::UseItemAtInventorySlot(int32 SlotNum)
 				}
 			}
 			//TODO : 인벤토리를 사용 후 갱신해야할때, 너무 경로가 긴거같음.
-			//PlayerHUD->GetInventory()->Refresh();
+			InventoryUI->RefreshAllSlot();
 		}
 	}
 }
@@ -86,7 +89,15 @@ void UInventoryManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	const ACharacterBase* Character=Cast<ACharacterBase>(GetOwner());
+	const AMyPlayerController* PC = Cast<AMyPlayerController>(Character->GetController());
+	if(PC!=nullptr)
+	{
+		const UPlayerHUD* newPlayerHUD=PC->GetPlayerHUD();
+		if(newPlayerHUD!=nullptr)
+		{
+			InventoryUI=newPlayerHUD->GetInventory();
+		}
+	}
 }
 

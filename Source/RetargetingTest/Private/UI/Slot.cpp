@@ -79,20 +79,20 @@ FReply USlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointe
 
 	if(InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton)==true)
 	{
-		if(Player->GetItemAtInventory(Index) !=nullptr)
+		//if(Player->GetItemAtInventory(Index) !=nullptr)
 		{
-			if(Index<0 || Player->GetItemAtInventory(Index)!=nullptr)
+			//if(Index<0 || Player->GetItemAtInventory(Index)!=nullptr)
 			{
-				Player->UseItemAtInventorySlot(Index);
+				//Player->UseItemAtInventorySlot(Index);
 				return reply.NativeReply;
 			}
 		}
 	}
 	else if(InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton)==true)
 	{
-		if(Player->GetItemAtInventory(Index)!=nullptr)
+		//if(Player->GetItemAtInventory(Index)!=nullptr)
 		{
-			if(Player->GetItemAtInventory(Index)!=nullptr)
+			//if(Player->GetItemAtInventory(Index)!=nullptr)
 			{
 				reply=UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent,this,EKeys::LeftMouseButton);
 			}
@@ -134,8 +134,8 @@ void USlot::Refresh()
 			{
 				Count=Player->Inventory[Index]->GetCount();
 			}
-			UTexture2D* Tex=Player->GetThumnailAtInventorySlot(Index);
-			Img->SetBrushFromTexture(Tex);
+			//UTexture2D* Tex=Player->GetThumnailAtInventorySlot(Index);
+			//Img->SetBrushFromTexture(Tex);
 			if(Count >1)
 			{
 				CountText->SetText(FText::FromString(FString::FromInt(Count)));
@@ -161,8 +161,8 @@ void USlot::Refresh()
 				{
 					Count= Player->Inventory[Index]->GetCount();
 				}
-				UTexture2D* Tex=Player->GetThumnailAtInventorySlot(Index);
-				Img->SetBrushFromTexture(Tex);
+				//UTexture2D* Tex=Player->GetThumnailAtInventorySlot(Index);
+				//Img->SetBrushFromTexture(Tex);
 				if(Count >1)
 				{
 					CountText->SetText(FText::FromString(FString::FromInt(Count)));
@@ -183,7 +183,7 @@ void USlot::SetType(ESlotType NewSlotType)
 	SlotType=NewSlotType;
 }
 
-void USlot::SetCharacter(APlayerBase* NewCharacter)
+void USlot::SetCharacter(ACharacterBase* NewCharacter)
 {
 	Player=NewCharacter;
 }
@@ -207,7 +207,7 @@ void USlot::Action()
 	{
 	case ESlotType::SLOT_INVENTORY:
 	case ESlotType::SLOT_QUICK:
-		Player->UseItemAtInventorySlot(Index);
+		//Player->UseItemAtInventorySlot(Index);
 		break;
 		
 	default:

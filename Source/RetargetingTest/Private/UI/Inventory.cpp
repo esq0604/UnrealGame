@@ -40,7 +40,7 @@ void UInventory::Init()
 	}
 }
 
-void UInventory::Refresh()
+void UInventory::RefreshAllSlot()
 {
 	for(USlot* slot : Slots)
 	{
@@ -48,7 +48,12 @@ void UInventory::Refresh()
 	}
 }
 
-void UInventory::SetCharacter(APlayerBase* NewCharacter)
+void UInventory::RefreshSlotByIndex(int32 Index)
+{
+	Slots[Index]->Refresh();
+}
+
+void UInventory::SetCharacter(ACharacterBase* NewCharacter)
 {
 	Player= NewCharacter;
 }

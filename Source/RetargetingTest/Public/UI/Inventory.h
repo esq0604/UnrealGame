@@ -9,7 +9,7 @@
 /**
  * 
  */
-class APlayerBase;
+class ACharacterBase;
 class USlot;
 
 UCLASS()
@@ -20,12 +20,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Init();
 	
-	void Refresh();
-	void SetCharacter(APlayerBase* NewCharacter);
+	void RefreshAllSlot();
+	void RefreshSlotByIndex(int32 Index);
+	void SetCharacter(ACharacterBase* NewCharacter);
 	USlot* GetSlot(int32 Index) const;
 protected:
 	virtual void NativeConstruct() override; 
 
-	APlayerBase* Player;
+	ACharacterBase* Player;
 	TArray<USlot*> Slots;
 };

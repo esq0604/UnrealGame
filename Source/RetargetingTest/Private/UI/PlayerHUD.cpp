@@ -44,7 +44,7 @@ UInventory* UPlayerHUD::GetInventory() const
 	return Inventory;
 }
 
-void UPlayerHUD::SetCharacter(APlayerBase* NewPlayer)
+void UPlayerHUD::SetCharacter(ACharacterBase* NewPlayer)
 {
 	Player = NewPlayer;
 }
@@ -56,14 +56,14 @@ void UPlayerHUD::ToggleInventory()
 {
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
 
-	if(Inventory->GetVisibility()==ESlateVisibility::Hidden)
+	if(Inventory->GetVisibility()==ESlateVisibility::Collapsed)
 	{
 		Inventory->SetVisibility(ESlateVisibility::Visible);
 		PlayerController->SetShowMouseCursor(true);
 	}
 	else
 	{
-		Inventory->SetVisibility(ESlateVisibility::Hidden);
+		Inventory->SetVisibility(ESlateVisibility::Collapsed);
 		PlayerController->SetShowMouseCursor(false);
 	}
 	

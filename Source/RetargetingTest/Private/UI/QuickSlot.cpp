@@ -42,7 +42,7 @@ void UQuickSlot::Use(int UsedSlotIdx)
 	Slots[UsedSlotIdx]->Action();
 }
 
-void UQuickSlot::SetCharacter(APlayerBase* NewPlayer)
+void UQuickSlot::SetCharacter(ACharacterBase* NewPlayer)
 {
 	Player=NewPlayer;
 }

@@ -27,7 +27,7 @@ void AItemBase::Interact_Implementation()
 {
 	APlayerBase* Character=Cast<APlayerBase>(UGameplayStatics::GetPlayerCharacter(this,0));
 
-	Character->AddItemToInventory(this);
+	//Character->AddItemToInventory(this);
 	OnPickup();
 }
 

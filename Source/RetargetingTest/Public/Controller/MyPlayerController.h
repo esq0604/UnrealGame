@@ -10,6 +10,7 @@
 class UInputDataAsset;
 class UInputMappingContext;
 class UBaseStateManagerComponent;
+class UPlayerHUD;
 struct FInputActionValue;
 /**
  * 
@@ -35,6 +36,7 @@ public:
 	void EquipUnEquip(const FInputActionValue& Value);
 	void Init();
 
+	UPlayerHUD* GetPlayerHUD() const;
 	//bool 변수가 아닌 나중에 EquipState, Ability에서 수정되어야합니다.
 	bool IsEquipWeapon=false;
 	
@@ -49,5 +51,11 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Enhanced Input")
 	UInputDataAsset* InputAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="HUD", meta=(AllowPrivateAccess=true))
+	TSubclassOf<UPlayerHUD> PlayerHUDClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category="HUD", meta=(AllowPrivateAccess=true))
+	UPlayerHUD* PlayerHUD;	
 };
 

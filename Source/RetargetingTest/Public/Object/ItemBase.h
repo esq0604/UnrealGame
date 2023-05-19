@@ -28,7 +28,7 @@ public:
 	void RemoveReferenceSlot(class USlot*& Slot);
 	virtual void UseItem(ACharacterBase* Character) ;
 	virtual int GetCount() const;
-	void UseItem(UInventoryManagerComponent* Character);
+	//void UseItem(ACharacterBase* Character);
 
 protected:
 	virtual void BeginPlay() override;
