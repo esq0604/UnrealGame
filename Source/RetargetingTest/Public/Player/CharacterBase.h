@@ -26,6 +26,7 @@ class UAbilitySystemComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class AItemBase;
+class URuneAttributeSet;
 
 //TODO : CharacterBase 클래스이므로, 플레이어 클래스를 따로 나누어 CharacterBase에 존재하는 Player 속성들을 옮겨야합니다.
 UCLASS(config=Game)
@@ -37,13 +38,11 @@ public:
 	ACharacterBase();
 
 	UFUNCTION(BlueprintCallable)
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 	virtual void InitializeAttributes();
 	virtual void GiveDefaultAbilities();
-	TArray<AItemBase*> GetInventory() const;
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 protected:
 	virtual void PostInitializeComponents() override;
 
@@ -75,12 +74,12 @@ protected:
 	UFloatingCombatTextComponent* FloatingTextComponent;
 
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Abilities", meta=(AllowPrivateAccess="true"))
-	UAbilitySystemComponent* AbilitySystemComponent;
+	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	TWeakObjectPtr<URuneAttributeSet> Attributes;
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Component",meta=(AllowPrivateAccess="true"))
-	class UMotionWarpingComponent* MotionWarpComponent;
-	UPROPERTY()
-	class URuneAttributeSet* Attributes;
+	UMotionWarpingComponent* MotionWarpComponent;
+
 
 	class UInventoryManagerComponent* InventoryManagerComponent;
 

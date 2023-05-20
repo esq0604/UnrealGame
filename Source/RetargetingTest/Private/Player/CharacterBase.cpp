@@ -1,5 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
+#include "Player/CharacterBase.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
 
 #include "Components/CapsuleComponent.h"
@@ -16,8 +17,9 @@
 #include "Camera/CameraComponent.h"
 #include "Component/InventoryManagerComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "RetargetingTest/Public/Attribute/RuneAttributeSet.h"
+#include "Player/PlayerStateBase.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
+#include "Attribute/RuneAttributeSet.h"
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
 
@@ -61,38 +63,18 @@ ACharacterBase::ACharacterBase()
 
 	//사용자 정의 컴포넌트입니다.
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));
-
-
-	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-	AbilitySystemComponent->SetIsReplicated(true);
-	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
-
-	Attributes = CreateDefaultSubobject<URuneAttributeSet>(TEXT("Attribute"));
+	
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
 	InventoryManagerComponent =CreateDefaultSubobject<UInventoryManagerComponent>(TEXT("InventoryManagerComponent"));
 	InventoryManagerComponent->SetOwnerInventory(Inventory);
 }
 
-UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
-{
-	return AbilitySystemComponent;
-}
-
-/**
- * 게임플레이의 시작 전 초기화 단계입니다.
- * 플레이어의 HP Widget Component의 초기화 후에 뷰포트에 노출해야 하기 때문에 BeginPlay에 작성하였습니다.
- * Default Weapon을 생성하고, 초기화합니다.
- * PlayerController를 초기화합니다.
- */
 void ACharacterBase::BeginPlay()
 {
 	// Call the base class
 	Super::BeginPlay();
 }
 
-/**
- * 현재 속도가 0이면 Idle 상태로 전환합니다. 
- */
 void ACharacterBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
@@ -102,22 +84,25 @@ void ACharacterBase::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	if(AbilitySystemComponent)
+	APlayerStateBase* PS = GetPlayerState<APlayerStateBase>();
+	if(PS)
 	{
-		AbilitySystemComponent->InitAbilityActorInfo(this,this);
+		AbilitySystemComponent=PS->GetAbilitySystemComponent();
+		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
+		Attributes = PS->GetAttributes();
+		InitializeAttributes();
+		GiveDefaultAbilities();
 	}
 
-	InitializeAttributes();
-	GiveDefaultAbilities();
 }
 
 void ACharacterBase::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
-
-	if(AbilitySystemComponent)
+	APlayerStateBase* PS = GetPlayerState<APlayerStateBase>();
+	if(PS)
 	{
-		AbilitySystemComponent->InitAbilityActorInfo(this,this);
+		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
 	}
 
 	InitializeAttributes();
@@ -125,7 +110,7 @@ void ACharacterBase::OnRep_PlayerState()
 
 void ACharacterBase::InitializeAttributes()
 {
-	if(AbilitySystemComponent&&DefaultAttributeEffect)
+	if(AbilitySystemComponent.IsValid() &&DefaultAttributeEffect)
 	{
 		FGameplayEffectContextHandle EffectContextHandle = AbilitySystemComponent->MakeEffectContext();
 		EffectContextHandle.AddSourceObject(this);
@@ -140,7 +125,7 @@ void ACharacterBase::InitializeAttributes()
 
 void ACharacterBase::GiveDefaultAbilities()
 {
-	if(HasAuthority() && AbilitySystemComponent)
+	if(HasAuthority() && AbilitySystemComponent.IsValid())
 	{
 		for(TSubclassOf<UGameplayAbility>& StartupAbility : DefaultAbilities)
 		{
@@ -149,10 +134,11 @@ void ACharacterBase::GiveDefaultAbilities()
 	}
 }
 
-TArray<AItemBase*> ACharacterBase::GetInventory() const
+UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
 {
-	return Inventory;
+	return AbilitySystemComponent.Get();
 }
+
 
 void ACharacterBase::PostInitializeComponents()
 {

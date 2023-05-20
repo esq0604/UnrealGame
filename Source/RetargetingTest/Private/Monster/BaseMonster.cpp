@@ -4,18 +4,14 @@
 #include "RetargetingTest/Public/Monster/BaseMonster.h"
 
 #include "Materials/Material.h"
-#include "Components/ProgressBar.h"
-#include "Components/WidgetComponent.h"
 #include "Engine/DamageEvents.h"
 
-#include "RetargetingTest/Public/Component/BaseMonsterStatComponent.h"
 #include "RetargetingTest/Public/Monster/BaseMonsterAnimInstance.h"
 
 ABaseMonster::ABaseMonster()
 {
 //	HPWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
 //	HPWidgetComponent->SetupAttachment(RootComponent);
-	StatComponent =CreateDefaultSubobject<UBaseMonsterStatComponent>(TEXT("StatComponent"));
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 }
 
@@ -67,9 +63,7 @@ float ABaseMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	AActor* DamageCauser)
 {
 	mAnimInstacne->PlayHitMontage();
-	StatComponent->SufferDamage(DamageAmount);
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
 }
 
 /**
@@ -115,7 +109,6 @@ void ABaseMonster::AttackCheck()
 		{
 			UE_LOG(LogTemp,Warning,TEXT("Monster Take Damage To Player"));
 			FDamageEvent DamageEvent;
-			HitResult.GetActor()->TakeDamage(StatComponent->GetAttackDamage(),DamageEvent,GetController(),this);
 			//플러팅텍스트를 스폰합니다.
 			//FText AttackDamage = FText::FromString(FString::SanitizeFloat(StatComponent->GetAttackDamage()));
 			//FloatingTextComponent->AddFloatingActor(AttackDamage,HitResult.GetActor()->GetActorLocation());

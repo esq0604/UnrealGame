@@ -5,7 +5,6 @@
 
 #include "VectorTypes.h"
 #include "Components/ProgressBar.h"
-#include "RetargetingTest/Public/Component/BaseStatComponent.h"
 
 void UMonsterGauge::NativeConstruct()
 {
@@ -18,7 +17,7 @@ void UMonsterGauge::NativeConstruct()
  */
 void UMonsterGauge::UpdateHPWidget()
 {
-	const float NewHp = CurrentActorStat->GetNewHpPercent();
-	HpProgressBar->SetPercent(NewHp);
+	//const float NewHp = CurrentActorStat->GetNewHpPercent();
+	//HpProgressBar->SetPercent(NewHp);
 }
  

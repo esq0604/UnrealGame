@@ -23,14 +23,16 @@ class RETARGETINGTEST_API UPlayerHUD : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 	void Init();
+
+	UFUNCTION(BlueprintCallable)
+	void ToggleInventory();
 	
 	UPlayerGauge* GetGauge() const;
 	UQuickSlot* GetQuickSlot() const;
 	UInventory* GetInventory() const;
 
 	void SetCharacter(ACharacterBase* NewPlayer);
-	UFUNCTION(BlueprintCallable)
-	void ToggleInventory(); 
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))
 	UPlayerGauge* Gauge;

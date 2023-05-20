@@ -19,7 +19,9 @@ void UPlayerHUD::Init()
 	if(Player!=nullptr)
 	{
 		//Gauge->BindActorStat(Character->GetStatComponent());
-
+		Gauge->SetCharacter(Player);
+		Gauge->Init();
+		
 		QuickSlot->SetCharacter(Player);
 		QuickSlot->Init();
 	

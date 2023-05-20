@@ -2,9 +2,11 @@
 
 
 #include "RetargetingTest/Public/UI/PlayerGauge.h"
-
+#include "Player/CharacterBase.h"
 #include "Components/ProgressBar.h"
-#include "RetargetingTest/Public/Component/BasePlayerStatComponent.h"
+
+
+
 
 void UPlayerGauge::NativeConstruct()
 {
@@ -18,19 +20,23 @@ void UPlayerGauge::NativeConstruct()
  */
 void UPlayerGauge::UpdateHPWidget()
 {
+	
 }
 
 void UPlayerGauge::UpdateStaminaWidget()
 {
-	UBasePlayerStatComponent* PlayerStatComponent=Cast<UBasePlayerStatComponent>(CurrentActorStat);
-	Stamina->SetPercent(PlayerStatComponent->GetCurrentStaminaPercent());
+	//UBasePlayerStatComponent* PlayerStatComponent=Cast<UBasePlayerStatComponent>(CurrentActorStat);
+	//Stamina->SetPercent(PlayerStatComponent->GetCurrentStaminaPercent());
 }
 
-void UPlayerGauge::BindActorStat(UBaseStatComponent* NewActorStat)
+void UPlayerGauge::SetCharacter(ACharacterBase* NewPlayer)
 {
-	Super::BindActorStat(NewActorStat);
-	UBasePlayerStatComponent* PlayerStatComponent = Cast<UBasePlayerStatComponent>(NewActorStat);
-	PlayerStatComponent->OnStaminaChangedDelegate.AddUObject(this,&UPlayerGauge::UpdateStaminaWidget);
+	Player=NewPlayer;
+}
+
+void UPlayerGauge::Init()
+{
+	Player->GetAbilitySystemComponent();
 }
 
 

@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "BaseStatWidget.h"
-#include "Blueprint/UserWidget.h"
 #include "PlayerGauge.generated.h"
 
 /**
  * 
  */
 
+class ACharacterBase;
 UCLASS()
 class RETARGETINGTEST_API UPlayerGauge : public UBaseStatWidget
 {
@@ -20,13 +20,14 @@ public:
 	
 	virtual void UpdateHPWidget() override;
 	void UpdateStaminaWidget();
-	virtual void BindActorStat(UBaseStatComponent* NewActorStat) override;
+	void Init();
+	void SetCharacter(ACharacterBase* NewPlayer);
 protected:
 	virtual void NativeConstruct() override;
-
+	
 protected:
 	UPROPERTY()
 	UProgressBar* Stamina;
-
+	ACharacterBase* Player;
 private:
 };

@@ -4,7 +4,6 @@
 #include "RetargetingTest/Public/UI/BaseStatWidget.h"
 
 #include "Components/ProgressBar.h"
-#include "RetargetingTest/Public/Component//BaseStatComponent.h"
 
 void UBaseStatWidget::NativeConstruct()
 {
@@ -13,16 +12,7 @@ void UBaseStatWidget::NativeConstruct()
 
 }
 
-/**
- * 새로운 액터의 스탯컴포넌트를 받아 바인딩합니다.
- * @param NewActorStat-액터의 스탯컴포넌트가 들어옵니다.
- */
-void UBaseStatWidget::BindActorStat(UBaseStatComponent* NewActorStat)
-{
-	CurrentActorStat=NewActorStat;
-	if(CurrentActorStat!=nullptr)
-	CurrentActorStat->OnHPChangedDelegate.AddUObject(this,&UBaseStatWidget::UpdateHPWidget);
-}
+
 
 void UBaseStatWidget::UpdateHPWidget()
 {

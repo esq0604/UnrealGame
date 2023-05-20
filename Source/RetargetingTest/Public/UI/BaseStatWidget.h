@@ -15,9 +15,6 @@ class RETARGETINGTEST_API UBaseStatWidget : public UUserWidget
 	GENERATED_BODY()
 public:
 
-	UFUNCTION(BlueprintCallable)  
-	virtual void BindActorStat(class UBaseStatComponent* NewActorStat);
-
 protected:
 	virtual void UpdateHPWidget();
 	virtual void NativeConstruct() override; 
@@ -26,6 +23,4 @@ protected:
 	UPROPERTY()
 	class UProgressBar* HpProgressBar;
 
-	TWeakObjectPtr<UBaseStatComponent> CurrentActorStat;
-private:
 };
