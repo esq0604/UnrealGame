@@ -9,6 +9,7 @@
 #include "DemoPlayerState.generated.h"
 
 class UCharacterAbilitySystemComponent;
+class UPlayerHUD;
 /**
  * 
  */
@@ -69,6 +70,4 @@ protected:
 	FDelegateHandle ManaChangeDelegateHandle;
 	FDelegateHandle MaxManaChangeDelegateHandle;
 	FDelegateHandle CharacterLevelChangeDelegateHandle;
-
-	
 };

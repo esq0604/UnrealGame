@@ -1,7 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Player/CharacterBase.h"
-#include "RetargetingTest/Public/Player/CharacterBase.h"
 
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -73,6 +72,7 @@ void ACharacterBase::BeginPlay()
 {
 	// Call the base class
 	Super::BeginPlay();
+	UE_LOG(LogTemp,Warning,TEXT("Player BeginPlay"));
 }
 
 void ACharacterBase::Tick(float DeltaSeconds)
@@ -83,7 +83,7 @@ void ACharacterBase::Tick(float DeltaSeconds)
 void ACharacterBase::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-
+	UE_LOG(LogTemp,Warning,TEXT("ACharacterBase: PossessBy"));
 	APlayerStateBase* PS = GetPlayerState<APlayerStateBase>();
 	if(PS)
 	{
@@ -137,6 +137,11 @@ void ACharacterBase::GiveDefaultAbilities()
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent.Get();
+}
+
+URuneAttributeSet* ACharacterBase::GetAttributes() const
+{
+	return Attributes.Get();
 }
 
 

@@ -3,30 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseStatWidget.h"
-#include "Blueprint/UserWidget.h"
+#include "BaseGaugeWidget.h"
 #include "MonsterGauge.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RETARGETINGTEST_API UMonsterGauge : public UBaseStatWidget
+class RETARGETINGTEST_API UMonsterGauge : public UBaseGaugeWidget
 {
 	GENERATED_BODY()
 
 public:
-	virtual void UpdateHPWidget() override;
+	virtual void UpdateHPWidget(float NewHPPercent) override;
 protected:
 	virtual void NativeConstruct() override;
 
-private:
 
-
-public:
-
-
-protected:
-	
-private:
 };

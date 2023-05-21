@@ -16,6 +16,7 @@
  */
 void UPlayerHUD::Init()
 {
+	
 	if(Player!=nullptr)
 	{
 		//Gauge->BindActorStat(Character->GetStatComponent());
@@ -29,6 +30,12 @@ void UPlayerHUD::Init()
 		Inventory->SetVisibility(ESlateVisibility::Hidden);
 		Inventory->Init();
 	}
+}
+
+void UPlayerHUD::NativeConstruct()
+{
+	Super::NativeConstruct();
+
 }
 
 UPlayerGauge* UPlayerHUD::GetGauge() const
@@ -45,6 +52,22 @@ UInventory* UPlayerHUD::GetInventory() const
 {
 	return Inventory;
 }
+
+void UPlayerHUD::SetGauge(UPlayerGauge* NewGauge)
+{
+	Gauge=NewGauge;
+}
+
+void UPlayerHUD::SetQuickSlot(UQuickSlot* NewQuickSlot)
+{
+	QuickSlot=NewQuickSlot;
+}
+
+void UPlayerHUD::SetInventory(UInventory* NewInventory)
+{
+	Inventory=NewInventory;
+}
+
 
 void UPlayerHUD::SetCharacter(ACharacterBase* NewPlayer)
 {

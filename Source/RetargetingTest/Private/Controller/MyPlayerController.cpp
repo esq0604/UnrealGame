@@ -8,6 +8,7 @@
 #include "InterchangeResult.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/Character.h"
+#include "Player/PlayerStateBase.h"
 #include "RetargetingTest/Public/Controller/InputDataAsset.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
 #include "UI/PlayerHUD.h"
@@ -15,7 +16,7 @@
 AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	//PlayerHUDClass = UPlayerHUD::StaticClass();
+	PlayerHUDClass = UPlayerHUD::StaticClass();
 }
 
 void AMyPlayerController::BeginPlay()
@@ -24,11 +25,19 @@ void AMyPlayerController::BeginPlay()
 	UE_LOG(LogTemp,Warning,TEXT("PlayerController BeginPlay"));
 	const FInputModeGameOnly InputModeGameOnly;
 	SetInputMode(InputModeGameOnly);
-	
-	if(PlayerHUD!=nullptr)
+	ACharacterBase* LocalCharacter=Cast<ACharacterBase>(GetPawn());
+	APlayerStateBase* LocalPS=Cast<APlayerStateBase>(LocalCharacter->GetPlayerState());
+	if(LocalCharacter!=nullptr)
 	{
-		PlayerHUD->SetCharacter(Cast<ACharacterBase>(GetOwner()));
+		UE_LOG(LogTemp,Warning,TEXT("PlayerController BeginPlay GetPawn !nullptr"));
+		PlayerHUD=Cast<UPlayerHUD>(CreateWidget(this,PlayerHUDClass));
+		if(PlayerHUD!=nullptr)
+		PlayerHUD->SetCharacter(LocalCharacter);
 		PlayerHUD->Init();
+		UE_LOG(LogTemp,Warning,TEXT(""))
+		LocalPS->SetPlayerHUD(PlayerHUD);
+		PlayerHUD->AddToViewport();
+		
 	}
 
 }
@@ -154,6 +163,11 @@ UPlayerHUD* AMyPlayerController::GetPlayerHUD() const
 		UE_LOG(LogTemp,Warning,TEXT("PlayerController GetPlayerHUD nullptr"));
 		return nullptr;
 	}
+}
+
+UPlayerGauge* AMyPlayerController::GetGauge() const
+{
+	return PlayerHUD->GetGauge();
 }
 
 

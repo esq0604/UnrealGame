@@ -43,6 +43,7 @@ public:
 	virtual void InitializeAttributes();
 	virtual void GiveDefaultAbilities();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	URuneAttributeSet* GetAttributes() const;
 protected:
 	virtual void PostInitializeComponents() override;
 
@@ -79,8 +80,7 @@ private:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Component",meta=(AllowPrivateAccess="true"))
 	UMotionWarpingComponent* MotionWarpComponent;
-
-
+	
 	class UInventoryManagerComponent* InventoryManagerComponent;
 
 

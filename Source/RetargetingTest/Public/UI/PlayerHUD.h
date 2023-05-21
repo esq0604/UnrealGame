@@ -24,19 +24,24 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Init();
 
+	virtual void NativeConstruct() override;
 	UFUNCTION(BlueprintCallable)
 	void ToggleInventory();
-	
+
+
 	UPlayerGauge* GetGauge() const;
 	UQuickSlot* GetQuickSlot() const;
 	UInventory* GetInventory() const;
 
+	void SetGauge(UPlayerGauge* NewGauge);
+	void SetQuickSlot(UQuickSlot* NewQuickSlot);
+	void SetInventory(UInventory* NewInventory);
 	void SetCharacter(ACharacterBase* NewPlayer);
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))
 	UPlayerGauge* Gauge;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))
 	UQuickSlot* QuickSlot;
 
@@ -45,6 +50,3 @@ protected:
 
 	ACharacterBase* Player;
 };
-
-
-

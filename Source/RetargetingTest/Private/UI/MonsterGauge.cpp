@@ -15,7 +15,7 @@ void UMonsterGauge::NativeConstruct()
 /**
  * 체력이 수정된다면 바뀐 Hp를 프로그래스바에 적용시킵니다.
  */
-void UMonsterGauge::UpdateHPWidget()
+void UMonsterGauge::UpdateHPWidget(float NewHPPercent)
 {
 	//const float NewHp = CurrentActorStat->GetNewHpPercent();
 	//HpProgressBar->SetPercent(NewHp);
