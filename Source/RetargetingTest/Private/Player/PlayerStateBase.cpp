@@ -37,7 +37,7 @@ URuneAttributeSet* APlayerStateBase::GetAttributes() const
 
 void APlayerStateBase::SetPlayerHUD(UPlayerHUD* NewPlayerHUD)
 {
-	PSPlayerHUD=NewPlayerHUD;
+	PlayerHUD=NewPlayerHUD;
 	
 	//PlayerHUD->Child
 }
@@ -47,7 +47,7 @@ void APlayerStateBase::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogTemp,Warning,TEXT("PCPlayerState BeginPlay"));
-	//const AMyPlayerController*  PC= Cast<AMyPlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
+	const AMyPlayerController*  PC= Cast<AMyPlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
 	
 	if(AbilitySystemComponent)
 	{
@@ -56,7 +56,8 @@ void APlayerStateBase::BeginPlay()
 		StaminaChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetStaminaAttribute()).AddUObject(this,&APlayerStateBase::StaminaChange);
 		MaxManaChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetMaxManaAttribute()).AddUObject(this,&APlayerStateBase::MaxManaChange);
 	}
-	
+
+	PlayerHUD=PC->GetPlayerHUD();
 }
 
 /**
@@ -67,7 +68,8 @@ void APlayerStateBase::HealthChange(const FOnAttributeChangeData& Data)
 {
 	UE_LOG(LogTemp,Warning,TEXT("HealthChange"));
 	const float NewHealthPercent=(Data.NewValue/Attributes->GetMaxHealth());
-	PSPlayerHUD->GetGauge()->UpdateHPWidget(NewHealthPercent);
+	const float OldHealthPercent=Data.OldValue/Attributes->GetMaxHealth();
+	PlayerHUD->GetGauge()->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
 }
 
 /**
@@ -85,8 +87,11 @@ void APlayerStateBase::MaxHealthChange(const FOnAttributeChangeData& Data)
 void APlayerStateBase::StaminaChange(const FOnAttributeChangeData& Data)
 {
 	UE_LOG(LogTemp,Warning,TEXT("StamChange"));
+	UE_LOG(LogTemp,Warning,TEXT("%f ,%f "),Data.OldValue,Data.NewValue);
+
 	const float NewStaminaPercent=(Data.NewValue/Attributes->GetMaxStamina());
-	PSPlayerHUD->GetGauge()->UpdateStaminaWidget(NewStaminaPercent);
+	const float OldStaminaPercent =Data.OldValue/Attributes->GetMaxStamina();
+	PlayerHUD->GetGauge()->UpdateStaminaWidget(NewStaminaPercent,OldStaminaPercent);
 }
 
 /**

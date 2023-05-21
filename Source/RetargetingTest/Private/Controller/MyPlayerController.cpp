@@ -26,7 +26,6 @@ void AMyPlayerController::BeginPlay()
 	const FInputModeGameOnly InputModeGameOnly;
 	SetInputMode(InputModeGameOnly);
 	ACharacterBase* LocalCharacter=Cast<ACharacterBase>(GetPawn());
-	APlayerStateBase* LocalPS=Cast<APlayerStateBase>(LocalCharacter->GetPlayerState());
 	if(LocalCharacter!=nullptr)
 	{
 		UE_LOG(LogTemp,Warning,TEXT("PlayerController BeginPlay GetPawn !nullptr"));
@@ -34,8 +33,6 @@ void AMyPlayerController::BeginPlay()
 		if(PlayerHUD!=nullptr)
 		PlayerHUD->SetCharacter(LocalCharacter);
 		PlayerHUD->Init();
-		UE_LOG(LogTemp,Warning,TEXT(""))
-		LocalPS->SetPlayerHUD(PlayerHUD);
 		PlayerHUD->AddToViewport();
 		
 	}
@@ -133,7 +130,6 @@ void AMyPlayerController::JumpStop(const FInputActionValue& Value)
 
 void AMyPlayerController::Interact(const FInputActionValue& Value)
 {
-	//UE_LOG(LogTemp,Warning,TEXT("Interact"));
 }
 
 void AMyPlayerController::ToggleInventory(const FInputActionValue& Value)

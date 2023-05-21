@@ -47,7 +47,7 @@ protected:
 	UPROPERTY()
 	URuneAttributeSet* Attributes;
 
-	TWeakObjectPtr<UPlayerHUD> PSPlayerHUD;
+	TWeakObjectPtr<UPlayerHUD> PlayerHUD;
 
 	FDelegateHandle HealthChangeDelegateHandle;
 	FDelegateHandle MaxHealthChangeDelegateHandle;
