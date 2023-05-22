@@ -12,6 +12,7 @@
 #include "CharacterBase.generated.h"
 
 
+class APlayerStateBase;
 class UBaseAbilityManagerComponent;
 class UWidgetComponent;
 class UFloatingCombatTextComponent;
@@ -51,37 +52,46 @@ protected:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
 public:
-	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Abilities")
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="CharacterBase | Attributes")
 	TSubclassOf<UGameplayEffect> DefaultAttributeEffect;
 
-	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Abilities")
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="CharacterBase | Attributes")
 	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
 
 	/** Camera boom positioning the camera behind the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"),Category="CharacterBase | Component")
 	USpringArmComponent* CameraBoom;
 
 	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"),Category="CharacterBase | Component")
 	UCameraComponent* FollowCamera;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true),Category="CharacterBase | Inventory")
 	TArray<AItemBase*> Inventory;
 protected:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category="Animation")
-	UCharaterAnimInstance* mAnimInstance;
-
 	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess=true))
 	UFloatingCombatTextComponent* FloatingTextComponent;
 
-private:
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Component")
 	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attributes")
 	TWeakObjectPtr<URuneAttributeSet> Attributes;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,Category="Component",meta=(AllowPrivateAccess="true"))
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | AnimInstance")
+	UCharaterAnimInstance* AnimInstance;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=ture),Category="CharacterBase | Weapon")
+	UStaticMeshComponent* Weapon;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Weapon")
+	UCapsuleComponent* WeaponCollision;
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category="CharacterBase | Component")
 	UMotionWarpingComponent* MotionWarpComponent;
-	
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category="CharacterBase | Component")
 	class UInventoryManagerComponent* InventoryManagerComponent;
 
-
+	
 };

@@ -17,6 +17,23 @@ AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitial
 	: Super(ObjectInitializer)
 {
 	PlayerHUDClass = UPlayerHUD::StaticClass();
+
+	RollTag=FGameplayTag::RequestGameplayTag("Player.Ability.Roll");
+	RollTagContainer.AddTag(RollTag);
+
+	AttackTag = FGameplayTag::RequestGameplayTag("Ability.Attack.Combo");
+	AttackTagContainer.AddTag(AttackTag);
+
+	BlockStateTag =FGameplayTag::RequestGameplayTag("Character.IsBlocking");
+	BlockTag = FGameplayTag::RequestGameplayTag("Ability.Block");
+	BlockTagContainer.AddTag(BlockTag);
+	BlockStateTagContainer.AddTag(BlockStateTag);
+
+	InteractTag = FGameplayTag::RequestGameplayTag("Ability.Interact");
+	InteractTagContainer.AddTag(InteractTag);
+
+	EquipUnEquipTag=FGameplayTag::RequestGameplayTag("Ability.EquipUnEquip");
+	EquipEquipUnEquipTagContainer.AddTag(EquipUnEquipTag);
 }
 
 void AMyPlayerController::BeginPlay()
@@ -26,6 +43,7 @@ void AMyPlayerController::BeginPlay()
 	const FInputModeGameOnly InputModeGameOnly;
 	SetInputMode(InputModeGameOnly);
 	ACharacterBase* LocalCharacter=Cast<ACharacterBase>(GetPawn());
+	APlayerStateBase* LocalPS = Cast<APlayerStateBase>(LocalCharacter->GetPlayerState());
 	if(LocalCharacter!=nullptr)
 	{
 		UE_LOG(LogTemp,Warning,TEXT("PlayerController BeginPlay GetPawn !nullptr"));
@@ -34,7 +52,11 @@ void AMyPlayerController::BeginPlay()
 		PlayerHUD->SetCharacter(LocalCharacter);
 		PlayerHUD->Init();
 		PlayerHUD->AddToViewport();
-		
+		AbilitySystemComponent= LocalPS->GetAbilitySystemComponent();
+		if(AbilitySystemComponent!=nullptr)
+		{
+			UE_LOG(LogTemp,Warning,TEXT("AbilitySystem Comp not nullptr"));
+		}
 	}
 
 }
@@ -52,16 +74,17 @@ void AMyPlayerController::SetupInputComponent()
 	EnhancedInputComp->BindAction(InputAction->InputMove,ETriggerEvent::Triggered,this,&AMyPlayerController::Move);
 	EnhancedInputComp->BindAction(InputAction->InputSprint,ETriggerEvent::Triggered,this,&AMyPlayerController::Sprint);
 	EnhancedInputComp->BindAction(InputAction->InputSprint,ETriggerEvent::Completed,this,&AMyPlayerController::SprintEnd);
-	EnhancedInputComp->BindAction(InputAction->InputAttack,ETriggerEvent::Started,this,&AMyPlayerController::Attack);
+	EnhancedInputComp->BindAction(InputAction->InputAttack,ETriggerEvent::Triggered,this,&AMyPlayerController::Attack);
 	EnhancedInputComp->BindAction(InputAction->InputLook,ETriggerEvent::Triggered,this,&AMyPlayerController::Look);
-	EnhancedInputComp->BindAction(InputAction->InputJumpAndDodge,ETriggerEvent::Triggered,this,&AMyPlayerController::JumpAndDodge);
-	EnhancedInputComp->BindAction(InputAction->InputJumpAndDodge,ETriggerEvent::Completed,this,&AMyPlayerController::JumpStop);
+	EnhancedInputComp->BindAction(InputAction->InputJump,ETriggerEvent::Triggered,this,&AMyPlayerController::Jump);
+	EnhancedInputComp->BindAction(InputAction->InputJump,ETriggerEvent::Completed,this,&AMyPlayerController::JumpStop);
 	EnhancedInputComp->BindAction(InputAction->InputInteract,ETriggerEvent::Triggered,this,&AMyPlayerController::Interact);
 	EnhancedInputComp->BindAction(InputAction->InputToggleInventory,ETriggerEvent::Triggered,this,&AMyPlayerController::ToggleInventory);
 	EnhancedInputComp->BindAction(InputAction->InputEquipUnEquip,ETriggerEvent::Triggered,this,&AMyPlayerController::EquipUnEquip);
-
+	EnhancedInputComp->BindAction(InputAction->InputRoll,ETriggerEvent::Triggered,this,&AMyPlayerController::Roll);
+	EnhancedInputComp->BindAction(InputAction->InputBlock,ETriggerEvent::Started,this,&AMyPlayerController::Block);
+	EnhancedInputComp->BindAction(InputAction->InputBlock,ETriggerEvent::Canceled,this,&AMyPlayerController::BlockEnd);
 }
-
 void AMyPlayerController::Move(const FInputActionValue& Value)
 {
 	//const FGameplayTag LocalWalkTag=FGameplayTag::RequestGameplayTag("State.Walk");	
@@ -101,7 +124,7 @@ void AMyPlayerController::SprintEnd(const FInputActionValue& Value)
  */
 void AMyPlayerController::Attack(const FInputActionValue& Value)
 {
-
+	AbilitySystemComponent->TryActivateAbilitiesByTag(AttackTagContainer);
 }
 
 void AMyPlayerController::Look(const FInputActionValue& Value)
@@ -117,7 +140,7 @@ void AMyPlayerController::Look(const FInputActionValue& Value)
 	}
 }
 
-void AMyPlayerController::JumpAndDodge(const FInputActionValue& Value)
+void AMyPlayerController::Jump(const FInputActionValue& Value)
 {
 	//GetCharacter()->Jump();
 }
@@ -130,22 +153,27 @@ void AMyPlayerController::JumpStop(const FInputActionValue& Value)
 
 void AMyPlayerController::Interact(const FInputActionValue& Value)
 {
+	AbilitySystemComponent->TryActivateAbilitiesByTag(InteractTagContainer);
 }
 
 void AMyPlayerController::ToggleInventory(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp,Warning,TEXT("ToggleInven"));
 	PlayerHUD->ToggleInventory();
 }
 
 void AMyPlayerController::EquipUnEquip(const FInputActionValue& Value)
 {
-
+	AbilitySystemComponent->TryActivateAbilitiesByTag(EquipEquipUnEquipTagContainer);
 }
 
 void AMyPlayerController::Init()
 {
 
+}
+
+void AMyPlayerController::Roll(const FInputActionValue& Value)
+{
+	AbilitySystemComponent->TryActivateAbilitiesByTag(RollTagContainer);
 }
 
 UPlayerHUD* AMyPlayerController::GetPlayerHUD() const
@@ -164,6 +192,16 @@ UPlayerHUD* AMyPlayerController::GetPlayerHUD() const
 UPlayerGauge* AMyPlayerController::GetGauge() const
 {
 	return PlayerHUD->GetGauge();
+}
+
+void AMyPlayerController::Block(const FInputActionValue& Value)
+{
+	AbilitySystemComponent->TryActivateAbilitiesByTag(BlockTagContainer);
+}
+
+void AMyPlayerController::BlockEnd(const FInputActionValue& Value)
+{
+	AbilitySystemComponent->RemoveActiveEffectsWithGrantedTags(BlockStateTagContainer);
 }
 
 

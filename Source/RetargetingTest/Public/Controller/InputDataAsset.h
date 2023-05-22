@@ -27,7 +27,7 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UInputAction* InputLook;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	UInputAction* InputJumpAndDodge;
+	UInputAction* InputJump;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UInputAction* InputToggleInventory;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -46,4 +46,6 @@ public:
 	UInputAction* InputUseQuickSlot_Four;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UInputAction* InputEquipUnEquip;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	UInputAction* InputRoll;
 };

@@ -3,10 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "InputActionValue.h"
 #include "GameFramework/PlayerController.h"
 #include "MyPlayerController.generated.h"
 
+struct FGameplayTagContainer;
+class UAbilitySystemComponent;
 class UInputDataAsset;
 class UInputMappingContext;
 class UBaseStateManagerComponent;
@@ -25,18 +28,22 @@ public:
 	AMyPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); 
 
 public:
+	void Init();
+
+	
 	void Move(const FInputActionValue& Value);
 	void Sprint(const FInputActionValue& Value);
 	void SprintEnd(const FInputActionValue& Value);
 	void Attack(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
-	void JumpAndDodge(const FInputActionValue& Value);
+	void Jump(const FInputActionValue& Value);
 	void JumpStop(const FInputActionValue& Value);
 	void Interact(const FInputActionValue& Value);
 	void ToggleInventory(const FInputActionValue& Value);
 	void EquipUnEquip(const FInputActionValue& Value);
-	void Init();
-
+	void Roll(const FInputActionValue& Value);
+	void Block(const FInputActionValue& Value);
+	void BlockEnd(const FInputActionValue& Value);
 	
 	UPlayerHUD* GetPlayerHUD() const;
 	UPlayerGauge* GetGauge() const;
@@ -49,16 +56,38 @@ private:
 	virtual void SetupInputComponent() override;
 	
 protected:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Enhanced Input")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="AMyPlayerController | Enhanced Input")
 	UInputMappingContext* InputMapping;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="Enhanced Input")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="AMyPlayerController | Enhanced Input")
 	UInputDataAsset* InputAction;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="HUD", meta=(AllowPrivateAccess=true))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="AMyPlayerController | HUD", meta=(AllowPrivateAccess=true))
 	TSubclassOf<UPlayerHUD> PlayerHUDClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category="HUD", meta=(AllowPrivateAccess=true))
-	UPlayerHUD* PlayerHUD;	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,Category="AMyPlayerController | HUD", meta=(AllowPrivateAccess=true))
+	UPlayerHUD* PlayerHUD;
+
+	UPROPERTY(EditInstanceOnly,BlueprintReadWrite,Category="AMyPlayerController | AbilitySystemComponent" , meta=(AllowPrivateAccess=true))
+	UAbilitySystemComponent* AbilitySystemComponent;
+
+private:
+	FGameplayTagContainer RollTagContainer;
+	FGameplayTag RollTag;
+
+	FGameplayTagContainer AttackTagContainer;
+	FGameplayTag AttackTag;
+
+	FGameplayTagContainer BlockTagContainer;
+	FGameplayTag BlockTag;
+	
+	FGameplayTag BlockStateTag;
+	FGameplayTagContainer BlockStateTagContainer;
+
+	FGameplayTag InteractTag;
+	FGameplayTagContainer InteractTagContainer;
+
+	FGameplayTag EquipUnEquipTag;
+	FGameplayTagContainer EquipEquipUnEquipTagContainer;
 };
 

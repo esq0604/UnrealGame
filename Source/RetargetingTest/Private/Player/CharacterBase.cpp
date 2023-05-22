@@ -19,6 +19,7 @@
 #include "Player/PlayerStateBase.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
 #include "Attribute/RuneAttributeSet.h"
+#include "Player/CharaterAnimInstance.h"
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
 
@@ -64,15 +65,23 @@ ACharacterBase::ACharacterBase()
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));
 	
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
+
 	InventoryManagerComponent =CreateDefaultSubobject<UInventoryManagerComponent>(TEXT("InventoryManagerComponent"));
 	InventoryManagerComponent->SetOwnerInventory(Inventory);
+
+	Weapon=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon StaticMesh Component"));
+	WeaponCollision=CreateDefaultSubobject<UCapsuleComponent>(TEXT("Weapon Collision"));
+	WeaponCollision->SetupAttachment(Weapon);
 }
 
 void ACharacterBase::BeginPlay()
 {
 	// Call the base class
 	Super::BeginPlay();
-	UE_LOG(LogTemp,Warning,TEXT("Player BeginPlay"));
+	AnimInstance=Cast<UCharaterAnimInstance>(GetMesh()->GetAnimInstance());
+	Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,"Weapon_R");
+
+	
 }
 
 void ACharacterBase::Tick(float DeltaSeconds)

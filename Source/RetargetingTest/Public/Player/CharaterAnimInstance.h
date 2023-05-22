@@ -29,27 +29,14 @@ public:
 	void PlayAttackMontage();
 	void JumpToAttackMontageSection(int32 NewSection);
 
+	UFUNCTION(BlueprintCallable)
+	bool GetIsBlocking() const;
+
+	UFUNCTION(BlueprintCallable)
+	void SetIsBlocking(bool newIsBlocking);
 protected:
 	virtual void NativeBeginPlay() override;
 	
-private:
-	UFUNCTION()
-	void AnimNotify_SaveAttack();
-	
-	UFUNCTION()
-	void AnimNotify_AttackHitCheck();
-
-	UFUNCTION()
-	void AnimNotify_NextAttackCheck();
-
-	UFUNCTION()
-	void AnimNotify_StateStart();
-	
-
-	UFUNCTION()
-	void AnimNotify_StateEnd();
-	FName GetAttackMontageSectionName(int32 Section);
-
 public :
 	FOnAttackHitCheckDelegate OnAttackHitCheck;
 	FOnNextAttackCheckDelegate OnNextAttackHitCheck;
@@ -62,6 +49,9 @@ protected:
 private:
 	UPROPERTY()
 	ACharacterBase* OwnerCharacter;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess=true))
+	bool IsBlocking;
 
 
 
