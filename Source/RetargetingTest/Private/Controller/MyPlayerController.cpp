@@ -34,6 +34,9 @@ AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitial
 
 	EquipUnEquipTag=FGameplayTag::RequestGameplayTag("Ability.EquipUnEquip");
 	EquipEquipUnEquipTagContainer.AddTag(EquipUnEquipTag);
+
+	JumpTag = FGameplayTag::RequestGameplayTag("Ability.Jump");
+	JumpTagContainer.AddTag(JumpTag);
 }
 
 void AMyPlayerController::BeginPlay()
@@ -76,8 +79,8 @@ void AMyPlayerController::SetupInputComponent()
 	EnhancedInputComp->BindAction(InputAction->InputSprint,ETriggerEvent::Completed,this,&AMyPlayerController::SprintEnd);
 	EnhancedInputComp->BindAction(InputAction->InputAttack,ETriggerEvent::Triggered,this,&AMyPlayerController::Attack);
 	EnhancedInputComp->BindAction(InputAction->InputLook,ETriggerEvent::Triggered,this,&AMyPlayerController::Look);
-	EnhancedInputComp->BindAction(InputAction->InputJump,ETriggerEvent::Triggered,this,&AMyPlayerController::Jump);
-	EnhancedInputComp->BindAction(InputAction->InputJump,ETriggerEvent::Completed,this,&AMyPlayerController::JumpStop);
+	EnhancedInputComp->BindAction(InputAction->InputJump,ETriggerEvent::Started,this,&AMyPlayerController::Jump);
+	//EnhancedInputComp->BindAction(InputAction->InputJump,ETriggerEvent::Completed,this,&AMyPlayerController::JumpStop);
 	EnhancedInputComp->BindAction(InputAction->InputInteract,ETriggerEvent::Triggered,this,&AMyPlayerController::Interact);
 	EnhancedInputComp->BindAction(InputAction->InputToggleInventory,ETriggerEvent::Triggered,this,&AMyPlayerController::ToggleInventory);
 	EnhancedInputComp->BindAction(InputAction->InputEquipUnEquip,ETriggerEvent::Triggered,this,&AMyPlayerController::EquipUnEquip);
@@ -142,7 +145,7 @@ void AMyPlayerController::Look(const FInputActionValue& Value)
 
 void AMyPlayerController::Jump(const FInputActionValue& Value)
 {
-	//GetCharacter()->Jump();
+	AbilitySystemComponent->TryActivateAbilitiesByTag(JumpTagContainer);
 }
 
 void AMyPlayerController::JumpStop(const FInputActionValue& Value)

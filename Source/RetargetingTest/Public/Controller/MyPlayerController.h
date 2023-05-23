@@ -89,5 +89,8 @@ private:
 
 	FGameplayTag EquipUnEquipTag;
 	FGameplayTagContainer EquipEquipUnEquipTagContainer;
+
+	FGameplayTag JumpTag;
+	FGameplayTagContainer JumpTagContainer;
 };
 
