@@ -44,7 +44,7 @@ public:
 	void Roll(const FInputActionValue& Value);
 	void Block(const FInputActionValue& Value);
 	void BlockEnd(const FInputActionValue& Value);
-	
+	void TargetLook(const FInputActionValue& Value);
 	UPlayerHUD* GetPlayerHUD() const;
 	UPlayerGauge* GetGauge() const;
 	//bool 변수가 아닌 나중에 EquipState, Ability에서 수정되어야합니다.
@@ -92,5 +92,8 @@ private:
 
 	FGameplayTag JumpTag;
 	FGameplayTagContainer JumpTagContainer;
+
+	FGameplayTag TargetLookTag;
+	FGameplayTagContainer TargetLookTagContainer;
 };
 

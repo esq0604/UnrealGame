@@ -18,7 +18,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Player/PlayerStateBase.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
-#include "Attribute/RuneAttributeSet.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Player/CharaterAnimInstance.h"
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
@@ -87,6 +87,18 @@ void ACharacterBase::BeginPlay()
 void ACharacterBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	if(TargetLock)
+	{
+		const FRotator PlayerRotate = GetActorRotation();
+		const FVector TargetObjectLocation=TargetObject->GetActorLocation();
+		
+		const FRotator FindLookAtRotator=UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),FVector(TargetObjectLocation.X,TargetObjectLocation.Y,TargetObjectLocation.Z-200));	
+		const FRotator InterpPlayerToTarget=UKismetMathLibrary::RInterpTo(PlayerRotate,FindLookAtRotator,DeltaSeconds,5.0);
+
+		const FRotator LookAtTargetRotator(InterpPlayerToTarget.Pitch,InterpPlayerToTarget.Yaw,PlayerRotate.Roll);
+		GetController()->SetControlRotation(LookAtTargetRotator);
+	}
 }
 
 void ACharacterBase::PossessedBy(AController* NewController)

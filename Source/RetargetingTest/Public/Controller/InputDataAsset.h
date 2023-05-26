@@ -48,4 +48,6 @@ public:
 	UInputAction* InputEquipUnEquip;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UInputAction* InputRoll;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	UInputAction* InputTargetLook;
 };

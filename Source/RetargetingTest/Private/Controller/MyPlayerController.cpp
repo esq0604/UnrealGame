@@ -37,6 +37,9 @@ AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitial
 
 	JumpTag = FGameplayTag::RequestGameplayTag("Ability.Jump");
 	JumpTagContainer.AddTag(JumpTag);
+
+	TargetLookTag = FGameplayTag::RequestGameplayTag("Ability.TargetLook");
+	TargetLookTagContainer.AddTag(TargetLookTag);
 }
 
 void AMyPlayerController::BeginPlay()
@@ -87,6 +90,7 @@ void AMyPlayerController::SetupInputComponent()
 	EnhancedInputComp->BindAction(InputAction->InputRoll,ETriggerEvent::Triggered,this,&AMyPlayerController::Roll);
 	EnhancedInputComp->BindAction(InputAction->InputBlock,ETriggerEvent::Started,this,&AMyPlayerController::Block);
 	EnhancedInputComp->BindAction(InputAction->InputBlock,ETriggerEvent::Canceled,this,&AMyPlayerController::BlockEnd);
+	EnhancedInputComp->BindAction(InputAction->InputTargetLook,ETriggerEvent::Started,this,&AMyPlayerController::TargetLook);
 }
 void AMyPlayerController::Move(const FInputActionValue& Value)
 {
@@ -205,6 +209,13 @@ void AMyPlayerController::Block(const FInputActionValue& Value)
 void AMyPlayerController::BlockEnd(const FInputActionValue& Value)
 {
 	AbilitySystemComponent->RemoveActiveEffectsWithGrantedTags(BlockStateTagContainer);
+}
+
+
+void AMyPlayerController::TargetLook(const FInputActionValue& Value)
+{
+	UE_LOG(LogTemp,Warning,TEXT("Target Look "));
+	AbilitySystemComponent->TryActivateAbilitiesByTag(TargetLookTagContainer);
 }
 
 
