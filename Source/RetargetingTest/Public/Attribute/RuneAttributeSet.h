@@ -65,6 +65,9 @@ public:
 	
 	UFUNCTION()
 	virtual void OnRep_Luck(const FGameplayAttributeData& OldLuck);
+
+	UFUNCTION()
+	virtual void OnRep_Damage(const FGameplayAttributeData& OldDamage);
 public:
 	UPROPERTY(BlueprintReadOnly, Category="Attributes")
 	FGameplayAttributeData Health;
@@ -121,4 +124,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category="Attributes")
 	FGameplayAttributeData Luck;
 	ATTRIBUTE_ACCESSORS(URuneAttributeSet, Luck);
+
+	UPROPERTY(BlueprintReadOnly, Category="Attributes")
+	FGameplayAttributeData Damage;
+	ATTRIBUTE_ACCESSORS(URuneAttributeSet, Damage);
 };

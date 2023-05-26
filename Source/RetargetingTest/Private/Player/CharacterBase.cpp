@@ -16,6 +16,7 @@
 #include "Camera/CameraComponent.h"
 #include "Component/InventoryManagerComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Player/PlayerStateBase.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -80,6 +81,7 @@ void ACharacterBase::BeginPlay()
 	Super::BeginPlay();
 	AnimInstance=Cast<UCharaterAnimInstance>(GetMesh()->GetAnimInstance());
 	Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,"Weapon_R");
+	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this,&ACharacterBase::WeaponCollisionBeginOverlap);
 
 	
 }
@@ -169,4 +171,30 @@ URuneAttributeSet* ACharacterBase::GetAttributes() const
 void ACharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+}
+
+void ACharacterBase::WeaponCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+												 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+												 const FHitResult& SweepResult)
+{
+	UE_LOG(LogTemp,Warning,TEXT("WeaponCollisionBeginOverlap"));
+	HitActor=OtherActor;
+	const float Damage = Attributes->GetDamage();
+	UGameplayStatics::ApplyDamage(OtherActor,Damage,GetController(),nullptr,nullptr);
+
+	const FVector HitActorForwardVector = OtherActor->GetActorForwardVector();
+	const FVector ActorForwardVector = GetActorForwardVector();
+
+	const auto Direction =FVector::DotProduct(HitActorForwardVector,ActorForwardVector);
+
+	if(Direction>=0.0f)
+	{
+		HitReaction = EHitReaction::Backward;
+	}
+	else
+	{
+		HitReaction= EHitReaction::Forward;
+	}
+
+	UE_LOG(LogTemp,Warning,TEXT("%d"),HitReaction);
 }

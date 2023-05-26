@@ -4,11 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "InputActionValue.h"
-#include "GameplayTagContainer.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "GameplayEffect.h"
+#include "Weapon/EHitReaction.h"
 #include "CharacterBase.generated.h"
 
 
@@ -52,6 +51,11 @@ protected:
 	// To add mapping context
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
+
+	UFUNCTION()
+	void WeaponCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+												 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+												 const FHitResult& SweepResult);
 public:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="CharacterBase | Attributes")
 	TSubclassOf<UGameplayEffect> DefaultAttributeEffect;
@@ -93,6 +97,12 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | LookOnTarget")
 	TObjectPtr<AActor> TargetObject;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attack")
+	EHitReaction HitReaction;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attack")
+	TWeakObjectPtr<AActor> HitActor;
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category="CharacterBase | Component")
 	TObjectPtr<UMotionWarpingComponent> MotionWarpComponent;
@@ -102,3 +112,4 @@ private:
 
 	
 };
+

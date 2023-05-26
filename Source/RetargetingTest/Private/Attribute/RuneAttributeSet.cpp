@@ -96,3 +96,9 @@ void URuneAttributeSet::OnRep_Luck(const FGameplayAttributeData& OldLuck)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(URuneAttributeSet, Luck, OldLuck);
 }
+
+void URuneAttributeSet::OnRep_Damage(const FGameplayAttributeData& OldDamage)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(URuneAttributeSet, Damage, OldDamage);
+
+}
