@@ -125,17 +125,21 @@ void USlot::Init()
  */
 void USlot::Refresh()
 {
+	
+	UInventoryComponent* InventoryComp = Player->GetInventoryManagerCompnent();
+	TArray<AItemBase*> Inventory= InventoryComp->GetInventory();
 	switch(SlotType)
 	{
 	case ESlotType::SLOT_INVENTORY:
 		{
-
-			if(Player->Inventory[Index]!=nullptr)
+			if(Inventory[Index]!=nullptr)
 			{
-				Count=Player->Inventory[Index]->GetCount();
+				Count=Inventory[Index]->GetCount();
 			}
-			//UTexture2D* Tex=Player->GetThumnailAtInventorySlot(Index);
-			//Img->SetBrushFromTexture(Tex);
+			
+			UTexture2D* Tex= InventoryComp->GetThumnailAtInventorySlot(Index);
+			Img->SetBrushFromTexture(Tex);
+
 			if(Count >1)
 			{
 				CountText->SetText(FText::FromString(FString::FromInt(Count)));
@@ -157,9 +161,9 @@ void USlot::Refresh()
 			}
 			else
 			{
-				if(Player->Inventory[Index]!=nullptr)
+				if(Inventory[Index]!=nullptr)
 				{
-					Count= Player->Inventory[Index]->GetCount();
+					Count= Inventory[Index]->GetCount();
 				}
 				//UTexture2D* Tex=Player->GetThumnailAtInventorySlot(Index);
 				//Img->SetBrushFromTexture(Tex);
@@ -175,6 +179,8 @@ void USlot::Refresh()
 				break;
 			}
 		}
+	default:
+		return;
 	}
 }
 

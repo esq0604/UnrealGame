@@ -65,6 +65,7 @@ public:
 
 
 protected:
+	UPROPERTY()
 	ACharacterBase* Player;
 private:
 	ESlotType SlotType;

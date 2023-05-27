@@ -25,6 +25,7 @@ void URuneAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(URuneAttributeSet, Intelligence, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URuneAttributeSet, Faith, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(URuneAttributeSet, Luck, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(URuneAttributeSet,Damage,COND_None,REPNOTIFY_Always);
 }
 
 void URuneAttributeSet::OnRep_Health(const FGameplayAttributeData& OldHealth)

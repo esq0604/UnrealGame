@@ -4,7 +4,7 @@
 #include "Player/PlayerBase.h"
 
 #include "MotionWarpingComponent.h"
-#include "Component/InventoryManagerComponent.h"
+#include "Component/InventoryComponent.h"
 #include "Object/ItemBase.h"
 #include "UI/Inventory.h"
 #include "UI/PlayerHUD.h"

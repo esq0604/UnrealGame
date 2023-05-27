@@ -14,7 +14,7 @@
 #include "AbilitySystemComponent.h"
 #include "MotionWarpingComponent.h"
 #include "Camera/CameraComponent.h"
-#include "Component/InventoryManagerComponent.h"
+#include "Component/InventoryComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/PlayerStateBase.h"
@@ -67,8 +67,7 @@ ACharacterBase::ACharacterBase()
 	
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
 
-	InventoryManagerComponent =CreateDefaultSubobject<UInventoryManagerComponent>(TEXT("InventoryManagerComponent"));
-	InventoryManagerComponent->SetOwnerInventory(Inventory);
+	InventoryManagerComponent =CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryManagerComponent"));
 
 	Weapon=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon StaticMesh Component"));
 	WeaponCollision=CreateDefaultSubobject<UCapsuleComponent>(TEXT("Weapon Collision"));
@@ -82,8 +81,6 @@ void ACharacterBase::BeginPlay()
 	AnimInstance=Cast<UCharaterAnimInstance>(GetMesh()->GetAnimInstance());
 	Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,"Weapon_R");
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this,&ACharacterBase::WeaponCollisionBeginOverlap);
-
-	
 }
 
 void ACharacterBase::Tick(float DeltaSeconds)
@@ -113,6 +110,8 @@ void ACharacterBase::PossessedBy(AController* NewController)
 		AbilitySystemComponent=PS->GetAbilitySystemComponent();
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
 		Attributes = PS->GetAttributes();
+		if(!Attributes)
+			UE_LOG(LogTemp,Warning,TEXT("Attribute is not vaild"));
 		InitializeAttributes();
 		GiveDefaultAbilities();
 	}
@@ -133,15 +132,19 @@ void ACharacterBase::OnRep_PlayerState()
 
 void ACharacterBase::InitializeAttributes()
 {
-	if(AbilitySystemComponent.IsValid() &&DefaultAttributeEffect)
+	if(AbilitySystemComponent.IsValid())
 	{
 		FGameplayEffectContextHandle EffectContextHandle = AbilitySystemComponent->MakeEffectContext();
 		EffectContextHandle.AddSourceObject(this);
-		FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DefaultAttributeEffect,1,EffectContextHandle);
 
-		if(SpecHandle.IsValid())
+		for(TSubclassOf<UGameplayEffect> GameplayEffect : DefaultAttributeEffects)
 		{
-			FActiveGameplayEffectHandle GEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());  
+			FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(GameplayEffect,1,EffectContextHandle);
+
+			if(SpecHandle.IsValid())
+			{
+				FActiveGameplayEffectHandle GEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());  
+			}
 		}
 	}
 }
@@ -164,7 +167,12 @@ UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
 
 URuneAttributeSet* ACharacterBase::GetAttributes() const
 {
-	return Attributes.Get();
+	return Attributes;
+}
+
+UInventoryComponent* ACharacterBase::GetInventoryManagerCompnent() const
+{
+	return InventoryManagerComponent;
 }
 
 
@@ -179,22 +187,25 @@ void ACharacterBase::WeaponCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 {
 	UE_LOG(LogTemp,Warning,TEXT("WeaponCollisionBeginOverlap"));
 	HitActor=OtherActor;
-	const float Damage = Attributes->GetDamage();
-	UGameplayStatics::ApplyDamage(OtherActor,Damage,GetController(),nullptr,nullptr);
-
-	const FVector HitActorForwardVector = OtherActor->GetActorForwardVector();
-	const FVector ActorForwardVector = GetActorForwardVector();
-
-	const auto Direction =FVector::DotProduct(HitActorForwardVector,ActorForwardVector);
-
-	if(Direction>=0.0f)
+	if(Attributes)
 	{
-		HitReaction = EHitReaction::Backward;
-	}
-	else
-	{
-		HitReaction= EHitReaction::Forward;
-	}
+		const float Damage = Attributes->GetDamage();
+		UGameplayStatics::ApplyDamage(OtherActor,Damage,GetController(),nullptr,nullptr);
 
-	UE_LOG(LogTemp,Warning,TEXT("%d"),HitReaction);
+		const FVector HitActorForwardVector = OtherActor->GetActorForwardVector();
+		const FVector ActorForwardVector = GetActorForwardVector();
+
+		const auto Direction =FVector::DotProduct(HitActorForwardVector,ActorForwardVector);
+
+		if(Direction>=0.0f)
+		{
+			HitReaction = EHitReaction::Backward;
+		}
+		
+		else
+		{
+			HitReaction= EHitReaction::Forward;
+		}
+	}
+	UE_LOG(LogTemp,Warning,TEXT("Attributes is not vaild"));
 }

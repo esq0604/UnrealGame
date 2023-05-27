@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Component/InventoryManagerComponent.h"
+#include "Component/InventoryComponent.h"
 
 #include "Controller/MyPlayerController.h"
 #include "Object/ItemBase.h"
@@ -11,21 +11,29 @@
 #include "UI/Slot.h"
 
 // Sets default values for this component's properties
-UInventoryManagerComponent::UInventoryManagerComponent()
+UInventoryComponent::UInventoryComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	// ...
+	ComponentOwner=Cast<ACharacterBase>(GetOwner());
 }
 
-bool UInventoryManagerComponent::AddItemToInventory(AItemBase* Item)
+bool UInventoryComponent::AddItemToInventory(AItemBase* Item)
 {
 	if (Item != nullptr)
 	{
-		const int32 AvaliableSlot = OwnerInventory.Find(nullptr);
+		const int32 AvaliableSlot = Inventory.Find(nullptr);
 		if (AvaliableSlot != INDEX_NONE)
 		{
-			OwnerInventory[AvaliableSlot] = Item;
+			Inventory[AvaliableSlot] = Item;
+			Inventory[AvaliableSlot]=Item;
+
+			if(Inventory[AvaliableSlot]==nullptr)
+				UE_LOG(LogTemp,Warning,TEXT("Character Inven[AvaliableSlot nullptr"));
+
+			InventoryUI->RefreshSlotByIndex(AvaliableSlot);
+			
 			return true;
 		}
 		else
@@ -36,34 +44,34 @@ bool UInventoryManagerComponent::AddItemToInventory(AItemBase* Item)
 	return false;
 }
 
-void UInventoryManagerComponent::UseItemAtInventorySlot(int32 SlotNum)
+void UInventoryComponent::UseItemAtInventorySlot(int32 SlotNum)
 {
-	if (OwnerInventory[SlotNum] != nullptr && SlotNum != -1)
+	if (Inventory[SlotNum] != nullptr && SlotNum != -1)
 	{
 		TArray<USlot*> TempSlot;
 
-		OwnerInventory[SlotNum]->UseItem(ComponentOwner);
+		Inventory[SlotNum]->UseItem(ComponentOwner);
 
 		//레퍼런스 슬롯이 없다면 인벤토리만 갱신합니다.
-		if (OwnerInventory[SlotNum]->ReferenceSlot.IsEmpty())
+		if (Inventory[SlotNum]->ReferenceSlot.IsEmpty())
 		{
-			if (OwnerInventory[SlotNum]->GetCount() == 0)
+			if (Inventory[SlotNum]->GetCount() == 0)
 			{
-				OwnerInventory[SlotNum] = nullptr;
+				Inventory[SlotNum] = nullptr;
 			}
 			//TODO : 인벤토리를 사용 후 갱신해야할때, 너무 경로가 긴거같음.
-			InventoryUI->RefreshAllSlot();
+			InventoryUI->RefreshSlotByIndex(SlotNum);
 		}
 		//있다면 레퍼런스 슬롯을 옮겨줍니다.
 		else
 		{
-			for (USlot* eachSlot : OwnerInventory[SlotNum]->ReferenceSlot)
+			for (USlot* eachSlot : Inventory[SlotNum]->ReferenceSlot)
 			{
 				TempSlot.Add(eachSlot);
 			}
-			if (OwnerInventory[SlotNum]->GetCount() == 0)
+			if (Inventory[SlotNum]->GetCount() == 0)
 			{
-				OwnerInventory[SlotNum] = nullptr;
+				Inventory[SlotNum] = nullptr;
 			}
 			for (USlot* eachSlot : TempSlot)
 			{
@@ -78,14 +86,24 @@ void UInventoryManagerComponent::UseItemAtInventorySlot(int32 SlotNum)
 	}
 }
 
-void UInventoryManagerComponent::SetOwnerInventory(TArray<AItemBase*>& NewInventory)
+TArray<AItemBase*> UInventoryComponent::GetInventory() const
 {
-	OwnerInventory=NewInventory;
+	return Inventory;
+}
+
+UTexture2D* UInventoryComponent::GetThumnailAtInventorySlot(int32 SlotIdx)
+{
+	// if(OwnerInventory[SlotIdx]==nullptr)
+	// {
+	// 	UE_LOG(LogTemp,Warning,TEXT("%d slot nullptr"),SlotIdx);
+	// 	return nullptr;
+	// }
+	return Inventory[SlotIdx]->PickupThumbnail;
 }
 
 
 // Called when the game starts
-void UInventoryManagerComponent::BeginPlay()
+void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 

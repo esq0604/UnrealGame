@@ -27,7 +27,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class AItemBase;
 class URuneAttributeSet;
-class UInventoryManagerComponent;
+class UInventoryComponent;
 
 //TODO : CharacterBase 클래스이므로, 플레이어 클래스를 따로 나누어 CharacterBase에 존재하는 Player 속성들을 옮겨야합니다.
 UCLASS(config=Game)
@@ -45,6 +45,8 @@ public:
 	virtual void GiveDefaultAbilities();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	URuneAttributeSet* GetAttributes() const;
+
+	UInventoryComponent* GetInventoryManagerCompnent() const;
 protected:
 	virtual void PostInitializeComponents() override;
 
@@ -58,11 +60,11 @@ protected:
 												 const FHitResult& SweepResult);
 public:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="CharacterBase | Attributes")
-	TSubclassOf<UGameplayEffect> DefaultAttributeEffect;
+	TArray<TSubclassOf<UGameplayEffect>> DefaultAttributeEffects;
 
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="CharacterBase | Attributes")
 	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
-
+	
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"),Category="CharacterBase | Component")
 	TObjectPtr<USpringArmComponent> CameraBoom;
@@ -71,8 +73,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"),Category="CharacterBase | Component")
 	TObjectPtr<UCameraComponent> FollowCamera;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true),Category="CharacterBase | Inventory")
-	TArray<AItemBase*> Inventory;
+
 protected:
 	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess=true))
 	TObjectPtr<UFloatingCombatTextComponent> FloatingTextComponent;
@@ -81,7 +82,7 @@ protected:
 	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attributes")
-	TWeakObjectPtr<URuneAttributeSet> Attributes;
+	URuneAttributeSet* Attributes;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | AnimInstance")
 	TObjectPtr<UCharaterAnimInstance> AnimInstance;
@@ -108,7 +109,7 @@ private:
 	TObjectPtr<UMotionWarpingComponent> MotionWarpComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category="CharacterBase | Component")
-	TObjectPtr<UInventoryManagerComponent> InventoryManagerComponent;
+	TObjectPtr<UInventoryComponent> InventoryManagerComponent;
 
 	
 };

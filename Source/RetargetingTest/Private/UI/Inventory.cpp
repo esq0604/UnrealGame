@@ -4,8 +4,7 @@
 #include "RetargetingTest/Public/UI/Inventory.h"
 
 #include "Blueprint/WidgetTree.h"
-#include "Kismet/GameplayStatics.h"
-#include "Player/PlayerBase.h"
+#include "Component/InventoryComponent.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
 #include "RetargetingTest/Public/UI/Slot.h"
 
@@ -20,23 +19,30 @@ void UInventory::NativeConstruct()
  */
 void UInventory::Init()
 {
-	Player=Cast<APlayerBase>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
-	TArray<UWidget*> Widgets;
-	WidgetTree->GetAllWidgets(Widgets);
-	Slots.Init(nullptr,12);
-
-	for(UWidget* widget : Widgets)
+	if(Player)
 	{
-		USlot* slot =nullptr;
-		slot = Cast<USlot>(widget);
-		if(slot != nullptr)
+		const UInventoryComponent* InventoryComp = Player->GetInventoryManagerCompnent();
+		TArray<UWidget*> Widgets;
+		WidgetTree->GetAllWidgets(Widgets);
+		Slots.Init(nullptr,InventoryComp->GetInventory().Num());
+
+		for(UWidget* widget : Widgets)
 		{
-			slot->SetType(ESlotType::SLOT_INVENTORY);
-			slot->SetCharacter(this->Player);
-			slot->Init();
-			Slots[slot->GetIndex()]=slot;
+			USlot* slot =nullptr;
+			slot = Cast<USlot>(widget);
+			if(slot != nullptr)
+			{
+				slot->SetType(ESlotType::SLOT_INVENTORY);
+				slot->SetCharacter(this->Player);
+				slot->Init();
+				Slots[slot->GetIndex()]=slot;
 			
+			}
 		}
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Player nullptr"))
 	}
 }
 

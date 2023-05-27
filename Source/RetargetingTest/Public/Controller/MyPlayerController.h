@@ -28,8 +28,6 @@ public:
 	AMyPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); 
 
 public:
-	void Init();
-
 	
 	void Move(const FInputActionValue& Value);
 	void Sprint(const FInputActionValue& Value);

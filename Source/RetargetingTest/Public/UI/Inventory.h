@@ -27,6 +27,9 @@ public:
 protected:
 	virtual void NativeConstruct() override; 
 
+	UPROPERTY()
 	ACharacterBase* Player;
+
+	UPROPERTY()
 	TArray<USlot*> Slots;
 };

@@ -62,3 +62,8 @@ int32 AItemBase::GetCount() const
 	return Count;
 }
 
+UTexture2D* AItemBase::GetThumbnail() const
+{
+	return PickupThumbnail;
+}
+

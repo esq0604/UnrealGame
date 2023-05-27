@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Component/InventoryManagerComponent.h"
+#include "Component/InventoryComponent.h"
 #include "RetargetingTest/Public/Interface/Interactable.h"
 #include "ItemBase.generated.h"
 
@@ -21,7 +21,8 @@ public:
 	AItemBase();
 
 	virtual void Interact_Implementation() override;
-	
+
+	UFUNCTION(BlueprintCallable)
 	void OnPickup();
 	
 	void AddReferenceSlot(class USlot*& Slot);
@@ -30,6 +31,7 @@ public:
 	virtual int GetCount() const;
 	//void UseItem(ACharacterBase* Character);
 
+	UTexture2D* GetThumbnail() const;
 protected:
 	virtual void BeginPlay() override;
 public:

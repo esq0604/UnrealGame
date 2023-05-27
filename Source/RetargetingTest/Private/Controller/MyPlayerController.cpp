@@ -173,10 +173,7 @@ void AMyPlayerController::EquipUnEquip(const FInputActionValue& Value)
 	AbilitySystemComponent->TryActivateAbilitiesByTag(EquipEquipUnEquipTagContainer);
 }
 
-void AMyPlayerController::Init()
-{
 
-}
 
 void AMyPlayerController::Roll(const FInputActionValue& Value)
 {
