@@ -86,18 +86,18 @@ void UInventoryComponent::UseItemAtInventorySlot(int32 SlotNum)
 	}
 }
 
+AItemBase* UInventoryComponent::GetItemAtInventory(int32 SlotNum) const
+{
+	return Inventory[SlotNum];
+}
+
 TArray<AItemBase*> UInventoryComponent::GetInventory() const
 {
 	return Inventory;
 }
 
-UTexture2D* UInventoryComponent::GetThumnailAtInventorySlot(int32 SlotIdx)
+UTexture2D* UInventoryComponent::GetThumbnailAtInventorySlot(int32 SlotIdx) const
 {
-	// if(OwnerInventory[SlotIdx]==nullptr)
-	// {
-	// 	UE_LOG(LogTemp,Warning,TEXT("%d slot nullptr"),SlotIdx);
-	// 	return nullptr;
-	// }
 	return Inventory[SlotIdx]->PickupThumbnail;
 }
 

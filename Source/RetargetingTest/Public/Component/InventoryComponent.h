@@ -9,6 +9,7 @@
 class UInventory;
 class AItemBase;
 class ACharacterBase;
+class UTexture2D;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RETARGETINGTEST_API UInventoryComponent : public UActorComponent
@@ -25,16 +26,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void UseItemAtInventorySlot(int32 SlotNum);
 
-	void SetOwnerInventory(const TArray<AItemBase*>& NewInventory);
-
+	AItemBase* GetItemAtInventory(int32 SlotNum) const;
 	TArray<AItemBase*> GetInventory() const;
-	UTexture2D* GetThumnailAtInventorySlot(int32 SlotIdx);
+	UTexture2D* GetThumbnailAtInventorySlot(int32 SlotIdx) const;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true),Category="CharacterBase | Inventory")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
 	TArray<AItemBase*> Inventory;
 	
 private:

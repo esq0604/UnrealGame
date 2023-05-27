@@ -172,10 +172,7 @@ AActor* APlayerBase::CheckForInteractalbe()
 // 	return Inventory;
 // }
 
-// AItemBase* APlayerBase::GetItemAtInventory(int32 Index)
-// {
-// 	return Inventory[Index];
-// }
+
 
 /**
 * 슬롯에 있는 아이템의 썸네일을 반환합니다.

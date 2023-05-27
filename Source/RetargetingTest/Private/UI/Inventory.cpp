@@ -21,11 +21,11 @@ void UInventory::Init()
 {
 	if(Player)
 	{
-		const UInventoryComponent* InventoryComp = Player->GetInventoryManagerCompnent();
+		UInventoryComponent* InventoryComp = Player->GetInventoryManagerCompnent();
 		TArray<UWidget*> Widgets;
 		WidgetTree->GetAllWidgets(Widgets);
 		Slots.Init(nullptr,InventoryComp->GetInventory().Num());
-
+	
 		for(UWidget* widget : Widgets)
 		{
 			USlot* slot =nullptr;
@@ -33,7 +33,8 @@ void UInventory::Init()
 			if(slot != nullptr)
 			{
 				slot->SetType(ESlotType::SLOT_INVENTORY);
-				slot->SetCharacter(this->Player);
+				slot->SetCharacter(Player);
+				slot->SetInventoryCompnent(InventoryComp);
 				slot->Init();
 				Slots[slot->GetIndex()]=slot;
 			

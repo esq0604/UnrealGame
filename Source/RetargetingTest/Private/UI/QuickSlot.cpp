@@ -11,14 +11,13 @@
 
 void UQuickSlot::Init()
 {
-	Player=Cast<APlayerBase>(UGameplayStatics::GetPlayerCharacter(GetWorld(),0));Slots.Init(nullptr,MAX_QUICK_SLOT);
+	Slots.Init(nullptr,MAX_QUICK_SLOT);
 	TArray<UWidget*> widgets;
 	WidgetTree->GetAllWidgets(widgets);
 
-	USlot* slot =nullptr;
 	for(UWidget* widget : widgets)
 	{
-		slot = Cast<USlot>(widget);
+		USlot* slot = Cast<USlot>(widget);
 
 		if(!slot)
 		{
@@ -26,7 +25,8 @@ void UQuickSlot::Init()
 		}
 
 		slot->SetType(ESlotType::SLOT_QUICK);
-		slot->SetCharacter(this->Player);
+		slot->SetCharacter(Player);
+		slot->SetInventoryCompnent(Player->GetInventoryManagerCompnent());
 		slot->Init();
 		Slots[slot->SlotNum]=slot;
 	}

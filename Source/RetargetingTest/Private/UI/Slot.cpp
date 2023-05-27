@@ -6,7 +6,6 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
-#include "Player/PlayerBase.h"
 #include "RetargetingTest/Public/Object/ItemBase.h"
 #include "RetargetingTest/Public/Object/SlotDragDrop.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
@@ -36,11 +35,18 @@ void USlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEven
 		if (DragVisualClass != nullptr)
 		{
 			USlot* visual = CreateWidget<USlot>(Cast<APlayerController>(Player->Controller), DragVisualClass);
-			visual->SlotType = this->SlotType;
-			visual->Player = this->Player;
-			visual->Index = this->Index;
-			visual->Refresh();
-			
+			if(visual!=nullptr)
+			{
+				visual->SlotType = this->SlotType;
+				visual->Player = this->Player;
+				visual->Index = this->Index;
+				visual->InventoryComponent=Player->GetInventoryManagerCompnent();
+				visual->Refresh();
+			}
+			else
+			{
+				UE_LOG(LogTemp,Warning,TEXT("visual nullptr"));
+			}
 			oper->DefaultDragVisual = visual;
 		}
 	}
@@ -79,20 +85,20 @@ FReply USlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointe
 
 	if(InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton)==true)
 	{
-		//if(Player->GetItemAtInventory(Index) !=nullptr)
+		if(InventoryComponent->GetItemAtInventory(Index) !=nullptr)
 		{
-			//if(Index<0 || Player->GetItemAtInventory(Index)!=nullptr)
+			if(Index<0 || InventoryComponent->GetItemAtInventory(Index)!=nullptr)
 			{
-				//Player->UseItemAtInventorySlot(Index);
+				InventoryComponent->UseItemAtInventorySlot(Index);
 				return reply.NativeReply;
 			}
 		}
 	}
 	else if(InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton)==true)
 	{
-		//if(Player->GetItemAtInventory(Index)!=nullptr)
+		if(InventoryComponent->GetItemAtInventory(Index)!=nullptr)
 		{
-			//if(Player->GetItemAtInventory(Index)!=nullptr)
+			if(InventoryComponent->GetItemAtInventory(Index)!=nullptr)
 			{
 				reply=UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent,this,EKeys::LeftMouseButton);
 			}
@@ -125,48 +131,21 @@ void USlot::Init()
  */
 void USlot::Refresh()
 {
-	
-	UInventoryComponent* InventoryComp = Player->GetInventoryManagerCompnent();
-	TArray<AItemBase*> Inventory= InventoryComp->GetInventory();
-	switch(SlotType)
+	if(Player->GetInventoryManagerCompnent()!=nullptr)
 	{
-	case ESlotType::SLOT_INVENTORY:
+		TArray<AItemBase*> Inventory= InventoryComponent->GetInventory();
+		switch(SlotType)
 		{
-			if(Inventory[Index]!=nullptr)
-			{
-				Count=Inventory[Index]->GetCount();
-			}
-			
-			UTexture2D* Tex= InventoryComp->GetThumnailAtInventorySlot(Index);
-			Img->SetBrushFromTexture(Tex);
-
-			if(Count >1)
-			{
-				CountText->SetText(FText::FromString(FString::FromInt(Count)));
-				CountText->SetVisibility(ESlateVisibility::Visible);
-			}
-			else
-			{
-				CountText->SetVisibility(ESlateVisibility::Hidden);
-			}
-			break;
-		}
-	case ESlotType::SLOT_QUICK:
-		{
-			if(Index<0)
-			{
-				Img->SetBrushFromTexture(nullptr);
-				CountText->SetVisibility(ESlateVisibility::Hidden);
-				break;
-			}
-			else
+		case ESlotType::SLOT_INVENTORY:
 			{
 				if(Inventory[Index]!=nullptr)
 				{
-					Count= Inventory[Index]->GetCount();
+					Count=Inventory[Index]->GetCount();
 				}
-				//UTexture2D* Tex=Player->GetThumnailAtInventorySlot(Index);
-				//Img->SetBrushFromTexture(Tex);
+			
+				UTexture2D* Tex= InventoryComponent->GetThumbnailAtInventorySlot(Index);
+				Img->SetBrushFromTexture(Tex);
+
 				if(Count >1)
 				{
 					CountText->SetText(FText::FromString(FString::FromInt(Count)));
@@ -178,8 +157,40 @@ void USlot::Refresh()
 				}
 				break;
 			}
+		case ESlotType::SLOT_QUICK:
+			{
+				if(Index<0)
+				{
+					Img->SetBrushFromTexture(nullptr);
+					CountText->SetVisibility(ESlateVisibility::Hidden);
+					break;
+				}
+				else
+				{
+					if(Inventory[Index]!=nullptr)
+					{
+						Count= Inventory[Index]->GetCount();
+					}
+					UTexture2D* Tex=InventoryComponent->GetThumbnailAtInventorySlot(Index);
+					Img->SetBrushFromTexture(Tex);
+					if(Count >=1)
+					{
+						CountText->SetText(FText::FromString(FString::FromInt(Count)));
+						CountText->SetVisibility(ESlateVisibility::Visible);
+					}
+					else
+					{
+						CountText->SetVisibility(ESlateVisibility::Hidden);
+					}
+					break;
+				}
+			}
+		default:
+			return;
 		}
-	default:
+	}
+	else
+	{
 		return;
 	}
 }
@@ -202,6 +213,11 @@ void USlot::SetIndex(int32 NewIndex)
 void USlot::SetImg(UTexture2D* NewImg)
 {
 	Img->SetBrushFromTexture(NewImg);
+}
+
+void USlot::SetInventoryCompnent(UInventoryComponent* NewInventoryComponent)
+{
+	InventoryComponent=NewInventoryComponent;
 }
 
 /**
