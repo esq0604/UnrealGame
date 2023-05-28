@@ -14,6 +14,21 @@
 void USlot::NativeConstruct()
 {
 	Super::NativeConstruct();
+	if(Player)
+		InventoryComponent=Player->GetInventoryManagerCompnent();
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Slot NativeContruct Player nullptr"));
+	}
+	if(InventoryComponent)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("InventoryComp not nullptr"));
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("InventoryComp nullptr"));
+
+	}
 }
 
 /**
@@ -144,8 +159,14 @@ void USlot::Refresh()
 				}
 			
 				UTexture2D* Tex= InventoryComponent->GetThumbnailAtInventorySlot(Index);
-				Img->SetBrushFromTexture(Tex);
-
+				if(Tex)
+				{
+					Img->SetBrushFromTexture(Tex);
+				}
+				else
+				{
+					Img->SetBrushFromTexture(DefaultTexture);
+				}
 				if(Count >1)
 				{
 					CountText->SetText(FText::FromString(FString::FromInt(Count)));
@@ -173,7 +194,7 @@ void USlot::Refresh()
 					}
 					UTexture2D* Tex=InventoryComponent->GetThumbnailAtInventorySlot(Index);
 					Img->SetBrushFromTexture(Tex);
-					if(Count >=1)
+					if(Count >1)
 					{
 						CountText->SetText(FText::FromString(FString::FromInt(Count)));
 						CountText->SetVisibility(ESlateVisibility::Visible);

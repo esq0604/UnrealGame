@@ -49,7 +49,6 @@ void UInventoryComponent::UseItemAtInventorySlot(int32 SlotNum)
 	if (Inventory[SlotNum] != nullptr && SlotNum != -1)
 	{
 		TArray<USlot*> TempSlot;
-
 		Inventory[SlotNum]->UseItem(ComponentOwner);
 
 		//레퍼런스 슬롯이 없다면 인벤토리만 갱신합니다.
@@ -59,7 +58,6 @@ void UInventoryComponent::UseItemAtInventorySlot(int32 SlotNum)
 			{
 				Inventory[SlotNum] = nullptr;
 			}
-			//TODO : 인벤토리를 사용 후 갱신해야할때, 너무 경로가 긴거같음.
 			InventoryUI->RefreshSlotByIndex(SlotNum);
 		}
 		//있다면 레퍼런스 슬롯을 옮겨줍니다.
@@ -98,7 +96,12 @@ TArray<AItemBase*> UInventoryComponent::GetInventory() const
 
 UTexture2D* UInventoryComponent::GetThumbnailAtInventorySlot(int32 SlotIdx) const
 {
-	return Inventory[SlotIdx]->PickupThumbnail;
+	if(Inventory[SlotIdx])
+	{
+		return Inventory[SlotIdx]->PickupThumbnail;
+	}
+
+	return nullptr;
 }
 
 

@@ -41,4 +41,6 @@ private:
 	ACharacterBase* ComponentOwner;
 	
 	UInventory* InventoryUI;
+
+	
 };

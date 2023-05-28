@@ -55,6 +55,9 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(BindWidget))
 	UImage* Img;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UTexture2D* DefaultTexture;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(BindWidget))
 	UTextBlock* CountText;
