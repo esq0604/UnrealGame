@@ -29,7 +29,6 @@ class AItemBase;
 class URuneAttributeSet;
 class UInventoryComponent;
 
-//TODO : CharacterBase 클래스이므로, 플레이어 클래스를 따로 나누어 CharacterBase에 존재하는 Player 속성들을 옮겨야합니다.
 UCLASS(config=Game)
 class ACharacterBase : public ACharacter, public IAbilitySystemInterface
 {
