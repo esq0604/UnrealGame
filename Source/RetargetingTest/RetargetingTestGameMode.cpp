@@ -16,13 +16,6 @@ void ARetargetingTestGameMode::BeginPlay()
 ARetargetingTestGameMode::ARetargetingTestGameMode()
 {
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));
-	if (PlayerPawnBPClass.Class != NULL)
-	{
-		DefaultPawnClass = PlayerPawnBPClass.Class;
-	}
-	//HUDClass=ARetargetingHUD::StaticClass();
-	HUDState=EHUDState::HS_Ingame;
 }
 
 /**

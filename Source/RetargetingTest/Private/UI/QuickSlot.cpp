@@ -5,7 +5,6 @@
 
 #include "Blueprint/WidgetTree.h"
 #include "Kismet/GameplayStatics.h"
-#include "Player/PlayerBase.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
 #include "RetargetingTest/Public/UI/Slot.h"
 

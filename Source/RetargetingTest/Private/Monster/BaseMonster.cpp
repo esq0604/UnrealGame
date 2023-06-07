@@ -3,16 +3,29 @@
 
 #include "RetargetingTest/Public/Monster/BaseMonster.h"
 
+#include "AbilitySystemComponent.h"
+#include "Attribute/EnemyAttributeSetBase.h"
+#include "Components/WidgetComponent.h"
 #include "Materials/Material.h"
 #include "Engine/DamageEvents.h"
 
 #include "RetargetingTest/Public/Monster/BaseMonsterAnimInstance.h"
+#include "UI/MonsterGauge.h"
 
 ABaseMonster::ABaseMonster()
 {
 //	HPWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
 //	HPWidgetComponent->SetupAttachment(RootComponent);
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+
+	Attributes = CreateDefaultSubobject<UEnemyAttributeSetBase>(TEXT("Attribute"));
+
+	HPWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPWidgetComponent"));
+	
 }
 
 /**
@@ -24,35 +37,35 @@ ABaseMonster::ABaseMonster()
 void ABaseMonster::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	//mAnimInstacne = Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
-	//mAnimInstacne->OnAttackHitCheckDelegate.AddUObject(this,&ABaseMonster::AttackCheck);
-	// StatComponent->OnHPIsZeroDelegate.AddLambda([this]()->void
-	// {
-	// 	mAnimInstacne->PlayDeadMontage();
-	// 	SetActorHiddenInGame(true);
-	// 	SetActorEnableCollision(false);
-	// 	SetActorTickEnabled(false);
-	// 	
-	// 	MonsterDieDelegate.ExecuteIfBound(this);
-	// });
+	UE_LOG(LogTemp,Warning,TEXT("Default Attribute, Default Ability Init"));
+	InitializeAttributes();
+	GiveDefaultAbilities();
+}
+
+void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
+{
+	const float NewHealthPercent=(Data.NewValue/Attributes->GetMaxHealth());
+	const float OldHealthPercent=Data.OldValue/Attributes->GetMaxHealth();
+	HPBarWidget->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
+	HPWidgetComponent->UpdateWidget();
 }
 
 // Called when the game starts or when spawned
 void ABaseMonster::BeginPlay()
 {
 	Super::BeginPlay();
-	//mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
-	// = Cast<UMonsterStatWidget>(UMonsterStatWidget->GetWidget());
-	//if(HPBarWidget!=nullptr)
-	//{
-	//	HPBarWidget->BindActorStat(StatComponent);
-	//}
-	//else
-	//{
-	//	UE_LOG(LogTemp,Warning,TEXT("BindWidget nullptr"));
-	//}
+	if(AbilitySystemComponent)
+	{
+		HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetHealthAttribute()).AddUObject(this,&ABaseMonster::HealthChange);
+	}
+	//HPBarWidget=Cast<UMonsterGauge>(CreateWidget(this,HPBarWidgetClass));
+	//HPBarWidget->AddToViewport();
+	//HPBarWidget->UpdateHPWidget(Attributes->GetHealth()/Attributes->GetMaxHealth(),Attributes->GetHealth()/Attributes->GetMaxHealth());
+	HPWidgetComponent->SetWidgetClass(HPBarWidgetClass);
+	HPWidgetComponent->SetVisibility(true);
+	HPBarWidget=Cast<UMonsterGauge>(HPWidgetComponent->GetWidget());
+	HPBarWidget->UpdateHPWidget(1.0f,1.0f);
 }
-
 
 /**
  * 몬스터의 데미지 피격 함수입니다. 피격 애니메이션을 실행하고, 체력을 감소합니다.
@@ -62,59 +75,47 @@ void ABaseMonster::BeginPlay()
 float ABaseMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
-	mAnimInstacne->PlayHitMontage();
+	AnimInstacne->PlayHitMontage();
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
-/**
- * 몬스터의 공격 체크 함수입니다. 콜리전을 생성하며 닿은 적에게 데미지를 줍니다.
- * @warning 공격받는 대상이 TakeDamage 함수가 있는지 확인해야합니다.
- */
-void ABaseMonster::AttackCheck()
+void ABaseMonster::InitializeAttributes()
 {
-	FHitResult HitResult;
-	FCollisionQueryParams Params(NAME_None,false,this);
-	bool bResult=GetWorld()->SweepSingleByChannel(
-		HitResult,
-		GetActorLocation(),
-		GetActorLocation()+GetActorForwardVector()*200.0f,
-		FQuat::Identity,
-		ECC_GameTraceChannel1,
-		FCollisionShape::MakeSphere(50.0f),
-		Params
-	);
-
-#if ENABLE_DRAW_DEBUG
-	FVector TraceVec = GetActorForwardVector()*AttackRange;
-	FVector Center = GetActorLocation() + TraceVec*0.5f;
-	float HalfHeight = AttackRange* 0.5f +AttackRadius;
-	FQuat CapsuleRot = FRotationMatrix::MakeFromZ(TraceVec).ToQuat();
-	FColor DrawColor = bResult ? FColor::Blue : FColor::Red;
-	float DebugLifeTime = 3.0f;
-
-	DrawDebugCapsule(GetWorld()
-		,Center
-		,HalfHeight
-		,AttackRadius
-		,CapsuleRot
-		,DrawColor
-		,false
-		,DebugLifeTime
-		);
-#endif
-	
-	if(bResult)
+	if(AbilitySystemComponent)
 	{
-		if(HitResult.GetActor()->ActorHasTag("Player"))
+		FGameplayEffectContextHandle EffectContextHandle = AbilitySystemComponent->MakeEffectContext();
+		EffectContextHandle.AddSourceObject(this);
+
+		for(const TSubclassOf<UGameplayEffect>& GameplayEffect : DefaultAttributeEffects)
 		{
-			UE_LOG(LogTemp,Warning,TEXT("Monster Take Damage To Player"));
-			FDamageEvent DamageEvent;
-			//플러팅텍스트를 스폰합니다.
-			//FText AttackDamage = FText::FromString(FString::SanitizeFloat(StatComponent->GetAttackDamage()));
-			//FloatingTextComponent->AddFloatingActor(AttackDamage,HitResult.GetActor()->GetActorLocation());
+			FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(GameplayEffect,1,EffectContextHandle);
+
+			if(SpecHandle.IsValid())
+			{
+				UE_LOG(LogTemp,Warning,TEXT("InitAttribute"));
+				FActiveGameplayEffectHandle GEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());  
+			}
 		}
 	}
 }
+
+void ABaseMonster::GiveDefaultAbilities()
+{
+	if(AbilitySystemComponent)
+	{
+		for(TSubclassOf<UGameplayAbility>& StartupAbility : DefaultAbilities)
+		{
+			UE_LOG(LogTemp,Warning,TEXT("GiveDefaultAbility"));
+			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility.GetDefaultObject(),1,0));
+		}
+	}
+}
+
+UAbilitySystemComponent* ABaseMonster::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
 
 
 

@@ -3,21 +3,36 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BaseGaugeWidget.h"
+#include "Blueprint/UserWidget.h"
 #include "MonsterGauge.generated.h"
 
 /**
  * 
  */
+class UProgressBar;
 UCLASS()
-class RETARGETINGTEST_API UMonsterGauge : public UBaseGaugeWidget
+class RETARGETINGTEST_API UMonsterGauge : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	virtual void UpdateHPWidget(float NewHPPercent) override;
+	UFUNCTION(BlueprintCallable)
+	void UpdateHPWidget(float NewHPPercent, float OldHPPercent);
 protected:
 	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 
+public:
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))
+	TObjectPtr<UProgressBar> HpProgressBar;
+private:
+	float CurrentTime=0;
+	float LerpTime=1.0f;
+
+private:
+	float mNewHpPercent=0;
+	float mOldHpPercent=0;
 };

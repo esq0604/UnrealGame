@@ -46,7 +46,6 @@ void APlayerStateBase::SetPlayerHUD(UPlayerHUD* NewPlayerHUD)
 void APlayerStateBase::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp,Warning,TEXT("PCPlayerState BeginPlay"));
 	const AMyPlayerController*  PC= Cast<AMyPlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
 	
 	if(AbilitySystemComponent)
