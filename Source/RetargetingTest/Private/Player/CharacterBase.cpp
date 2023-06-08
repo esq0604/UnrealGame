@@ -81,6 +81,7 @@ void ACharacterBase::BeginPlay()
 	AnimInstance=Cast<UCharaterAnimInstance>(GetMesh()->GetAnimInstance());
 	Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,"Weapon_R");
 	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this,&ACharacterBase::WeaponCollisionBeginOverlap);
+	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ACharacterBase::Tick(float DeltaSeconds)
@@ -185,7 +186,6 @@ void ACharacterBase::WeaponCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 												 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 												 const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp,Warning,TEXT("WeaponCollisionBeginOverlap"));
 	HitActor=OtherActor;
 	if(Attributes)
 	{
@@ -207,5 +207,9 @@ void ACharacterBase::WeaponCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 			HitReaction= EHitReaction::Forward;
 		}
 	}
-	UE_LOG(LogTemp,Warning,TEXT("Attributes is not vaild"));
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Attributes is not vaild"));
+
+	}
 }

@@ -17,14 +17,11 @@ class RETARGETINGTEST_API UBaseMonsterAnimInstance : public UAnimInstance
 
 public:
 	UBaseMonsterAnimInstance();
-
-	void PlayHitMontage();
-
+	
 	void PlayDeadMontage();
 
 private:
-	UFUNCTION()
-	void AnimNotify_DoDamage();
+
 
 public:
 	FOnAttackHitCheckSignature OnAttackHitCheckDelegate;

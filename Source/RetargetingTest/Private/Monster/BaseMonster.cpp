@@ -14,10 +14,7 @@
 
 ABaseMonster::ABaseMonster()
 {
-//	HPWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidget"));
-//	HPWidgetComponent->SetupAttachment(RootComponent);
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
@@ -25,7 +22,8 @@ ABaseMonster::ABaseMonster()
 	Attributes = CreateDefaultSubobject<UEnemyAttributeSetBase>(TEXT("Attribute"));
 
 	HPWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPWidgetComponent"));
-	
+	HPWidgetComponent->SetupAttachment(RootComponent);
+
 }
 
 /**
@@ -37,7 +35,6 @@ ABaseMonster::ABaseMonster()
 void ABaseMonster::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	UE_LOG(LogTemp,Warning,TEXT("Default Attribute, Default Ability Init"));
 	InitializeAttributes();
 	GiveDefaultAbilities();
 }
@@ -58,11 +55,6 @@ void ABaseMonster::BeginPlay()
 	{
 		HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetHealthAttribute()).AddUObject(this,&ABaseMonster::HealthChange);
 	}
-	//HPBarWidget=Cast<UMonsterGauge>(CreateWidget(this,HPBarWidgetClass));
-	//HPBarWidget->AddToViewport();
-	//HPBarWidget->UpdateHPWidget(Attributes->GetHealth()/Attributes->GetMaxHealth(),Attributes->GetHealth()/Attributes->GetMaxHealth());
-	HPWidgetComponent->SetWidgetClass(HPBarWidgetClass);
-	HPWidgetComponent->SetVisibility(true);
 	HPBarWidget=Cast<UMonsterGauge>(HPWidgetComponent->GetWidget());
 	HPBarWidget->UpdateHPWidget(1.0f,1.0f);
 }
@@ -75,8 +67,8 @@ void ABaseMonster::BeginPlay()
 float ABaseMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
-	AnimInstacne->PlayHitMontage();
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
 }
 
 void ABaseMonster::InitializeAttributes()
@@ -92,7 +84,6 @@ void ABaseMonster::InitializeAttributes()
 
 			if(SpecHandle.IsValid())
 			{
-				UE_LOG(LogTemp,Warning,TEXT("InitAttribute"));
 				FActiveGameplayEffectHandle GEHandle = AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());  
 			}
 		}
@@ -105,7 +96,6 @@ void ABaseMonster::GiveDefaultAbilities()
 	{
 		for(TSubclassOf<UGameplayAbility>& StartupAbility : DefaultAbilities)
 		{
-			UE_LOG(LogTemp,Warning,TEXT("GiveDefaultAbility"));
 			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility.GetDefaultObject(),1,0));
 		}
 	}

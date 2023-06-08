@@ -64,9 +64,6 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | HPWidget")
 	TObjectPtr<UMonsterGauge> HPBarWidget;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | HPWidget")
-	TSubclassOf<UMonsterGauge> HPBarWidgetClass;
 	
 	FDelegateHandle HealthChangeDelegateHandle;
 	FDelegateHandle MaxHealthChangeDelegateHandle;
