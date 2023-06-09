@@ -17,24 +17,25 @@ class RETARGETINGTEST_API UBaseMonsterAnimInstance : public UAnimInstance
 
 public:
 	UBaseMonsterAnimInstance();
-	
+
+	UFUNCTION()
 	void PlayDeadMontage();
 
-private:
 
+private:
+	UFUNCTION()
+	void DeadMontageEnded(UAnimMontage* Montage, bool bInterrupted);
 
 public:
-	FOnAttackHitCheckSignature OnAttackHitCheckDelegate;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
+	TObjectPtr<UAnimMontage> mHitMontage;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
+	TObjectPtr<UAnimMontage> mDeadMontage;
+
 protected:
-	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
-	UAnimMontage* mHitMontage;
-
-	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
-	UAnimMontage* mDeadMontage;
-
-	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true))
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	float mSpeed;
 
-	
 private:
 };

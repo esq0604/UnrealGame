@@ -24,6 +24,7 @@ ABaseMonster::ABaseMonster()
 	HPWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPWidgetComponent"));
 	HPWidgetComponent->SetupAttachment(RootComponent);
 
+
 }
 
 /**
@@ -45,6 +46,11 @@ void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 	const float OldHealthPercent=Data.OldValue/Attributes->GetMaxHealth();
 	HPBarWidget->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
 	HPWidgetComponent->UpdateWidget();
+	
+	if(Attributes->GetHealth()==0)
+	{
+		mAnimInstacne->PlayDeadMontage();
+	}
 }
 
 // Called when the game starts or when spawned
@@ -57,6 +63,7 @@ void ABaseMonster::BeginPlay()
 	}
 	HPBarWidget=Cast<UMonsterGauge>(HPWidgetComponent->GetWidget());
 	HPBarWidget->UpdateHPWidget(1.0f,1.0f);
+	mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
 }
 
 /**

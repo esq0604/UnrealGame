@@ -16,19 +16,6 @@ void USlot::NativeConstruct()
 	Super::NativeConstruct();
 	if(Player)
 		InventoryComponent=Player->GetInventoryManagerCompnent();
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Slot NativeContruct Player nullptr"));
-	}
-	if(InventoryComponent)
-	{
-		UE_LOG(LogTemp,Warning,TEXT("InventoryComp not nullptr"));
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("InventoryComp nullptr"));
-
-	}
 }
 
 /**

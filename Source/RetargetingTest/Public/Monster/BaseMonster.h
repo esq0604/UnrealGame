@@ -64,9 +64,15 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | HPWidget")
 	TObjectPtr<UMonsterGauge> HPBarWidget;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Anim")
+	TObjectPtr<UAnimMontage> DeadAnim;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Anim")
+	TObjectPtr<UBaseMonsterAnimInstance> mAnimInstacne;
 	
 	FDelegateHandle HealthChangeDelegateHandle;
 	FDelegateHandle MaxHealthChangeDelegateHandle;
 private:
-	TObjectPtr<UBaseMonsterAnimInstance> AnimInstacne;
+	
 };

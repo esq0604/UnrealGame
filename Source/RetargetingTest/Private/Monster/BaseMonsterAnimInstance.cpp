@@ -12,6 +12,17 @@ UBaseMonsterAnimInstance::UBaseMonsterAnimInstance()
 void UBaseMonsterAnimInstance::PlayDeadMontage()
 {
 	Montage_Play(mDeadMontage);
+	FOnMontageEnded CompleteDelegate;
+	CompleteDelegate.BindUObject(this,&UBaseMonsterAnimInstance::DeadMontageEnded);
+
+	FOnMontageBlendingOutStarted BlendingOutStarted;
+	BlendingOutStarted.BindUObject(this,&UBaseMonsterAnimInstance::DeadMontageEnded);
 }
+
+void UBaseMonsterAnimInstance::DeadMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	UE_LOG(LogTemp,Warning,TEXT("Monster Dead"));
+}
+
 
 

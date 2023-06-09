@@ -45,24 +45,18 @@ AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitial
 void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogTemp,Warning,TEXT("PlayerController BeginPlay"));
 	const FInputModeGameOnly InputModeGameOnly;
 	SetInputMode(InputModeGameOnly);
 	ACharacterBase* LocalCharacter=Cast<ACharacterBase>(GetPawn());
 	APlayerStateBase* LocalPS = Cast<APlayerStateBase>(LocalCharacter->GetPlayerState());
 	if(LocalCharacter!=nullptr)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("PlayerController BeginPlay GetPawn !nullptr"));
 		PlayerHUD=Cast<UPlayerHUD>(CreateWidget(this,PlayerHUDClass));
 		if(PlayerHUD!=nullptr)
 		PlayerHUD->SetCharacter(LocalCharacter);
 		PlayerHUD->Init();
 		PlayerHUD->AddToViewport();
 		AbilitySystemComponent= LocalPS->GetAbilitySystemComponent();
-		if(AbilitySystemComponent!=nullptr)
-		{
-			UE_LOG(LogTemp,Warning,TEXT("AbilitySystem Comp not nullptr"));
-		}
 	}
 
 }
