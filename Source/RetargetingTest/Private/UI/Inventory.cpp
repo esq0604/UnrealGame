@@ -41,10 +41,6 @@ void UInventory::Init()
 			}
 		}
 	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Player nullptr"))
-	}
 }
 
 void UInventory::RefreshAllSlot()

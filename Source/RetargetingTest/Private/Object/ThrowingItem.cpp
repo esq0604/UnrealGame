@@ -23,7 +23,6 @@ void AThrowingItem::Use(ACharacterBase* Character)
 	}
 	else
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Num of Item is 0"));
 	}
 }
 

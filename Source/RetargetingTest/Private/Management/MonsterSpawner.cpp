@@ -3,6 +3,7 @@
 
 #include "RetargetingTest/Public/Management/MonsterSpawner.h"
 
+#include "Kismet/KismetSystemLibrary.h"
 #include "RetargetingTest/Public/Monster/BaseMonster.h"
 
 // Sets default values
@@ -28,21 +29,25 @@ void AMonsterSpawner::BeginPlay()
  */
 void AMonsterSpawner::SpawnMonster(bool IsPoolFull)
 {
-	if(ObjectPool!=nullptr && IsPoolFull)
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
 	{
-		for(int i=0; i<ObjectPool->mPoolSize; i++)
+		
+		for(const auto& monster : ObjectPool->MonsterPool)
 		{
+			UE_LOG(LogTemp,Warning,TEXT("Monster Re Spawn"));
 			//오브젝트 풀에서 생성된 오브젝트를 가져옵니다.
 			//오브젝트의 히든인게임을 비활성화 시키고 콜리전과,틱이벤트를 활성화 시킵니다.
-		
-			UE_LOG(LogTemp,Warning,TEXT("%s"),*ObjectPool->GetMonsterObject()->GetName());
-				ObjectPool->GetMonsterObject()->SetActorHiddenInGame(false);
-				ObjectPool->GetMonsterObject()->SetActorEnableCollision(true);
-				ObjectPool->GetMonsterObject()->SetActorTickEnabled(true);
+			monster->SpawnInit();
+			monster->SetActorHiddenInGame(false);
+			monster->SetActorEnableCollision(true);
+			monster->SetActorTickEnabled(true);
 			ObjectPool->MonsterPool.Pop();
 		}
-	}
-	ObjectPool->bIsPoolFull=false;
+		
+		ObjectPool->bIsPoolFull=false;
+	}, ReSpawnTime, false);
+
 }
 
 

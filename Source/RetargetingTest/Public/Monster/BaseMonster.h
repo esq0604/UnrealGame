@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
+#include "Interface/Attackable.h"
 #include "BaseMonster.generated.h"
 
 class UWidgetComponent;
@@ -22,7 +23,7 @@ class UMonsterGauge;
 struct FOnAttributeChangeData;
 struct FDamageEvent;
 UCLASS()
-class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface
+class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface,public IAttackable
 {
 	GENERATED_BODY()
 
@@ -34,11 +35,16 @@ public:
 	virtual void InitializeAttributes();
 	virtual void GiveDefaultAbilities();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	void ToggleWeaponCollision(bool bIsEnable);
+	virtual void ToggleWeaponCollision_Implementation(bool bIsEnable) override;
+
+	void SpawnInit();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
-
 private:
 	virtual void HealthChange(const FOnAttributeChangeData& Data);
 
@@ -55,7 +61,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Attributes")
 	TObjectPtr<UEnemyAttributeSetBase> Attributes;
-
+	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Component")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
@@ -70,6 +76,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Anim")
 	TObjectPtr<UBaseMonsterAnimInstance> mAnimInstacne;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Weapon")
+	TObjectPtr<UCapsuleComponent> AttackCollision;
 	
 	FDelegateHandle HealthChangeDelegateHandle;
 	FDelegateHandle MaxHealthChangeDelegateHandle;

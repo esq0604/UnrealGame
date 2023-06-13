@@ -53,10 +53,8 @@ void AItemBase::RemoveReferenceSlot(USlot*& Slot)
 
 void AItemBase::UseItem(ACharacterBase* Character)
 {
-	UE_LOG(LogTemp,Warning,TEXT("UseItem In AItemBase"));
 	if(Count>0)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("%d"),Count);
 		Count--;
 	}
 }

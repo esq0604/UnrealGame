@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Component/InventoryComponent.h"
 #include "RetargetingTest/Public/Interface/Interactable.h"
 #include "ItemBase.generated.h"
 

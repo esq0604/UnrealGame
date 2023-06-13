@@ -26,7 +26,9 @@ protected:
 	
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	UMonsterObjectPool* ObjectPool;
+	TObjectPtr<UMonsterObjectPool> ObjectPool;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float ReSpawnTime=5;
 	
 };

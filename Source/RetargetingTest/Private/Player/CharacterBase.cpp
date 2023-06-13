@@ -104,15 +104,12 @@ void ACharacterBase::Tick(float DeltaSeconds)
 void ACharacterBase::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	UE_LOG(LogTemp,Warning,TEXT("ACharacterBase: PossessBy"));
 	APlayerStateBase* PS = GetPlayerState<APlayerStateBase>();
 	if(PS)
 	{
 		AbilitySystemComponent=PS->GetAbilitySystemComponent();
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
 		Attributes = PS->GetAttributes();
-		if(!Attributes)
-			UE_LOG(LogTemp,Warning,TEXT("Attribute is not vaild"));
 		InitializeAttributes();
 		GiveDefaultAbilities();
 	}
@@ -207,9 +204,17 @@ void ACharacterBase::WeaponCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 			HitReaction= EHitReaction::Forward;
 		}
 	}
+}
+
+void ACharacterBase::ToggleWeaponCollision_Implementation(bool bIsEnable)
+{
+	if(WeaponCollision->GetCollisionEnabled()==ECollisionEnabled::QueryAndPhysics)
+	{
+		WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 	else
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Attributes is not vaild"));
-
+		WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	}
+	
 }

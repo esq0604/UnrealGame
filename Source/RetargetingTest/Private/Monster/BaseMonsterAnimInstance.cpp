@@ -21,7 +21,6 @@ void UBaseMonsterAnimInstance::PlayDeadMontage()
 
 void UBaseMonsterAnimInstance::DeadMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	UE_LOG(LogTemp,Warning,TEXT("Monster Dead"));
 }
 
 

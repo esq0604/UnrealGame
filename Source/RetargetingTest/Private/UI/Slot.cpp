@@ -4,6 +4,7 @@
 #include "RetargetingTest/Public/UI/Slot.h"
 
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Component/InventoryComponent.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "RetargetingTest/Public/Object/ItemBase.h"
@@ -45,10 +46,7 @@ void USlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEven
 				visual->InventoryComponent=Player->GetInventoryManagerCompnent();
 				visual->Refresh();
 			}
-			else
-			{
-				UE_LOG(LogTemp,Warning,TEXT("visual nullptr"));
-			}
+
 			oper->DefaultDragVisual = visual;
 		}
 	}

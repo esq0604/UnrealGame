@@ -53,7 +53,6 @@ void ADemoCharacter::PossessedBy(AController* NewController)
 	ADemoPlayerState* PS = GetPlayerState<ADemoPlayerState>();
 	if(PS)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("PossessedBy , PS is valid"));
 		InitializeStartingValues(PS);
 		AddStartupEffects();
 		AddCharacterAbilities();

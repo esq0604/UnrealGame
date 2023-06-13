@@ -32,13 +32,13 @@ public:
 	PoolIsFullSinature IsFullDieDelegate;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	TArray<class ABaseMonster*> MonsterPool;
+	TArray<TObjectPtr<ABaseMonster>> MonsterPool;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	int32 mPoolSize=10;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	TSubclassOf<class ABaseMonster> PooledMonster;
+	TSubclassOf<ABaseMonster> PooledMonster;
 
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))

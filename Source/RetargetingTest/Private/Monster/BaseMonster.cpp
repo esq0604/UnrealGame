@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "Attribute/EnemyAttributeSetBase.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Materials/Material.h"
 #include "Engine/DamageEvents.h"
@@ -24,7 +25,7 @@ ABaseMonster::ABaseMonster()
 	HPWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPWidgetComponent"));
 	HPWidgetComponent->SetupAttachment(RootComponent);
 
-
+	AttackCollision=CreateDefaultSubobject<UCapsuleComponent>(TEXT("AttackCollision"));
 }
 
 /**
@@ -40,6 +41,8 @@ void ABaseMonster::PostInitializeComponents()
 	GiveDefaultAbilities();
 }
 
+
+
 void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 {
 	const float NewHealthPercent=(Data.NewValue/Attributes->GetMaxHealth());
@@ -47,9 +50,12 @@ void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 	HPBarWidget->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
 	HPWidgetComponent->UpdateWidget();
 	
-	if(Attributes->GetHealth()==0)
+	if(Attributes->GetHealth()<=0)
 	{
-		mAnimInstacne->PlayDeadMontage();
+		SetActorHiddenInGame(true);
+		SetActorEnableCollision(false);
+		SetActorTickEnabled(false);
+		MonsterDieDelegate.Execute(this);
 	}
 }
 
@@ -111,6 +117,27 @@ void ABaseMonster::GiveDefaultAbilities()
 UAbilitySystemComponent* ABaseMonster::GetAbilitySystemComponent() const
 {
 	return AbilitySystemComponent;
+}
+
+
+void ABaseMonster::ToggleWeaponCollision_Implementation(bool bIsEnable)
+{
+	if(AttackCollision->GetCollisionEnabled()==ECollisionEnabled::QueryAndPhysics)
+	{
+		AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	else
+	{
+		AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	}
+}
+
+/**
+ * 스포너에 의해 스폰될때 체력을 다시 maxhealth양으로 초기화합니다.
+ */
+void ABaseMonster::SpawnInit()
+{
+	Attributes->SetHealth(Attributes->GetMaxHealth());
 }
 
 

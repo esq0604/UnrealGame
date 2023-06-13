@@ -62,6 +62,7 @@ ABaseMonster* UMonsterObjectPool::GetMonsterObject() const
  */
 void UMonsterObjectPool::InputMonsterToPool(ABaseMonster* Monster)
 {
+	UE_LOG(LogTemp,Warning,TEXT("Input Monster To Pool"));
 	MonsterPool.Push(Monster);
 	if(MonsterPool.Num()==mPoolSize)
 	{

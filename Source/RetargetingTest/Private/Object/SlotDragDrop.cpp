@@ -3,6 +3,7 @@
 
 #include "RetargetingTest/Public/Object/SlotDragDrop.h"
 
+#include "Component/InventoryComponent.h"
 #include "Player/CharacterBase.h"
 #include "RetargetingTest/Public/Object/ItemBase.h"
 #include "RetargetingTest/Public/UI/Slot.h"
@@ -67,7 +68,6 @@ bool USlotDragDrop::SetQuickSlot(USlot* To)
 	{
 		if(Inventory[From->GetIndex()]==nullptr)
 		{
-			UE_LOG(LogTemp,Warning,TEXT("Player->Inventory[From->GetIndex()] nullptr, GetIndx : %d"),From->GetIndex());
 			return false;
 		}
 		Inventory[From->GetIndex()]->AddReferenceSlot(To);

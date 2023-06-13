@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "GameplayEffect.h"
+#include "Interface/Attackable.h"
 #include "Weapon/EHitReaction.h"
 #include "CharacterBase.generated.h"
 
@@ -30,7 +31,7 @@ class URuneAttributeSet;
 class UInventoryComponent;
 
 UCLASS(config=Game)
-class ACharacterBase : public ACharacter, public IAbilitySystemInterface
+class ACharacterBase : public ACharacter, public IAbilitySystemInterface, public IAttackable
 {
 	GENERATED_BODY()
 
@@ -46,6 +47,10 @@ public:
 	URuneAttributeSet* GetAttributes() const;
 
 	UInventoryComponent* GetInventoryManagerCompnent() const;
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	void ToggleWeaponCollision(bool bIsEnable);
+	virtual void ToggleWeaponCollision_Implementation(bool bIsEnable) override;
 protected:
 	virtual void PostInitializeComponents() override;
 
@@ -57,6 +62,7 @@ protected:
 	void WeaponCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 												 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 												 const FHitResult& SweepResult);
+
 public:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="CharacterBase | Attributes")
 	TArray<TSubclassOf<UGameplayEffect>> DefaultAttributeEffects;

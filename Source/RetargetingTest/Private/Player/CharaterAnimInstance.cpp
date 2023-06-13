@@ -32,7 +32,6 @@ bool UCharaterAnimInstance::GetIsBlocking() const
 
 void UCharaterAnimInstance::SetIsBlocking(bool newIsBlocking)
 {
-	UE_LOG(LogTemp,Warning,TEXT("%d"),newIsBlocking);
 	IsBlocking=newIsBlocking;
 }
 
