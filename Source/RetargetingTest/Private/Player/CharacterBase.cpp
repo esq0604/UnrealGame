@@ -173,6 +173,25 @@ UInventoryComponent* ACharacterBase::GetInventoryManagerCompnent() const
 	return InventoryManagerComponent;
 }
 
+AActor* ACharacterBase::GetHitActor_Implementation()
+{
+	return mHitActor.Get();
+}
+
+void ACharacterBase::SetHitActor_Implementation(AActor* HitActor)
+{
+	mHitActor=HitActor;
+}
+
+EHitReaction ACharacterBase::GetHitReaction_Implementation()
+{
+	return mHitReaction;
+}
+
+void ACharacterBase::SetHitReaction_Implementation(EHitReaction HitReaction)
+{
+	mHitReaction=HitReaction;
+}
 
 void ACharacterBase::PostInitializeComponents()
 {
@@ -183,7 +202,7 @@ void ACharacterBase::WeaponCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 												 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 												 const FHitResult& SweepResult)
 {
-	HitActor=OtherActor;
+	mHitActor=OtherActor;
 	if(Attributes)
 	{
 		const float Damage = Attributes->GetDamage();
@@ -196,12 +215,12 @@ void ACharacterBase::WeaponCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 
 		if(Direction>=0.0f)
 		{
-			HitReaction = EHitReaction::Backward;
+			mHitReaction = EHitReaction::Backward;
 		}
 		
 		else
 		{
-			HitReaction= EHitReaction::Forward;
+			mHitReaction= EHitReaction::Forward;
 		}
 	}
 }
@@ -218,3 +237,4 @@ void ACharacterBase::ToggleWeaponCollision_Implementation(bool bIsEnable)
 	}
 	
 }
+

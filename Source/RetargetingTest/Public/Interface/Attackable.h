@@ -7,6 +7,7 @@
 #include "Attackable.generated.h"
 
 // This class does not need to be modified.
+
 UINTERFACE()
 class UAttackable : public UInterface
 {
@@ -25,4 +26,17 @@ public:
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
 	void ToggleWeaponCollision(bool bIsEnable);
 	virtual void ToggleWeaponCollision_Implementation(bool bIsEnable) =0;
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	class AActor* GetHitActor();
+	
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	void SetHitActor(class AActor* HitActor);
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	EHitReaction GetHitReaction();
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	void SetHitReaction(EHitReaction HitReaction);
+private:
 };

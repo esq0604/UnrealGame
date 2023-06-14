@@ -23,7 +23,7 @@ class UMonsterGauge;
 struct FOnAttributeChangeData;
 struct FDamageEvent;
 UCLASS()
-class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface,public IAttackable
+class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface, public IAttackable
 {
 	GENERATED_BODY()
 
@@ -41,6 +41,21 @@ public:
 	virtual void ToggleWeaponCollision_Implementation(bool bIsEnable) override;
 
 	void SpawnInit();
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	AActor* GetHitActor();
+	virtual AActor* GetHitActor_Implementation() override;
+	
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	void SetHitActor(AActor* HitActor);
+	virtual void SetHitActor_Implementation(AActor* HitActor) override;
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	EHitReaction GetHitReaction();
+	virtual EHitReaction GetHitReaction_Implementation() override;
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	void SetHitReaction(EHitReaction HitReaction);
+	virtual void SetHitReaction_Implementation(EHitReaction HitReaction) override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -82,9 +97,11 @@ protected:
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Weapon")
 	TObjectPtr<UCapsuleComponent> AttackCollision;
-	
+
+	TObjectPtr<AActor> mHitActor;
+
 	FDelegateHandle HealthChangeDelegateHandle;
 	FDelegateHandle MaxHealthChangeDelegateHandle;
 private:
-	
+	EHitReaction mHitReaction;	
 };

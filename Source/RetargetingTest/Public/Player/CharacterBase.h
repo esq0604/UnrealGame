@@ -51,6 +51,22 @@ public:
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
 	void ToggleWeaponCollision(bool bIsEnable);
 	virtual void ToggleWeaponCollision_Implementation(bool bIsEnable) override;
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	AActor* GetHitActor();
+	virtual AActor* GetHitActor_Implementation() override;
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	void SetHitActor(AActor* HitActor);
+	virtual void SetHitActor_Implementation(AActor* HitActor) override;
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	EHitReaction GetHitReaction();
+	virtual EHitReaction GetHitReaction_Implementation() override;
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	void SetHitReaction(EHitReaction HitReaction);
+	virtual void SetHitReaction_Implementation(EHitReaction HitReaction) override;
 protected:
 	virtual void PostInitializeComponents() override;
 
@@ -105,10 +121,10 @@ protected:
 	TObjectPtr<AActor> TargetObject;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attack")
-	EHitReaction HitReaction;
+	EHitReaction mHitReaction;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attack")
-	TWeakObjectPtr<AActor> HitActor;
+	TWeakObjectPtr<AActor> mHitActor;
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category="CharacterBase | Component")
 	TObjectPtr<UMotionWarpingComponent> MotionWarpComponent;

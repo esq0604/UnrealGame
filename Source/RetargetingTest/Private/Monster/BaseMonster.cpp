@@ -62,6 +62,26 @@ void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 	}
 }
 
+AActor* ABaseMonster::GetHitActor_Implementation()
+{
+	return mHitActor;
+}
+
+void ABaseMonster::SetHitActor_Implementation(AActor* HitActor)
+{
+	mHitActor=HitActor;
+}
+
+EHitReaction ABaseMonster::GetHitReaction_Implementation()
+{
+	return mHitReaction;
+}
+
+void ABaseMonster::SetHitReaction_Implementation(EHitReaction HitReaction)
+{
+	mHitReaction=HitReaction;
+}
+
 // Called when the game starts or when spawned
 void ABaseMonster::BeginPlay()
 {
@@ -148,6 +168,14 @@ void ABaseMonster::SpawnInit()
 {
 	Attributes->SetHealth(Attributes->GetMaxHealth());
 }
+
+// AActor* ABaseMonster::GetHitActor()
+// {
+// }
+//
+// void ABaseMonster::SetHitActor(AActor* HitActor)
+// {
+// }
 
 
 
