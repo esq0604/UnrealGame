@@ -39,10 +39,6 @@ public:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TSubclassOf<ABaseMonster> PooledMonster;
-
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
-	bool bIsPoolFull;
 protected:
 	
 };

@@ -66,8 +66,7 @@ void UMonsterObjectPool::InputMonsterToPool(ABaseMonster* Monster)
 	MonsterPool.Push(Monster);
 	if(MonsterPool.Num()==mPoolSize)
 	{
-		bIsPoolFull=true;
-		IsFullDieDelegate.ExecuteIfBound(bIsPoolFull);
+		IsFullDieDelegate.ExecuteIfBound(true);
 	}
 }
 

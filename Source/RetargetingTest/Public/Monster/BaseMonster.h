@@ -77,6 +77,9 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Anim")
 	TObjectPtr<UBaseMonsterAnimInstance> mAnimInstacne;
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=ture),Category="CharacterBase | Weapon")
+	TObjectPtr<UStaticMeshComponent> Weapon;
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Weapon")
 	TObjectPtr<UCapsuleComponent> AttackCollision;
 	

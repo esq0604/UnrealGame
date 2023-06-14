@@ -32,20 +32,20 @@ void AMonsterSpawner::SpawnMonster(bool IsPoolFull)
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
 	{
-		
 		for(const auto& monster : ObjectPool->MonsterPool)
 		{
-			UE_LOG(LogTemp,Warning,TEXT("Monster Re Spawn"));
 			//오브젝트 풀에서 생성된 오브젝트를 가져옵니다.
 			//오브젝트의 히든인게임을 비활성화 시키고 콜리전과,틱이벤트를 활성화 시킵니다.
 			monster->SpawnInit();
 			monster->SetActorHiddenInGame(false);
 			monster->SetActorEnableCollision(true);
 			monster->SetActorTickEnabled(true);
+		}
+
+		while(!ObjectPool->MonsterPool.IsEmpty())
+		{
 			ObjectPool->MonsterPool.Pop();
 		}
-		
-		ObjectPool->bIsPoolFull=false;
 	}, ReSpawnTime, false);
 
 }

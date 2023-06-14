@@ -25,7 +25,10 @@ ABaseMonster::ABaseMonster()
 	HPWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPWidgetComponent"));
 	HPWidgetComponent->SetupAttachment(RootComponent);
 
+	Weapon=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon StaticMesh Component"));
 	AttackCollision=CreateDefaultSubobject<UCapsuleComponent>(TEXT("AttackCollision"));
+	AttackCollision->SetupAttachment(Weapon);
+
 }
 
 /**
@@ -67,9 +70,15 @@ void ABaseMonster::BeginPlay()
 	{
 		HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetHealthAttribute()).AddUObject(this,&ABaseMonster::HealthChange);
 	}
-	HPBarWidget=Cast<UMonsterGauge>(HPWidgetComponent->GetWidget());
+	if(HPWidgetComponent->GetWidget())
+	{
+		HPBarWidget=Cast<UMonsterGauge>(HPWidgetComponent->GetWidget());
+	}
 	HPBarWidget->UpdateHPWidget(1.0f,1.0f);
 	mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
+	Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,"Weapon_R");
+	//AttackCollision->OnComponentBeginOverlap.AddDynamic(this,&ACharacterBase::WeaponCollisionBeginOverlap);
+	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 /**
