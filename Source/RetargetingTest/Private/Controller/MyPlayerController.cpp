@@ -205,7 +205,7 @@ void AMyPlayerController::BlockEnd(const FInputActionValue& Value)
 
 void AMyPlayerController::TargetLook(const FInputActionValue& Value)
 {
-	UE_LOG(LogTemp,Warning,TEXT("Target Look "));
+	//UE_LOG(LogTemp,Warning,TEXT("Target Look "));
 	AbilitySystemComponent->TryActivateAbilitiesByTag(TargetLookTagContainer);
 }
 

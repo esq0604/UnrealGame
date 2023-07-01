@@ -6,8 +6,10 @@
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "Interface/Attackable.h"
+#include "Interface/Targeting.h"
 #include "BaseMonster.generated.h"
 
+class UBehaviorTree;
 class UWidgetComponent;
 class UEnemyAttributeSetBase;
 DECLARE_DELEGATE_OneParam(FMonsterDieSignature, ABaseMonster*)
@@ -23,7 +25,7 @@ class UMonsterGauge;
 struct FOnAttributeChangeData;
 struct FDamageEvent;
 UCLASS()
-class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface, public IAttackable
+class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface, public IAttackable,public ITargeting
 {
 	GENERATED_BODY()
 
@@ -61,6 +63,10 @@ public:
 	void AttackCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 												 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 												 const FHitResult& SweepResult);
+	UFUNCTION()
+	virtual bool CanBeTargeted() override;
+
+	TObjectPtr<UBehaviorTree> GetBehaviorTree() const;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -105,6 +111,9 @@ protected:
 
 	TObjectPtr<AActor> mHitActor;
 
+	UPROPERTY(EditInstanceOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Initialize")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+	
 	FDelegateHandle HealthChangeDelegateHandle;
 	FDelegateHandle MaxHealthChangeDelegateHandle;
 private:

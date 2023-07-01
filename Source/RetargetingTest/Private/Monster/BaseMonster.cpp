@@ -52,6 +52,7 @@ void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 {
 	const float NewHealthPercent=(Data.NewValue/Attributes->GetMaxHealth());
 	const float OldHealthPercent=Data.OldValue/Attributes->GetMaxHealth();
+	
 	HPBarWidget->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
 	HPWidgetComponent->UpdateWidget();
 	
@@ -109,19 +110,36 @@ void ABaseMonster::AttackCollisionBeginOverlap(UPrimitiveComponent* OverlappedCo
 	}
 }
 
+bool ABaseMonster::CanBeTargeted()
+{
+	return true;
+}
+
+TObjectPtr<UBehaviorTree> ABaseMonster::GetBehaviorTree() const
+{
+	return BehaviorTree;
+}
+
 // Called when the game starts or when spawned
 void ABaseMonster::BeginPlay()
 {
 	Super::BeginPlay();
 	if(AbilitySystemComponent)
 	{
-		HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetHealthAttribute()).AddUObject(this,&ABaseMonster::HealthChange);
+		if(Attributes)
+		{
+			HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetHealthAttribute()).AddUObject(this,&ABaseMonster::HealthChange);
+		}
 	}
 	if(HPWidgetComponent->GetWidget())
 	{
 		HPBarWidget=Cast<UMonsterGauge>(HPWidgetComponent->GetWidget());
 	}
-	HPBarWidget->UpdateHPWidget(1.0f,1.0f);
+
+	if(HPBarWidget)
+	{
+		HPBarWidget->UpdateHPWidget(1.0f,1.0f);
+	}
 	mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
 	Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,"Weapon_R");
 	AttackCollision->OnComponentBeginOverlap.AddDynamic(this,&ABaseMonster::AttackCollisionBeginOverlap);

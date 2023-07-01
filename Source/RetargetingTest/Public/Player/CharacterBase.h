@@ -12,6 +12,7 @@
 #include "CharacterBase.generated.h"
 
 
+class UTargetingComponent;
 class APlayerStateBase;
 class UBaseAbilityManagerComponent;
 class UWidgetComponent;
@@ -102,6 +103,9 @@ protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Component")
 	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="CharacterBase | Component")
+	TObjectPtr<UTargetingComponent> TargetingComponent;
+	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attributes")
 	URuneAttributeSet* Attributes;
 

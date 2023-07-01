@@ -15,6 +15,7 @@
 #include "MotionWarpingComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Component/InventoryComponent.h"
+#include "Component/TargetingComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/PlayerStateBase.h"
@@ -72,6 +73,8 @@ ACharacterBase::ACharacterBase()
 	Weapon=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon StaticMesh Component"));
 	WeaponCollision=CreateDefaultSubobject<UCapsuleComponent>(TEXT("Weapon Collision"));
 	WeaponCollision->SetupAttachment(Weapon);
+
+	TargetingComponent=CreateDefaultSubobject<UTargetingComponent>("TargetingComponent");
 }
 
 void ACharacterBase::BeginPlay()
