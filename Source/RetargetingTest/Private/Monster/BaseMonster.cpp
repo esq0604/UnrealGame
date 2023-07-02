@@ -120,6 +120,13 @@ TObjectPtr<UBehaviorTree> ABaseMonster::GetBehaviorTree() const
 	return BehaviorTree;
 }
 
+// void ABaseMonster::OnTargetSet(TWeakObjectPtr<AActor> NewTarget)
+// {
+// 	TargetActor=NewTarget.Get();
+// }
+
+
+
 // Called when the game starts or when spawned
 void ABaseMonster::BeginPlay()
 {

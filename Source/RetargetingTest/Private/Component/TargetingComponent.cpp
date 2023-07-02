@@ -76,3 +76,8 @@ void UTargetingComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	// ...
 }
 
+void UTargetingComponent::RotateToTarget()
+{
+
+}
+

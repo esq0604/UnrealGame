@@ -67,6 +67,11 @@ public:
 	virtual bool CanBeTargeted() override;
 
 	TObjectPtr<UBehaviorTree> GetBehaviorTree() const;
+
+	// UFUNCTION(BlueprintCallable)
+	// void OnTargetSet(TWeakObjectPtr<AActor> NewTarget);
+	
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

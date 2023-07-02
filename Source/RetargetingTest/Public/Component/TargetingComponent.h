@@ -29,6 +29,8 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintCallable)
+	void RotateToTarget();
 public:
 	UPROPERTY(BlueprintReadWrite,Category="TargetingComponent | Initialize")
 	float TargetingDistance=900.0f;

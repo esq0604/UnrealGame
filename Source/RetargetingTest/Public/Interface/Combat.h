@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "Targeting.generated.h"
+#include "Combat.generated.h"
 
 // This class does not need to be modified.
-UINTERFACE(meta=(CannotImplementInterfaceInBlueprint))
-class UTargeting : public UInterface
+UINTERFACE()
+class UCombat : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,14 +16,10 @@ class UTargeting : public UInterface
 /**
  * 
  */
-class RETARGETINGTEST_API ITargeting
+class RETARGETINGTEST_API ICombat
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	UFUNCTION()
-	virtual bool CanBeTargeted()=0;
-	
-
 };
