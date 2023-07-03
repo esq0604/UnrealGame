@@ -52,10 +52,13 @@ void AMyPlayerController::BeginPlay()
 	if(LocalCharacter!=nullptr)
 	{
 		PlayerHUD=Cast<UPlayerHUD>(CreateWidget(this,PlayerHUDClass));
-		if(PlayerHUD!=nullptr)
-		PlayerHUD->SetCharacter(LocalCharacter);
-		PlayerHUD->Init();
-		PlayerHUD->AddToViewport();
+		if(PlayerHUD)
+		{
+			PlayerHUD->SetCharacter(LocalCharacter);
+			PlayerHUD->Init();
+			PlayerHUD->AddToViewport();
+		}
+
 		AbilitySystemComponent= LocalPS->GetAbilitySystemComponent();
 	}
 

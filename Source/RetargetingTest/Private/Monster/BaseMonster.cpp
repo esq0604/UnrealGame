@@ -47,15 +47,20 @@ void ABaseMonster::PostInitializeComponents()
 }
 
 
-
+/**
+ * 몬스터마다 HPBarWidget은 존재하나. WidgetComponent는 일반몬스터에만 존재합니다(몬스터의 위에 체력바를 보여주기 위하여). 
+ */
 void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 {
 	const float NewHealthPercent=(Data.NewValue/Attributes->GetMaxHealth());
 	const float OldHealthPercent=Data.OldValue/Attributes->GetMaxHealth();
 	
 	HPBarWidget->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
-	HPWidgetComponent->UpdateWidget();
-	
+
+	if(HPWidgetComponent)
+	{
+		HPWidgetComponent->UpdateWidget();
+	}
 	if(Attributes->GetHealth()<=0)
 	{
 		SetActorHiddenInGame(true);
@@ -138,12 +143,20 @@ void ABaseMonster::BeginPlay()
 			HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetHealthAttribute()).AddUObject(this,&ABaseMonster::HealthChange);
 		}
 	}
-	if(HPWidgetComponent->GetWidget())
+	
+	if(HPWidgetComponent)
 	{
-		HPBarWidget=Cast<UMonsterGauge>(HPWidgetComponent->GetWidget());
+		if(HPWidgetComponent->GetWidget())
+		{
+			HPBarWidget=Cast<UMonsterGauge>(HPWidgetComponent->GetWidget());
+		}
 	}
-
-	if(HPBarWidget)
+	else
+	{
+		//HPBarWidget=Cast<UMonsterGauge>(CreateWidget(GetController(),HpWidgetClass));
+	}
+	
+	if(HPBarWidget.IsValid())
 	{
 		HPBarWidget->UpdateHPWidget(1.0f,1.0f);
 	}
@@ -210,6 +223,7 @@ void ABaseMonster::ToggleWeaponCollision_Implementation(bool bIsEnable)
 	}
 	else
 	{
+		UE_LOG(LogTemp,Warning,TEXT("Collision Enabled"));
 		AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	}
 }

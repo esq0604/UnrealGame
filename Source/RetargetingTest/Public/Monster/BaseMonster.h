@@ -84,6 +84,9 @@ public:
 	FMonsterDieSignature MonsterDieDelegate;
 
 protected:
+	/**
+	 * 어빌리티 및 어트리뷰트
+	 */
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="EnemyBase | Attributes")
 	TArray<TSubclassOf<UGameplayEffect>> DefaultAttributeEffects;
 
@@ -96,27 +99,42 @@ protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Component")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
+	/**
+	 * 에너미 위젯
+	 */
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Component")
 	TObjectPtr<UWidgetComponent> HPWidgetComponent;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | HPWidget")
-	TObjectPtr<UMonsterGauge> HPBarWidget;
+	TWeakObjectPtr<UMonsterGauge> HPBarWidget;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Anim")
-	TObjectPtr<UAnimMontage> DeadAnim;
-	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Anim")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | UI")
+	TSubclassOf<UUserWidget> HpWidgetClass;
+	/**
+	 * 초기화
+	 */
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize | Anim")
 	TObjectPtr<UBaseMonsterAnimInstance> mAnimInstacne;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=ture),Category="CharacterBase | Weapon")
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=ture),Category="CharacterBase | Initialize |Weapon")
 	TObjectPtr<UStaticMeshComponent> Weapon;
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Weapon")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Initialize |Weapon")
 	TObjectPtr<UCapsuleComponent> AttackCollision;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize |Anim")
+	TObjectPtr<UAnimMontage> DeadAnim;
+
+	/*
+	 * 몬스터 적 액터정보
+	 */
 	TObjectPtr<AActor> mHitActor;
 
-	UPROPERTY(EditInstanceOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Initialize")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
+	TObjectPtr<AActor> TargetActor;
+
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Initialize | AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
 	
 	FDelegateHandle HealthChangeDelegateHandle;

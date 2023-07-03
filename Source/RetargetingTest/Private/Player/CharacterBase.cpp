@@ -220,7 +220,6 @@ void ACharacterBase::WeaponCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 		{
 			mHitReaction = EHitReaction::Backward;
 		}
-		
 		else
 		{
 			mHitReaction= EHitReaction::Forward;
