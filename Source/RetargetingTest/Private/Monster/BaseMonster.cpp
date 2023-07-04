@@ -27,9 +27,9 @@ ABaseMonster::ABaseMonster()
 	HPWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPWidgetComponent"));
 	HPWidgetComponent->SetupAttachment(RootComponent);
 
-	Weapon=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon StaticMesh Component"));
-	AttackCollision=CreateDefaultSubobject<UCapsuleComponent>(TEXT("AttackCollision"));
-	AttackCollision->SetupAttachment(Weapon);
+	//Weapon=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon StaticMesh Component"));
+	//AttackCollision=CreateDefaultSubobject<UCapsuleComponent>(TEXT("AttackCollision"));
+	//AttackCollision->SetupAttachment(Weapon);
 
 }
 
@@ -115,10 +115,7 @@ void ABaseMonster::AttackCollisionBeginOverlap(UPrimitiveComponent* OverlappedCo
 	}
 }
 
-bool ABaseMonster::CanBeTargeted()
-{
-	return true;
-}
+
 
 TObjectPtr<UBehaviorTree> ABaseMonster::GetBehaviorTree() const
 {
@@ -161,10 +158,10 @@ void ABaseMonster::BeginPlay()
 		HPBarWidget->UpdateHPWidget(1.0f,1.0f);
 	}
 	mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
-	Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,"Weapon_R");
-	AttackCollision->OnComponentBeginOverlap.AddDynamic(this,&ABaseMonster::AttackCollisionBeginOverlap);
+	//Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,"Weapon_R");
+	//AttackCollision->OnComponentBeginOverlap.AddDynamic(this,&ABaseMonster::AttackCollisionBeginOverlap);
 
-	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 /**
@@ -217,15 +214,15 @@ UAbilitySystemComponent* ABaseMonster::GetAbilitySystemComponent() const
 
 void ABaseMonster::ToggleWeaponCollision_Implementation(bool bIsEnable)
 {
-	if(AttackCollision->GetCollisionEnabled()==ECollisionEnabled::QueryAndPhysics)
-	{
-		AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Collision Enabled"));
-		AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	}
+	// if(AttackCollision->GetCollisionEnabled()==ECollisionEnabled::QueryAndPhysics)
+	// {
+	// 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp,Warning,TEXT("Collision Enabled"));
+	// 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	// }
 }
 
 /**

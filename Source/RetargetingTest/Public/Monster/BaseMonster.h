@@ -63,9 +63,7 @@ public:
 	void AttackCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 												 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 												 const FHitResult& SweepResult);
-	UFUNCTION()
-	virtual bool CanBeTargeted() override;
-
+	
 	TObjectPtr<UBehaviorTree> GetBehaviorTree() const;
 
 	// UFUNCTION(BlueprintCallable)
@@ -115,13 +113,7 @@ protected:
 	 */
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize | Anim")
 	TObjectPtr<UBaseMonsterAnimInstance> mAnimInstacne;
-
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=ture),Category="CharacterBase | Initialize |Weapon")
-	TObjectPtr<UStaticMeshComponent> Weapon;
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Initialize |Weapon")
-	TObjectPtr<UCapsuleComponent> AttackCollision;
-
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize |Anim")
 	TObjectPtr<UAnimMontage> DeadAnim;
 

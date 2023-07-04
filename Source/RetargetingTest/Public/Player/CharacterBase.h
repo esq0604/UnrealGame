@@ -112,12 +112,6 @@ protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | AnimInstance")
 	TObjectPtr<UCharaterAnimInstance> AnimInstance;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=ture),Category="CharacterBase | Weapon")
-	TObjectPtr<UStaticMeshComponent> Weapon;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Weapon")
-	TObjectPtr<UCapsuleComponent> WeaponCollision;
-
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | LookOnTarget")
 	bool TargetLock{false};
 

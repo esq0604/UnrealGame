@@ -69,11 +69,7 @@ ACharacterBase::ACharacterBase()
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
 
 	InventoryManagerComponent =CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryManagerComponent"));
-
-	Weapon=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon StaticMesh Component"));
-	WeaponCollision=CreateDefaultSubobject<UCapsuleComponent>(TEXT("Weapon Collision"));
-	WeaponCollision->SetupAttachment(Weapon);
-
+	
 	TargetingComponent=CreateDefaultSubobject<UTargetingComponent>("TargetingComponent");
 }
 
@@ -82,9 +78,7 @@ void ACharacterBase::BeginPlay()
 	// Call the base class
 	Super::BeginPlay();
 	AnimInstance=Cast<UCharaterAnimInstance>(GetMesh()->GetAnimInstance());
-	Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,"Weapon_R");
-	WeaponCollision->OnComponentBeginOverlap.AddDynamic(this,&ACharacterBase::WeaponCollisionBeginOverlap);
-	WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 }
 
 void ACharacterBase::Tick(float DeltaSeconds)
@@ -205,38 +199,30 @@ void ACharacterBase::WeaponCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 												 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 												 const FHitResult& SweepResult)
 {
-	mHitActor=OtherActor;
-	if(Attributes)
-	{
-		const float Damage = Attributes->GetDamage();
-		UGameplayStatics::ApplyDamage(OtherActor,Damage,GetController(),nullptr,nullptr);
-
-		const FVector HitActorForwardVector = OtherActor->GetActorForwardVector();
-		const FVector ActorForwardVector = GetActorForwardVector();
-
-		const auto Direction =FVector::DotProduct(HitActorForwardVector,ActorForwardVector);
-
-		if(Direction>=0.0f)
-		{
-			mHitReaction = EHitReaction::Backward;
-		}
-		else
-		{
-			mHitReaction= EHitReaction::Forward;
-		}
-	}
+	// mHitActor=OtherActor;
+	// if(Attributes)
+	// {
+	// 	const float Damage = Attributes->GetDamage();
+	// 	UGameplayStatics::ApplyDamage(OtherActor,Damage,GetController(),nullptr,nullptr);
+	//
+	// 	const FVector HitActorForwardVector = OtherActor->GetActorForwardVector();
+	// 	const FVector ActorForwardVector = GetActorForwardVector();
+	//
+	// 	const auto Direction =FVector::DotProduct(HitActorForwardVector,ActorForwardVector);
+	//
+	// 	if(Direction>=0.0f)
+	// 	{
+	// 		mHitReaction = EHitReaction::Backward;
+	// 	}
+	// 	else
+	// 	{
+	// 		mHitReaction= EHitReaction::Forward;
+	// 	}
+	// }
 }
 
 void ACharacterBase::ToggleWeaponCollision_Implementation(bool bIsEnable)
 {
-	if(WeaponCollision->GetCollisionEnabled()==ECollisionEnabled::QueryAndPhysics)
-	{
-		WeaponCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
-	else
-	{
-		WeaponCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	}
-	
+
 }
 
