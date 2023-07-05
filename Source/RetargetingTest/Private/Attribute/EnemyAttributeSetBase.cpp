@@ -16,6 +16,12 @@ void UEnemyAttributeSetBase::OnRep_MaxHealth(const FGameplayAttributeData& OldMa
 
 }
 
+void UEnemyAttributeSetBase::OnRep_Armor(const FGameplayAttributeData& OldArmor)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UEnemyAttributeSetBase, MaxHealth, OldArmor);
+
+}
+
 void UEnemyAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

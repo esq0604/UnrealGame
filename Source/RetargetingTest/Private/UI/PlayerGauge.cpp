@@ -4,6 +4,7 @@
 #include "RetargetingTest/Public/UI/PlayerGauge.h"
 
 #include "FrameTypes.h"
+#include "Attribute/CharacterAttributeSetBase.h"
 #include "Player/CharacterBase.h"
 #include "Components/ProgressBar.h"
 #include "Player/PlayerStateBase.h"
@@ -68,8 +69,8 @@ void UPlayerGauge::Init()
 			{
 				const float Health=Player->GetAttributes()->GetHealth();
 				const float MaxHealth=Player->GetAttributes()->GetMaxHealth();
-				const float Stamina =Player->GetAttributes()->GetStamina();
-				const float MaxStamina =Player->GetAttributes()->GetMaxStamina();
+				const float Stamina =Player->GetAttributes()->GetMana();
+				const float MaxStamina =Player->GetAttributes()->GetMaxMana();
 
 				UpdateHPWidget(Health/MaxHealth,Health/MaxHealth);
 				UpdateStaminaWidget(Stamina/MaxStamina,Stamina/MaxStamina);

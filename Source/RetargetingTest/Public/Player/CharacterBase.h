@@ -12,6 +12,7 @@
 #include "CharacterBase.generated.h"
 
 
+class UCharacterAttributeSetBase;
 class UTargetingComponent;
 class APlayerStateBase;
 class UBaseAbilityManagerComponent;
@@ -28,7 +29,6 @@ class UAbilitySystemComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class AItemBase;
-class URuneAttributeSet;
 class UInventoryComponent;
 
 UCLASS(config=Game)
@@ -45,7 +45,7 @@ public:
 	virtual void InitializeAttributes();
 	virtual void GiveDefaultAbilities();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	URuneAttributeSet* GetAttributes() const;
+	UCharacterAttributeSetBase* GetAttributes() const;
 
 	UInventoryComponent* GetInventoryManagerCompnent() const;
 
@@ -107,7 +107,7 @@ protected:
 	TObjectPtr<UTargetingComponent> TargetingComponent;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attributes")
-	URuneAttributeSet* Attributes;
+	UCharacterAttributeSetBase* Attributes;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | AnimInstance")
 	TObjectPtr<UCharaterAnimInstance> AnimInstance;
@@ -129,7 +129,5 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category="CharacterBase | Component")
 	TObjectPtr<UInventoryComponent> InventoryManagerComponent;
-
-	
 };
 

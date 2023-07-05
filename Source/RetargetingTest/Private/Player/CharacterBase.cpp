@@ -13,6 +13,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "MotionWarpingComponent.h"
+#include "Attribute/CharacterAttributeSetBase.h"
 #include "Camera/CameraComponent.h"
 #include "Component/InventoryComponent.h"
 #include "Component/TargetingComponent.h"
@@ -160,7 +161,7 @@ UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent.Get();
 }
 
-URuneAttributeSet* ACharacterBase::GetAttributes() const
+UCharacterAttributeSetBase* ACharacterBase::GetAttributes() const
 {
 	return Attributes;
 }

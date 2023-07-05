@@ -45,6 +45,14 @@ public:
 	FGameplayAttributeData Damage;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSetBase, Damage)
 
+	UPROPERTY(BlueprintReadOnly, Category="Armor")
+	FGameplayAttributeData Armor;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSetBase, Armor)
+
+	UPROPERTY(BlueprintReadOnly, Category="Strength")
+	FGameplayAttributeData Strength;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSetBase, Strength)
+	
 	//나의 경우에는 복제할것이 아니기때문에(멀티게임이 아니기때문에 아래 함수들이 필요가 없음)
 	UFUNCTION()
 	virtual void OnRep_Level(const FGameplayAttributeData& OldLevel);
@@ -56,6 +64,9 @@ public:
 	virtual void OnRep_Mana(const FGameplayAttributeData& OldMana);
 	UFUNCTION()
 	virtual void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana);
-
+	UFUNCTION()
+	virtual void OnRep_Armor(const FGameplayAttributeData& OldArmor);
+	UFUNCTION()
+	virtual void OnRep_Strength(const FGameplayAttributeData& OldStrength);
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

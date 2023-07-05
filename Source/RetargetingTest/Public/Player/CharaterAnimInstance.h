@@ -8,9 +8,6 @@
 
 #include "CharaterAnimInstance.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnAttackHitCheckDelegate);
-//DECLARE_MULTICAST_DELEGATE_TwoParams(FOnMontageEndedDelegate,UAnimMontage* , bool);
-DECLARE_MULTICAST_DELEGATE(FOnNextAttackCheckDelegate);
 
 
 /**
@@ -36,10 +33,6 @@ public:
 	void SetIsBlocking(bool newIsBlocking);
 protected:
 	virtual void NativeBeginPlay() override;
-	
-public :
-	FOnAttackHitCheckDelegate OnAttackHitCheck;
-	FOnNextAttackCheckDelegate OnNextAttackHitCheck;
 
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))

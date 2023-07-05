@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
-#include "Attribute/RuneAttributeSet.h"
 #include "UI/PlayerHUD.h"
 #include "GameFramework/PlayerState.h"
 #include "PlayerStateBase.generated.h"
 
+class UCharacterAttributeSetBase;
 class UAbilitySystemComponent;
-class URuneAttributeSet;
 class UPlayerHUD;
+struct FOnAttributeChangeData;
 UCLASS()
 class RETARGETINGTEST_API APlayerStateBase : public APlayerState,public IAbilitySystemInterface
 {
@@ -26,16 +26,16 @@ public:
 	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	URuneAttributeSet* GetAttributes() const;
+	UCharacterAttributeSetBase* GetAttributes() const;
 	void SetPlayerHUD(UPlayerHUD* NewPlayerHUD);
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	virtual void HealthChange(const FOnAttributeChangeData& Data);
-	virtual void MaxHealthChange(const FOnAttributeChangeData& Data);
-	virtual void StaminaChange(const FOnAttributeChangeData& Data);
-	virtual void MaxManaChange(const FOnAttributeChangeData& Data);
+	void HealthChange(const FOnAttributeChangeData& Data);
+	void MaxHealthChange(const FOnAttributeChangeData& Data);
+	void StaminaChange(const FOnAttributeChangeData& Data);
+	void MaxManaChange(const FOnAttributeChangeData& Data);
 
 public:
 
@@ -45,14 +45,13 @@ protected:
 	UAbilitySystemComponent* AbilitySystemComponent;
 	
 	UPROPERTY()
-	URuneAttributeSet* Attributes;
+	UCharacterAttributeSetBase* Attributes;
 
 	TWeakObjectPtr<UPlayerHUD> PlayerHUD;
 
 	FDelegateHandle HealthChangeDelegateHandle;
 	FDelegateHandle MaxHealthChangeDelegateHandle;
-	FDelegateHandle StaminaChangeDelegateHandle;
+	FDelegateHandle ManaChangeDelegateHandle;
 	FDelegateHandle MaxManaChangeDelegateHandle;
-	FDelegateHandle CharacterLevelChangeDelegateHandle;
 
 };

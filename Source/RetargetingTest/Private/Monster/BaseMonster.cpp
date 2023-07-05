@@ -93,26 +93,26 @@ void ABaseMonster::SetHitReaction_Implementation(EHitReaction HitReaction)
 void ABaseMonster::AttackCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	mHitActor=OtherActor;
-	if(Attributes)
-	{
-		const float Damage = Attributes->GetDamage();
-		UGameplayStatics::ApplyDamage(OtherActor,Damage,GetController(),nullptr,nullptr);
-
-		const FVector HitActorForwardVector = OtherActor->GetActorForwardVector();
-		const FVector ActorForwardVector = GetActorForwardVector();
-
-		const auto Direction =FVector::DotProduct(HitActorForwardVector,ActorForwardVector);
-
-		if(Direction>=0.0f)
-		{
-			mHitReaction = EHitReaction::Backward;
-		}
-		else
-		{
-			mHitReaction= EHitReaction::Forward;
-		}
-	}
+	// mHitActor=OtherActor;
+	// if(Attributes)
+	// {
+	// 	const float Damage = Attributes->GetDamage();
+	// 	UGameplayStatics::ApplyDamage(OtherActor,Damage,GetController(),nullptr,nullptr);
+	//
+	// 	const FVector HitActorForwardVector = OtherActor->GetActorForwardVector();
+	// 	const FVector ActorForwardVector = GetActorForwardVector();
+	//
+	// 	const auto Direction =FVector::DotProduct(HitActorForwardVector,ActorForwardVector);
+	//
+	// 	if(Direction>=0.0f)
+	// 	{
+	// 		mHitReaction = EHitReaction::Backward;
+	// 	}
+	// 	else
+	// 	{
+	// 		mHitReaction= EHitReaction::Forward;
+	// 	}
+	// }
 }
 
 
@@ -158,10 +158,6 @@ void ABaseMonster::BeginPlay()
 		HPBarWidget->UpdateHPWidget(1.0f,1.0f);
 	}
 	mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
-	//Weapon->AttachToComponent(GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,"Weapon_R");
-	//AttackCollision->OnComponentBeginOverlap.AddDynamic(this,&ABaseMonster::AttackCollisionBeginOverlap);
-
-	//AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 /**

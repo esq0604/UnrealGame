@@ -4,7 +4,7 @@
 #include "Player/PlayerStateBase.h"
 
 #include "AbilitySystemComponent.h"
-#include "Attribute/RuneAttributeSet.h"
+#include "Attribute/CharacterAttributeSetBase.h"
 #include "Controller/MyPlayerController.h"
 #include "UI/PlayerGauge.h"
 #include "UI/PlayerHUD.h"
@@ -16,7 +16,7 @@ APlayerStateBase::APlayerStateBase()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
-	Attributes = CreateDefaultSubobject<URuneAttributeSet>(TEXT("Attribute"));
+	Attributes = CreateDefaultSubobject<UCharacterAttributeSetBase>(TEXT("Attribute"));
 }
 
 // Called every frame
@@ -30,7 +30,7 @@ UAbilitySystemComponent* APlayerStateBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
-URuneAttributeSet* APlayerStateBase::GetAttributes() const
+UCharacterAttributeSetBase* APlayerStateBase::GetAttributes() const
 {
 	return Attributes;
 }
@@ -52,7 +52,7 @@ void APlayerStateBase::BeginPlay()
 	{
 		HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetHealthAttribute()).AddUObject(this,&APlayerStateBase::HealthChange);
 		MaxHealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetMaxHealthAttribute()).AddUObject(this,&APlayerStateBase::MaxHealthChange);
-		StaminaChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetStaminaAttribute()).AddUObject(this,&APlayerStateBase::StaminaChange);
+		ManaChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetManaAttribute()).AddUObject(this,&APlayerStateBase::StaminaChange);
 		MaxManaChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetMaxManaAttribute()).AddUObject(this,&APlayerStateBase::MaxManaChange);
 	}
 
@@ -65,8 +65,7 @@ void APlayerStateBase::BeginPlay()
  */
 void APlayerStateBase::HealthChange(const FOnAttributeChangeData& Data)
 {
-	UE_LOG(LogTemp,Warning,TEXT("HealthChange"));
-	const float NewHealthPercent=(Data.NewValue/Attributes->GetMaxHealth());
+	const float NewHealthPercent=Data.NewValue/Attributes->GetMaxHealth();
 	const float OldHealthPercent=Data.OldValue/Attributes->GetMaxHealth();
 	PlayerHUD->GetGauge()->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
 }
@@ -77,6 +76,7 @@ void APlayerStateBase::HealthChange(const FOnAttributeChangeData& Data)
  */
 void APlayerStateBase::MaxHealthChange(const FOnAttributeChangeData& Data)
 {
+	UE_LOG(LogTemp,Warning,TEXT("MaxHealthChange"));
 }
 
 /**
@@ -88,8 +88,8 @@ void APlayerStateBase::StaminaChange(const FOnAttributeChangeData& Data)
 	UE_LOG(LogTemp,Warning,TEXT("StamChange"));
 	UE_LOG(LogTemp,Warning,TEXT("%f ,%f "),Data.OldValue,Data.NewValue);
 
-	const float NewStaminaPercent=(Data.NewValue/Attributes->GetMaxStamina());
-	const float OldStaminaPercent =Data.OldValue/Attributes->GetMaxStamina();
+	const float NewStaminaPercent=(Data.NewValue/Attributes->GetMaxMana());
+	const float OldStaminaPercent =Data.OldValue/Attributes->GetMaxMana();
 	PlayerHUD->GetGauge()->UpdateStaminaWidget(NewStaminaPercent,OldStaminaPercent);
 }
 
@@ -99,6 +99,7 @@ void APlayerStateBase::StaminaChange(const FOnAttributeChangeData& Data)
  */
 void APlayerStateBase::MaxManaChange(const FOnAttributeChangeData& Data)
 {
+	UE_LOG(LogTemp,Warning,TEXT("MaxManaChange"));
 }
 
 
