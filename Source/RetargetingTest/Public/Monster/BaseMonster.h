@@ -9,6 +9,7 @@
 #include "Interface/Targeting.h"
 #include "BaseMonster.generated.h"
 
+class UBaseAttributeSet;
 class UBehaviorTree;
 class UWidgetComponent;
 class UEnemyAttributeSetBase;
@@ -19,7 +20,6 @@ class USkeletalMeshComponent;
 class UBaseMonsterAnimInstance;
 class UGameplayEffect;
 class UGameplayAbility;
-class UEnemyAttributeSetBase;
 class UMonsterGauge;
 
 struct FOnAttributeChangeData;
@@ -92,7 +92,7 @@ protected:
 	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Attributes")
-	TObjectPtr<UEnemyAttributeSetBase> Attributes;
+	UBaseAttributeSet* Attributes;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Component")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;

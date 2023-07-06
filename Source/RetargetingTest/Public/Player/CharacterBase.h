@@ -12,6 +12,7 @@
 #include "CharacterBase.generated.h"
 
 
+class UBaseAttributeSet;
 class UCharacterAttributeSetBase;
 class UTargetingComponent;
 class APlayerStateBase;
@@ -45,7 +46,7 @@ public:
 	virtual void InitializeAttributes();
 	virtual void GiveDefaultAbilities();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UCharacterAttributeSetBase* GetAttributes() const;
+	UBaseAttributeSet* GetAttributes() const;
 
 	UInventoryComponent* GetInventoryManagerCompnent() const;
 
@@ -107,7 +108,7 @@ protected:
 	TObjectPtr<UTargetingComponent> TargetingComponent;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attributes")
-	UCharacterAttributeSetBase* Attributes;
+	UBaseAttributeSet* Attributes;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | AnimInstance")
 	TObjectPtr<UCharaterAnimInstance> AnimInstance;

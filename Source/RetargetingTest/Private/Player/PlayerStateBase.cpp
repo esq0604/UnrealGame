@@ -16,7 +16,7 @@ APlayerStateBase::APlayerStateBase()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
-	Attributes = CreateDefaultSubobject<UCharacterAttributeSetBase>(TEXT("Attribute"));
+	Attributes = CreateDefaultSubobject<UBaseAttributeSet>(TEXT("Attribute"));
 }
 
 // Called every frame
@@ -30,7 +30,7 @@ UAbilitySystemComponent* APlayerStateBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
-UCharacterAttributeSetBase* APlayerStateBase::GetAttributes() const
+UBaseAttributeSet* APlayerStateBase::GetAttributes() const
 {
 	return Attributes;
 }

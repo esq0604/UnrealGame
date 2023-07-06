@@ -4,12 +4,10 @@
 #include "RetargetingTest/Public/Monster/BaseMonster.h"
 
 #include "AbilitySystemComponent.h"
-#include "Attribute/EnemyAttributeSetBase.h"
-#include "Components/CapsuleComponent.h"
+#include "Attribute/BaseAttributeSet.h"
 #include "Components/WidgetComponent.h"
 #include "Materials/Material.h"
 #include "Engine/DamageEvents.h"
-#include "Kismet/GameplayStatics.h"
 
 #include "RetargetingTest/Public/Monster/BaseMonsterAnimInstance.h"
 #include "UI/MonsterGauge.h"
@@ -22,7 +20,7 @@ ABaseMonster::ABaseMonster()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
-	Attributes = CreateDefaultSubobject<UEnemyAttributeSetBase>(TEXT("Attribute"));
+	Attributes = CreateDefaultSubobject<UBaseAttributeSet>(TEXT("Attribute"));
 
 	HPWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPWidgetComponent"));
 	HPWidgetComponent->SetupAttachment(RootComponent);

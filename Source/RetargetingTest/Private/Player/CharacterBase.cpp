@@ -161,7 +161,7 @@ UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
 	return AbilitySystemComponent.Get();
 }
 
-UCharacterAttributeSetBase* ACharacterBase::GetAttributes() const
+UBaseAttributeSet* ACharacterBase::GetAttributes() const
 {
 	return Attributes;
 }

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
 #include "AbilitySystemComponent.h"
+#include "BaseAttributeSet.h"
 #include "CharacterAttributeSetBase.generated.h"
 
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \
@@ -23,14 +24,6 @@ public:
 	FGameplayAttributeData Level;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSetBase, Level)
 	
-	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_Health)
-	FGameplayAttributeData Health;
-	ATTRIBUTE_ACCESSORS(UCharacterAttributeSetBase, Health)
-	
-	UPROPERTY(BlueprintReadOnly, Category = "MaxHealth", ReplicatedUsing = OnRep_MaxHealth)
-	FGameplayAttributeData MaxHealth;
-	ATTRIBUTE_ACCESSORS(UCharacterAttributeSetBase, MaxHealth)
-	
 	UPROPERTY(BlueprintReadOnly, Category = "Mana", ReplicatedUsing = OnRep_Mana)
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSetBase, Mana)
@@ -41,10 +34,6 @@ public:
 
 	//Damage is a meta attribute used by the DamageExecution to calculate final damage, which then turns
 	//Temporary value that only exists on the server. Not replicated.
-	UPROPERTY(BlueprintReadOnly, Category="Damage")
-	FGameplayAttributeData Damage;
-	ATTRIBUTE_ACCESSORS(UCharacterAttributeSetBase, Damage)
-
 	UPROPERTY(BlueprintReadOnly, Category="Armor")
 	FGameplayAttributeData Armor;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSetBase, Armor)
@@ -56,10 +45,6 @@ public:
 	//나의 경우에는 복제할것이 아니기때문에(멀티게임이 아니기때문에 아래 함수들이 필요가 없음)
 	UFUNCTION()
 	virtual void OnRep_Level(const FGameplayAttributeData& OldLevel);
-	UFUNCTION()
-	virtual void OnRep_Health(const FGameplayAttributeData& OldHealth);
-	UFUNCTION()
-	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth);
 	UFUNCTION()
 	virtual void OnRep_Mana(const FGameplayAttributeData& OldMana);
 	UFUNCTION()

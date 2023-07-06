@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
 #include "AttributeSet.h"
+#include "BaseAttributeSet.h"
 #include "EnemyAttributeSetBase.generated.h"
 
 /**
@@ -23,28 +24,13 @@ class RETARGETINGTEST_API UEnemyAttributeSetBase : public UAttributeSet
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_Health)
-	FGameplayAttributeData Health;
-	ATTRIBUTE_ACCESSORS(UEnemyAttributeSetBase, Health)
 	
-	UPROPERTY(BlueprintReadOnly, Category = "MaxHealth", ReplicatedUsing = OnRep_MaxHealth)
-	FGameplayAttributeData MaxHealth;
-	ATTRIBUTE_ACCESSORS(UEnemyAttributeSetBase, MaxHealth)
-
-	UPROPERTY(BlueprintReadOnly, Category = "Armor", ReplicatedUsing = OnRep_MaxHealth)
+	UPROPERTY(BlueprintReadOnly, Category = "Armor", ReplicatedUsing = OnRep_Armor)
 	FGameplayAttributeData Armor;
 	ATTRIBUTE_ACCESSORS(UEnemyAttributeSetBase, Armor)
 	//Damage is a meta attribute used by the DamageExecution to calculate final damage, which then turns
 	//Temporary value that only exists on the server. Not replicated.
-	UPROPERTY(BlueprintReadOnly, Category="Damage")
-	FGameplayAttributeData Damage;
-	ATTRIBUTE_ACCESSORS(UEnemyAttributeSetBase, Damage)
-
-	UFUNCTION()
-	virtual void OnRep_Health(const FGameplayAttributeData& OldHealth);
-	UFUNCTION()
-	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth);
-
+	
 	UFUNCTION()
 	virtual void OnRep_Armor(const FGameplayAttributeData& OldArmor);
 

@@ -8,7 +8,7 @@
 #include "GameFramework/PlayerState.h"
 #include "PlayerStateBase.generated.h"
 
-class UCharacterAttributeSetBase;
+class UBaseAttributeSet;
 class UAbilitySystemComponent;
 class UPlayerHUD;
 struct FOnAttributeChangeData;
@@ -26,7 +26,7 @@ public:
 	
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	UCharacterAttributeSetBase* GetAttributes() const;
+	UBaseAttributeSet* GetAttributes() const;
 	void SetPlayerHUD(UPlayerHUD* NewPlayerHUD);
 protected:
 	// Called when the game starts or when spawned
@@ -45,7 +45,7 @@ protected:
 	UAbilitySystemComponent* AbilitySystemComponent;
 	
 	UPROPERTY()
-	UCharacterAttributeSetBase* Attributes;
+	UBaseAttributeSet* Attributes;
 
 	TWeakObjectPtr<UPlayerHUD> PlayerHUD;
 
