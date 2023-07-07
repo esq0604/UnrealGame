@@ -41,7 +41,9 @@ public:
 	void EquipUnEquip(const FInputActionValue& Value);
 	void Roll(const FInputActionValue& Value);
 	void Block(const FInputActionValue& Value);
+	UFUNCTION(BlueprintCallable,BlueprintImplementableEvent)
 	void BlockEnd(const FInputActionValue& Value);
+	void BlockEnd_Implementation(const FInputActionValue& Value);
 	void TargetLook(const FInputActionValue& Value);
 	UPlayerHUD* GetPlayerHUD() const;
 	UPlayerGauge* GetGauge() const;

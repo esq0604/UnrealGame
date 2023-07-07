@@ -24,7 +24,7 @@ AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitial
 	AttackTag = FGameplayTag::RequestGameplayTag("Ability.Attack.Combo");
 	AttackTagContainer.AddTag(AttackTag);
 
-	BlockStateTag =FGameplayTag::RequestGameplayTag("Character.IsBlocking");
+	BlockStateTag =FGameplayTag::RequestGameplayTag("Player.State.IsBlocking");
 	BlockTag = FGameplayTag::RequestGameplayTag("Ability.Block");
 	BlockTagContainer.AddTag(BlockTag);
 	BlockStateTagContainer.AddTag(BlockStateTag);
@@ -85,8 +85,8 @@ void AMyPlayerController::SetupInputComponent()
 	EnhancedInputComp->BindAction(InputAction->InputToggleInventory,ETriggerEvent::Triggered,this,&AMyPlayerController::ToggleInventory);
 	EnhancedInputComp->BindAction(InputAction->InputEquipUnEquip,ETriggerEvent::Triggered,this,&AMyPlayerController::EquipUnEquip);
 	EnhancedInputComp->BindAction(InputAction->InputRoll,ETriggerEvent::Triggered,this,&AMyPlayerController::Roll);
-	EnhancedInputComp->BindAction(InputAction->InputBlock,ETriggerEvent::Started,this,&AMyPlayerController::Block);
-	EnhancedInputComp->BindAction(InputAction->InputBlock,ETriggerEvent::Canceled,this,&AMyPlayerController::BlockEnd);
+	//EnhancedInputComp->BindAction(InputAction->InputBlock,ETriggerEvent::Started,this,&AMyPlayerController::Block);
+	//EnhancedInputComp->BindAction(InputAction->InputBlock,ETriggerEvent::Canceled,this,&AMyPlayerController::BlockEnd_Implementation);
 	EnhancedInputComp->BindAction(InputAction->InputTargetLook,ETriggerEvent::Started,this,&AMyPlayerController::TargetLook);
 }
 void AMyPlayerController::Move(const FInputActionValue& Value)
@@ -200,9 +200,11 @@ void AMyPlayerController::Block(const FInputActionValue& Value)
 	AbilitySystemComponent->TryActivateAbilitiesByTag(BlockTagContainer);
 }
 
-void AMyPlayerController::BlockEnd(const FInputActionValue& Value)
+void AMyPlayerController::BlockEnd_Implementation(const FInputActionValue& Value)
 {
+	UE_LOG(LogTemp,Warning,TEXT("BlockEnd"));
 	AbilitySystemComponent->RemoveActiveEffectsWithGrantedTags(BlockStateTagContainer);
+	//AbilitySystemComponent->CancelAbilities(&BlockStateTagContainer);
 }
 
 

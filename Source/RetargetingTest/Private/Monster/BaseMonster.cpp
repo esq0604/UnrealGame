@@ -16,11 +16,12 @@
 ABaseMonster::ABaseMonster()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	Attributes = CreateDefaultSubobject<UBaseAttributeSet>(TEXT("Attribute"));
+
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
-	Attributes = CreateDefaultSubobject<UBaseAttributeSet>(TEXT("Attribute"));
 
 	HPWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPWidgetComponent"));
 	HPWidgetComponent->SetupAttachment(RootComponent);
@@ -39,6 +40,7 @@ ABaseMonster::ABaseMonster()
  */
 void ABaseMonster::PostInitializeComponents()
 {
+	UE_LOG(LogTemp,Warning,TEXT("PostInitComp"));
 	Super::PostInitializeComponents();
 	InitializeAttributes();
 	GiveDefaultAbilities();
@@ -131,6 +133,12 @@ TObjectPtr<UBehaviorTree> ABaseMonster::GetBehaviorTree() const
 void ABaseMonster::BeginPlay()
 {
 	Super::BeginPlay();
+	InitializeAttributes();
+	GiveDefaultAbilities();
+	if(!Attributes)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Attributes not vaild"));
+	}
 	if(AbilitySystemComponent)
 	{
 		if(Attributes)
