@@ -71,7 +71,7 @@ ACharacterBase::ACharacterBase()
 
 	InventoryManagerComponent =CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryManagerComponent"));
 	
-	TargetingComponent=CreateDefaultSubobject<UTargetingComponent>("TargetingComponent");
+	//TargetingComponent=CreateDefaultSubobject<UTargetingComponent>("TargetingComponent");
 }
 
 void ACharacterBase::BeginPlay()
@@ -171,25 +171,25 @@ UInventoryComponent* ACharacterBase::GetInventoryManagerCompnent() const
 	return InventoryManagerComponent;
 }
 
-AActor* ACharacterBase::GetHitActor_Implementation()
-{
-	return mHitActor.Get();
-}
-
-void ACharacterBase::SetHitActor_Implementation(AActor* HitActor)
-{
-	mHitActor=HitActor;
-}
-
-EHitReaction ACharacterBase::GetHitReaction_Implementation()
-{
-	return mHitReaction;
-}
-
-void ACharacterBase::SetHitReaction_Implementation(EHitReaction HitReaction)
-{
-	mHitReaction=HitReaction;
-}
+// AActor* ACharacterBase::GetHitActor_Implementation()
+// {
+// 	return mHitActor.Get();
+// }
+//
+// void ACharacterBase::SetHitActor_Implementation(AActor* HitActor)
+// {
+// 	mHitActor=HitActor;
+// }
+//
+// EHitReaction ACharacterBase::GetHitReaction_Implementation()
+// {
+// 	return mHitReaction;
+// }
+//
+// void ACharacterBase::SetHitReaction_Implementation(EHitReaction HitReaction)
+// {
+// 	mHitReaction=HitReaction;
+// }
 
 void ACharacterBase::PostInitializeComponents()
 {
@@ -222,8 +222,4 @@ void ACharacterBase::WeaponCollisionBeginOverlap(UPrimitiveComponent* Overlapped
 	// }
 }
 
-void ACharacterBase::ToggleWeaponCollision_Implementation(bool bIsEnable)
-{
-
-}
 

@@ -26,9 +26,7 @@ ABaseMonster::ABaseMonster()
 	HPWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPWidgetComponent"));
 	HPWidgetComponent->SetupAttachment(RootComponent);
 
-	//Weapon=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon StaticMesh Component"));
-	//AttackCollision=CreateDefaultSubobject<UCapsuleComponent>(TEXT("AttackCollision"));
-	//AttackCollision->SetupAttachment(Weapon);
+
 
 }
 
@@ -69,26 +67,26 @@ void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 		MonsterDieDelegate.Execute(this);
 	}
 }
-
-AActor* ABaseMonster::GetHitActor_Implementation()
-{
-	return mHitActor;
-}
-
-void ABaseMonster::SetHitActor_Implementation(AActor* HitActor)
-{
-	mHitActor=HitActor;
-}
-
-EHitReaction ABaseMonster::GetHitReaction_Implementation()
-{
-	return mHitReaction;
-}
-
-void ABaseMonster::SetHitReaction_Implementation(EHitReaction HitReaction)
-{
-	mHitReaction=HitReaction;
-}
+//
+// AActor* ABaseMonster::GetHitActor_Implementation()
+// {
+// 	return mHitActor;
+// }
+//
+// void ABaseMonster::SetHitActor_Implementation(AActor* HitActor)
+// {
+// 	mHitActor=HitActor;
+// }
+//
+// EHitReaction ABaseMonster::GetHitReaction_Implementation()
+// {
+// 	return mHitReaction;
+// }
+//
+// void ABaseMonster::SetHitReaction_Implementation(EHitReaction HitReaction)
+// {
+// 	mHitReaction=HitReaction;
+// }
 
 void ABaseMonster::AttackCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -214,18 +212,18 @@ UAbilitySystemComponent* ABaseMonster::GetAbilitySystemComponent() const
 }
 
 
-void ABaseMonster::ToggleWeaponCollision_Implementation(bool bIsEnable)
-{
-	// if(AttackCollision->GetCollisionEnabled()==ECollisionEnabled::QueryAndPhysics)
-	// {
-	// 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	// }
-	// else
-	// {
-	// 	UE_LOG(LogTemp,Warning,TEXT("Collision Enabled"));
-	// 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	// }
-}
+// void ABaseMonster::ToggleWeaponCollision_Implementation(bool bIsEnable)
+// {
+// 	// if(AttackCollision->GetCollisionEnabled()==ECollisionEnabled::QueryAndPhysics)
+// 	// {
+// 	// 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+// 	// }
+// 	// else
+// 	// {
+// 	// 	UE_LOG(LogTemp,Warning,TEXT("Collision Enabled"));
+// 	// 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+// 	// }
+// }
 
 /**
  * 스포너에 의해 스폰될때 체력을 다시 maxhealth양으로 초기화합니다.

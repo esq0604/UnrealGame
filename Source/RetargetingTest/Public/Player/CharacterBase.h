@@ -33,7 +33,7 @@ class AItemBase;
 class UInventoryComponent;
 
 UCLASS(config=Game)
-class ACharacterBase : public ACharacter, public IAbilitySystemInterface, public IAttackable
+class ACharacterBase : public ACharacter, public IAbilitySystemInterface//, public IAttackable
 {
 	GENERATED_BODY()
 
@@ -49,26 +49,6 @@ public:
 	UBaseAttributeSet* GetAttributes() const;
 
 	UInventoryComponent* GetInventoryManagerCompnent() const;
-
-	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	void ToggleWeaponCollision(bool bIsEnable);
-	virtual void ToggleWeaponCollision_Implementation(bool bIsEnable) override;
-
-	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	AActor* GetHitActor();
-	virtual AActor* GetHitActor_Implementation() override;
-
-	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	void SetHitActor(AActor* HitActor);
-	virtual void SetHitActor_Implementation(AActor* HitActor) override;
-
-	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	EHitReaction GetHitReaction();
-	virtual EHitReaction GetHitReaction_Implementation() override;
-
-	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	void SetHitReaction(EHitReaction HitReaction);
-	virtual void SetHitReaction_Implementation(EHitReaction HitReaction) override;
 protected:
 	virtual void PostInitializeComponents() override;
 
@@ -104,8 +84,8 @@ protected:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Component")
 	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="CharacterBase | Component")
-	TObjectPtr<UTargetingComponent> TargetingComponent;
+	// UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="CharacterBase | Component")
+	// TObjectPtr<UTargetingComponent> TargetingComponent;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attributes")
 	UBaseAttributeSet* Attributes;

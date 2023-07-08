@@ -5,8 +5,6 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
-#include "Interface/Attackable.h"
-#include "Interface/Targeting.h"
 #include "BaseMonster.generated.h"
 
 class UBaseAttributeSet;
@@ -25,7 +23,7 @@ class UMonsterGauge;
 struct FOnAttributeChangeData;
 struct FDamageEvent;
 UCLASS()
-class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface, public IAttackable,public ITargeting
+class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface//, public IAttackable,public ITargeting
 {
 	GENERATED_BODY()
 
@@ -38,26 +36,26 @@ public:
 	virtual void GiveDefaultAbilities();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
-	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	void ToggleWeaponCollision(bool bIsEnable);
-	virtual void ToggleWeaponCollision_Implementation(bool bIsEnable) override;
-
 	void SpawnInit();
-	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	AActor* GetHitActor();
-	virtual AActor* GetHitActor_Implementation() override;
-	
-	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	void SetHitActor(AActor* HitActor);
-	virtual void SetHitActor_Implementation(AActor* HitActor) override;
-
-	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	EHitReaction GetHitReaction();
-	virtual EHitReaction GetHitReaction_Implementation() override;
-
-	UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	void SetHitReaction(EHitReaction HitReaction);
-	virtual void SetHitReaction_Implementation(EHitReaction HitReaction) override;
+	// UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	// void ToggleWeaponCollision(bool bIsEnable);
+	// virtual void ToggleWeaponCollision_Implementation(bool bIsEnable) override;
+	//
+	// UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	// AActor* GetHitActor();
+	// virtual AActor* GetHitActor_Implementation() override;
+	//
+	// UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	// void SetHitActor(AActor* HitActor);
+	// virtual void SetHitActor_Implementation(AActor* HitActor) override;
+	//
+	// UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	// EHitReaction GetHitReaction();
+	// virtual EHitReaction GetHitReaction_Implementation() override;
+	//
+	// UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
+	// void SetHitReaction(EHitReaction HitReaction);
+	// virtual void SetHitReaction_Implementation(EHitReaction HitReaction) override;
 
 	UFUNCTION()
 	void AttackCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -131,6 +129,4 @@ protected:
 	
 	FDelegateHandle HealthChangeDelegateHandle;
 	FDelegateHandle MaxHealthChangeDelegateHandle;
-private:
-	EHitReaction mHitReaction;	
 };
