@@ -32,7 +32,7 @@ public:
 	void Move(const FInputActionValue& Value);
 	void Sprint(const FInputActionValue& Value);
 	void SprintEnd(const FInputActionValue& Value);
-	void Attack(const FInputActionValue& Value);
+	//void Attack(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Jump(const FInputActionValue& Value);
 	void JumpStop(const FInputActionValue& Value);

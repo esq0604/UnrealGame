@@ -13,15 +13,11 @@
 
 #include "AbilitySystemComponent.h"
 #include "MotionWarpingComponent.h"
-#include "Attribute/CharacterAttributeSetBase.h"
 #include "Camera/CameraComponent.h"
 #include "Component/InventoryComponent.h"
-#include "Component/TargetingComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "Player/PlayerStateBase.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Player/CharaterAnimInstance.h"
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
@@ -80,23 +76,16 @@ void ACharacterBase::BeginPlay()
 	Super::BeginPlay();
 	AnimInstance=Cast<UCharaterAnimInstance>(GetMesh()->GetAnimInstance());
 
+	if(!Attributes)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Player Attributes is not valid"));
+	}
 }
 
 void ACharacterBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	if(TargetLock)
-	{
-		const FRotator PlayerRotate = GetActorRotation();
-		const FVector TargetObjectLocation=TargetObject->GetActorLocation();
-		
-		const FRotator FindLookAtRotator=UKismetMathLibrary::FindLookAtRotation(GetActorLocation(),FVector(TargetObjectLocation.X,TargetObjectLocation.Y,TargetObjectLocation.Z-200));	
-		const FRotator InterpPlayerToTarget=UKismetMathLibrary::RInterpTo(PlayerRotate,FindLookAtRotator,DeltaSeconds,5.0);
-
-		const FRotator LookAtTargetRotator(InterpPlayerToTarget.Pitch,InterpPlayerToTarget.Yaw,PlayerRotate.Roll);
-		GetController()->SetControlRotation(LookAtTargetRotator);
-	}
+	
 }
 
 void ACharacterBase::PossessedBy(AController* NewController)
@@ -171,55 +160,10 @@ UInventoryComponent* ACharacterBase::GetInventoryManagerCompnent() const
 	return InventoryManagerComponent;
 }
 
-// AActor* ACharacterBase::GetHitActor_Implementation()
-// {
-// 	return mHitActor.Get();
-// }
-//
-// void ACharacterBase::SetHitActor_Implementation(AActor* HitActor)
-// {
-// 	mHitActor=HitActor;
-// }
-//
-// EHitReaction ACharacterBase::GetHitReaction_Implementation()
-// {
-// 	return mHitReaction;
-// }
-//
-// void ACharacterBase::SetHitReaction_Implementation(EHitReaction HitReaction)
-// {
-// 	mHitReaction=HitReaction;
-// }
-
 void ACharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 }
 
-void ACharacterBase::WeaponCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-												 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-												 const FHitResult& SweepResult)
-{
-	// mHitActor=OtherActor;
-	// if(Attributes)
-	// {
-	// 	const float Damage = Attributes->GetDamage();
-	// 	UGameplayStatics::ApplyDamage(OtherActor,Damage,GetController(),nullptr,nullptr);
-	//
-	// 	const FVector HitActorForwardVector = OtherActor->GetActorForwardVector();
-	// 	const FVector ActorForwardVector = GetActorForwardVector();
-	//
-	// 	const auto Direction =FVector::DotProduct(HitActorForwardVector,ActorForwardVector);
-	//
-	// 	if(Direction>=0.0f)
-	// 	{
-	// 		mHitReaction = EHitReaction::Backward;
-	// 	}
-	// 	else
-	// 	{
-	// 		mHitReaction= EHitReaction::Forward;
-	// 	}
-	// }
-}
 
 

@@ -4,6 +4,7 @@
 #include "RetargetingTest/Public/Monster/BaseMonster.h"
 
 #include "AbilitySystemComponent.h"
+#include "Attribute/CharacterAttributeSetBase.h"
 #include "Attribute/BaseAttributeSet.h"
 #include "Components/WidgetComponent.h"
 #include "Materials/Material.h"
@@ -11,12 +12,11 @@
 
 #include "RetargetingTest/Public/Monster/BaseMonsterAnimInstance.h"
 #include "UI/MonsterGauge.h"
-#include "Weapon/EHitReaction.h"
 
 ABaseMonster::ABaseMonster()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	Attributes = CreateDefaultSubobject<UBaseAttributeSet>(TEXT("Attribute"));
+	EnemyAttributesSet = CreateDefaultSubobject<UBaseAttributeSet>(TEXT("AttributeSet"));
 
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
@@ -38,6 +38,7 @@ ABaseMonster::ABaseMonster()
  */
 void ABaseMonster::PostInitializeComponents()
 {
+
 	UE_LOG(LogTemp,Warning,TEXT("PostInitComp"));
 	Super::PostInitializeComponents();
 	InitializeAttributes();
@@ -50,8 +51,8 @@ void ABaseMonster::PostInitializeComponents()
  */
 void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 {
-	const float NewHealthPercent=(Data.NewValue/Attributes->GetMaxHealth());
-	const float OldHealthPercent=Data.OldValue/Attributes->GetMaxHealth();
+	const float NewHealthPercent=(Data.NewValue/EnemyAttributesSet->GetMaxHealth());
+	const float OldHealthPercent=Data.OldValue/EnemyAttributesSet->GetMaxHealth();
 	
 	HPBarWidget->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
 
@@ -59,7 +60,7 @@ void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 	{
 		HPWidgetComponent->UpdateWidget();
 	}
-	if(Attributes->GetHealth()<=0)
+	if(EnemyAttributesSet->GetHealth()<=0)
 	{
 		SetActorHiddenInGame(true);
 		SetActorEnableCollision(false);
@@ -67,81 +68,25 @@ void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 		MonsterDieDelegate.Execute(this);
 	}
 }
-//
-// AActor* ABaseMonster::GetHitActor_Implementation()
-// {
-// 	return mHitActor;
-// }
-//
-// void ABaseMonster::SetHitActor_Implementation(AActor* HitActor)
-// {
-// 	mHitActor=HitActor;
-// }
-//
-// EHitReaction ABaseMonster::GetHitReaction_Implementation()
-// {
-// 	return mHitReaction;
-// }
-//
-// void ABaseMonster::SetHitReaction_Implementation(EHitReaction HitReaction)
-// {
-// 	mHitReaction=HitReaction;
-// }
-
-void ABaseMonster::AttackCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	// mHitActor=OtherActor;
-	// if(Attributes)
-	// {
-	// 	const float Damage = Attributes->GetDamage();
-	// 	UGameplayStatics::ApplyDamage(OtherActor,Damage,GetController(),nullptr,nullptr);
-	//
-	// 	const FVector HitActorForwardVector = OtherActor->GetActorForwardVector();
-	// 	const FVector ActorForwardVector = GetActorForwardVector();
-	//
-	// 	const auto Direction =FVector::DotProduct(HitActorForwardVector,ActorForwardVector);
-	//
-	// 	if(Direction>=0.0f)
-	// 	{
-	// 		mHitReaction = EHitReaction::Backward;
-	// 	}
-	// 	else
-	// 	{
-	// 		mHitReaction= EHitReaction::Forward;
-	// 	}
-	// }
-}
-
-
 
 TObjectPtr<UBehaviorTree> ABaseMonster::GetBehaviorTree() const
 {
 	return BehaviorTree;
 }
 
-// void ABaseMonster::OnTargetSet(TWeakObjectPtr<AActor> NewTarget)
-// {
-// 	TargetActor=NewTarget.Get();
-// }
-
-
-
 // Called when the game starts or when spawned
 void ABaseMonster::BeginPlay()
 {
 	Super::BeginPlay();
-	InitializeAttributes();
-	GiveDefaultAbilities();
-	if(!Attributes)
+	if(!EnemyAttributesSet)
 	{
 		UE_LOG(LogTemp,Warning,TEXT("Attributes not vaild"));
 	}
 	if(AbilitySystemComponent)
 	{
-		if(Attributes)
+		if(EnemyAttributesSet)
 		{
-			HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetHealthAttribute()).AddUObject(this,&ABaseMonster::HealthChange);
+			HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(EnemyAttributesSet->GetHealthAttribute()).AddUObject(this,&ABaseMonster::HealthChange);
 		}
 	}
 	
@@ -193,6 +138,10 @@ void ABaseMonster::InitializeAttributes()
 			}
 		}
 	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Post Initialize AbilityComp not vaild"));
+	}
 }
 
 void ABaseMonster::GiveDefaultAbilities()
@@ -211,26 +160,12 @@ UAbilitySystemComponent* ABaseMonster::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
-
-// void ABaseMonster::ToggleWeaponCollision_Implementation(bool bIsEnable)
-// {
-// 	// if(AttackCollision->GetCollisionEnabled()==ECollisionEnabled::QueryAndPhysics)
-// 	// {
-// 	// 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-// 	// }
-// 	// else
-// 	// {
-// 	// 	UE_LOG(LogTemp,Warning,TEXT("Collision Enabled"));
-// 	// 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-// 	// }
-// }
-
 /**
- * 스포너에 의해 스폰될때 체력을 다시 maxhealth양으로 초기화합니다.
+ * 스포너에 의해 스폰될때 체력을 다시 max health양으로 초기화합니다.
  */
 void ABaseMonster::SpawnInit()
 {
-	Attributes->SetHealth(Attributes->GetMaxHealth());
+	EnemyAttributesSet->SetHealth(EnemyAttributesSet->GetMaxHealth());
 }
 
 

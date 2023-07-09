@@ -77,7 +77,7 @@ void AMyPlayerController::SetupInputComponent()
 	EnhancedInputComp->BindAction(InputAction->InputMove,ETriggerEvent::Triggered,this,&AMyPlayerController::Move);
 	EnhancedInputComp->BindAction(InputAction->InputSprint,ETriggerEvent::Triggered,this,&AMyPlayerController::Sprint);
 	EnhancedInputComp->BindAction(InputAction->InputSprint,ETriggerEvent::Completed,this,&AMyPlayerController::SprintEnd);
-	EnhancedInputComp->BindAction(InputAction->InputAttack,ETriggerEvent::Triggered,this,&AMyPlayerController::Attack);
+	//EnhancedInputComp->BindAction(InputAction->InputAttack,ETriggerEvent::Triggered,this,&AMyPlayerController::Attack);
 	EnhancedInputComp->BindAction(InputAction->InputLook,ETriggerEvent::Triggered,this,&AMyPlayerController::Look);
 	EnhancedInputComp->BindAction(InputAction->InputJump,ETriggerEvent::Started,this,&AMyPlayerController::Jump);
 	//EnhancedInputComp->BindAction(InputAction->InputJump,ETriggerEvent::Completed,this,&AMyPlayerController::JumpStop);
@@ -123,13 +123,12 @@ void AMyPlayerController::SprintEnd(const FInputActionValue& Value)
 
 }
 /**
- * TODO: 해당 함수에서 IsEquipWeapon 변수를 사용하지 않도록 상태시스템을 수정해야합니다.
  * 
  */
-void AMyPlayerController::Attack(const FInputActionValue& Value)
-{
-	AbilitySystemComponent->TryActivateAbilitiesByTag(AttackTagContainer);
-}
+// void AMyPlayerController::Attack(const FInputActionValue& Value)
+// {
+// 	AbilitySystemComponent->TryActivateAbilitiesByTag(AttackTagContainer);
+// }
 
 void AMyPlayerController::Look(const FInputActionValue& Value)
 {

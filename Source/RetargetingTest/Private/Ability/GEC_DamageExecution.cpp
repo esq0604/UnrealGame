@@ -62,9 +62,6 @@ void UGEC_DamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 	float BaseDamage =0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().DamageDef,EvaluateParameters,BaseDamage);
 	//BaseDamage = FMath::Max<float>(Spec.GetSetByCallerMagnitude(FGameplayTag::RequestGameplayTag(FName("Data.Damage")),false,-1.0f),0.0f);
-
-	UE_LOG(LogTemp,Warning,TEXT("BaseDamage : %f"),BaseDamage);
-
 	//Performing the actual damage calculation
 
 	//Final execution output. We can add more thane one AddOutputModifier to change multiple parameter at time base on complicated calculations. 

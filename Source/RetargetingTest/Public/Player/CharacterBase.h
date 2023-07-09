@@ -56,11 +56,6 @@ protected:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
 
-	UFUNCTION()
-	void WeaponCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-												 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-												 const FHitResult& SweepResult);
-
 public:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="CharacterBase | Attributes")
 	TArray<TSubclassOf<UGameplayEffect>> DefaultAttributeEffects;
@@ -83,22 +78,13 @@ protected:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Component")
 	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
-
-	// UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="CharacterBase | Component")
-	// TObjectPtr<UTargetingComponent> TargetingComponent;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attributes")
 	UBaseAttributeSet* Attributes;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | AnimInstance")
 	TObjectPtr<UCharaterAnimInstance> AnimInstance;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | LookOnTarget")
-	bool TargetLock{false};
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | LookOnTarget")
-	TObjectPtr<AActor> TargetObject;
-
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attack")
 	EHitReaction mHitReaction;
 

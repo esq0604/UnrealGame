@@ -37,37 +37,8 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	void SpawnInit();
-	// UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	// void ToggleWeaponCollision(bool bIsEnable);
-	// virtual void ToggleWeaponCollision_Implementation(bool bIsEnable) override;
-	//
-	// UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	// AActor* GetHitActor();
-	// virtual AActor* GetHitActor_Implementation() override;
-	//
-	// UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	// void SetHitActor(AActor* HitActor);
-	// virtual void SetHitActor_Implementation(AActor* HitActor) override;
-	//
-	// UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	// EHitReaction GetHitReaction();
-	// virtual EHitReaction GetHitReaction_Implementation() override;
-	//
-	// UFUNCTION(BlueprintCallable,BlueprintNativeEvent)
-	// void SetHitReaction(EHitReaction HitReaction);
-	// virtual void SetHitReaction_Implementation(EHitReaction HitReaction) override;
-
-	UFUNCTION()
-	void AttackCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-												 UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-												 const FHitResult& SweepResult);
 	
 	TObjectPtr<UBehaviorTree> GetBehaviorTree() const;
-
-	// UFUNCTION(BlueprintCallable)
-	// void OnTargetSet(TWeakObjectPtr<AActor> NewTarget);
-	
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -78,6 +49,7 @@ private:
 
 public:
 	FMonsterDieSignature MonsterDieDelegate;
+	
 
 protected:
 	/**
@@ -89,8 +61,8 @@ protected:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="EnemyBase | Ability")
 	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Attributes")
-	UBaseAttributeSet* Attributes;
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="EnemyBase | Attributes")
+	UBaseAttributeSet* EnemyAttributesSet;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Component")
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
@@ -120,11 +92,10 @@ protected:
 	 */
 	TObjectPtr<AActor> mHitActor;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true), Category="EnemyBase | Combat")
 	TObjectPtr<AActor> TargetActor;
 
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Initialize | AI")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize | AI")
 	TObjectPtr<UBehaviorTree> BehaviorTree;
 	
 	FDelegateHandle HealthChangeDelegateHandle;

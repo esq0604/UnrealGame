@@ -23,28 +23,34 @@ class RETARGETINGTEST_API UBaseAttributeSet : public UAttributeSet
 
 public:
 	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_Health)
-	FGameplayAttributeData Health;
+	FGameplayAttributeData Health=100.0f;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Health)
 	
-	UPROPERTY(BlueprintReadOnly, Category = "MaxHealth")
-	FGameplayAttributeData MaxHealth;
+	UPROPERTY(BlueprintReadOnly, Category = "MaxHealth",ReplicatedUsing = OnRep_MaxHealth)
+	FGameplayAttributeData MaxHealth=100.0f;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxHealth)
 	
-	UPROPERTY(BlueprintReadOnly, Category="Damage")
-	FGameplayAttributeData Damage;
+	UPROPERTY(BlueprintReadOnly, Category="Damage",ReplicatedUsing = OnRep_Damage)
+	FGameplayAttributeData Damage=10.0f;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Damage)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Mana", ReplicatedUsing = OnRep_Mana)
-	FGameplayAttributeData Mana;
+	FGameplayAttributeData Mana=100.0f;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Mana)
 	
 	UPROPERTY(BlueprintReadOnly, Category = "MaxMana")
-	FGameplayAttributeData MaxMana;
+	FGameplayAttributeData MaxMana=100.0f;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxMana)
 	
 	UFUNCTION()
 	virtual void OnRep_Health(const FGameplayAttributeData& OldHealth);
 
+	UFUNCTION()
+	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth);
+	
+	UFUNCTION()
+	virtual void OnRep_Damage(const FGameplayAttributeData& OldDamage);
+	
 	UFUNCTION()
 	virtual void OnRep_Mana(const FGameplayAttributeData& OldMana);
 
