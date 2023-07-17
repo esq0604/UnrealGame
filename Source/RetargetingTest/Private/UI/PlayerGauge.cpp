@@ -30,10 +30,17 @@ void UPlayerGauge::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	
 	const float LerpHpValue=FMath::Lerp(mOldHpPercent,mNewHpPercent,CurrentTime/LerpTime);
 	const float LerpStaminaValue = FMath::Lerp(mOldStaminaPercent,mNewStaminaPercent,CurrentTime/LerpTime);
-	
-	HpProgressBar->SetPercent(LerpHpValue);
-	StaminaProgressBar->SetPercent(LerpStaminaValue);
 
+	if(mChangeHp)
+	{
+		HpProgressBar->SetPercent(LerpHpValue);
+		mChangeHp=false;
+	}
+	else if(mChangeStam)
+	{
+		StaminaProgressBar->SetPercent(LerpStaminaValue);
+		mChangeStam=false;
+	}
 }
 
 /**
@@ -43,6 +50,7 @@ void UPlayerGauge::UpdateHPWidget(float NewHPPercent,float OldHPPercent)
 {
 	mNewHpPercent=NewHPPercent;
 	mOldHpPercent=OldHPPercent;
+	mChangeHp=true;
 	CurrentTime=0;
 }
 
@@ -50,6 +58,7 @@ void UPlayerGauge::UpdateStaminaWidget(float NewStamPercent,float OldStamPercent
 {
 	mNewStaminaPercent=NewStamPercent;
 	mOldStaminaPercent=OldStamPercent;
+	mChangeStam=true;
 	CurrentTime=0;
 }
 

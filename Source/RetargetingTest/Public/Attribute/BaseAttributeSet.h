@@ -23,23 +23,23 @@ class RETARGETINGTEST_API UBaseAttributeSet : public UAttributeSet
 
 public:
 	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_Health)
-	FGameplayAttributeData Health=100.0f;
+	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Health)
 	
 	UPROPERTY(BlueprintReadOnly, Category = "MaxHealth",ReplicatedUsing = OnRep_MaxHealth)
-	FGameplayAttributeData MaxHealth=100.0f;
+	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxHealth)
 	
 	UPROPERTY(BlueprintReadOnly, Category="Damage",ReplicatedUsing = OnRep_Damage)
-	FGameplayAttributeData Damage=10.0f;
+	FGameplayAttributeData Damage;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Damage)
 
 	UPROPERTY(BlueprintReadOnly, Category = "Mana", ReplicatedUsing = OnRep_Mana)
-	FGameplayAttributeData Mana=100.0f;
+	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Mana)
 	
-	UPROPERTY(BlueprintReadOnly, Category = "MaxMana")
-	FGameplayAttributeData MaxMana=100.0f;
+	UPROPERTY(BlueprintReadOnly, Category = "MaxMana",ReplicatedUsing=OnRep_MaxMana)
+	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, MaxMana)
 	
 	UFUNCTION()
@@ -54,6 +54,8 @@ public:
 	UFUNCTION()
 	virtual void OnRep_Mana(const FGameplayAttributeData& OldMana);
 
+	UFUNCTION()
+	virtual void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana);
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 };

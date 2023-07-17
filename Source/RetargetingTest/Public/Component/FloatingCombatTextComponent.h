@@ -25,6 +25,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
+	UFUNCTION(BlueprintCallable,Category="UFloatingCombatTextComponent")
 	void AddFloatingActor(const FText& Text, FVector WorldLocation);
 private:
 	//callback for when floating actor destroyed

@@ -67,6 +67,7 @@ void APlayerStateBase::HealthChange(const FOnAttributeChangeData& Data)
 {
 	const float NewHealthPercent=Data.NewValue/Attributes->GetMaxHealth();
 	const float OldHealthPercent=Data.OldValue/Attributes->GetMaxHealth();
+
 	PlayerHUD->GetGauge()->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
 }
 
@@ -85,10 +86,7 @@ void APlayerStateBase::MaxHealthChange(const FOnAttributeChangeData& Data)
  */
 void APlayerStateBase::StaminaChange(const FOnAttributeChangeData& Data)
 {
-	UE_LOG(LogTemp,Warning,TEXT("StamChange"));
-	UE_LOG(LogTemp,Warning,TEXT("%f ,%f "),Data.OldValue,Data.NewValue);
-
-	const float NewStaminaPercent=(Data.NewValue/Attributes->GetMaxMana());
+	const float NewStaminaPercent =Data.NewValue/Attributes->GetMaxMana();
 	const float OldStaminaPercent =Data.OldValue/Attributes->GetMaxMana();
 	PlayerHUD->GetGauge()->UpdateStaminaWidget(NewStaminaPercent,OldStaminaPercent);
 }

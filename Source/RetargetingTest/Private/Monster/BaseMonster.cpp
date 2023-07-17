@@ -4,7 +4,6 @@
 #include "RetargetingTest/Public/Monster/BaseMonster.h"
 
 #include "AbilitySystemComponent.h"
-#include "Attribute/CharacterAttributeSetBase.h"
 #include "Attribute/BaseAttributeSet.h"
 #include "Components/WidgetComponent.h"
 #include "Materials/Material.h"
@@ -51,22 +50,30 @@ void ABaseMonster::PostInitializeComponents()
  */
 void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 {
-	const float NewHealthPercent=(Data.NewValue/EnemyAttributesSet->GetMaxHealth());
-	const float OldHealthPercent=Data.OldValue/EnemyAttributesSet->GetMaxHealth();
+	if(Data.NewValue>=0.0f)
+	{
+		const float NewHealthPercent=(Data.NewValue/EnemyAttributesSet->GetMaxHealth());
+		const float OldHealthPercent=Data.OldValue/EnemyAttributesSet->GetMaxHealth();
 	
-	HPBarWidget->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
+		HPBarWidget->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
 
-	if(HPWidgetComponent)
-	{
-		HPWidgetComponent->UpdateWidget();
+		if(HPWidgetComponent)
+		{
+			HPWidgetComponent->UpdateWidget();
+		}
+		// if(EnemyAttributesSet->GetHealth()<=0)
+		// {
+		// 	SetActorHiddenInGame(true);
+		// 	SetActorEnableCollision(false);
+		// 	SetActorTickEnabled(false);
+		// 	//MonsterDieDelegate.Execute(this);
+		// }
 	}
-	if(EnemyAttributesSet->GetHealth()<=0)
+	else
 	{
-		SetActorHiddenInGame(true);
-		SetActorEnableCollision(false);
-		SetActorTickEnabled(false);
-		MonsterDieDelegate.Execute(this);
+		
 	}
+
 }
 
 TObjectPtr<UBehaviorTree> ABaseMonster::GetBehaviorTree() const

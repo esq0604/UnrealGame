@@ -46,4 +46,7 @@ private:
 	
 	float mNewStaminaPercent;
 	float mOldStaminaPercent;
+
+	bool mChangeHp;
+	bool mChangeStam;
 };

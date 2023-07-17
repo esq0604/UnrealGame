@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "FloatingDamageActor.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 class RETARGETINGTEST_API AFloatingDamageActor : public AActor
 {
 	GENERATED_BODY()
