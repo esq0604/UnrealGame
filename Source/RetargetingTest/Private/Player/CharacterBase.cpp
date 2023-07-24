@@ -87,6 +87,7 @@ void ACharacterBase::Tick(float DeltaSeconds)
 	
 }
 
+//Server Only
 void ACharacterBase::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -94,6 +95,7 @@ void ACharacterBase::PossessedBy(AController* NewController)
 	if(PS)
 	{
 		AbilitySystemComponent=PS->GetAbilitySystemComponent();
+		//어빌리티의 OwnerActor와 InAvartActor를 설정해줍니다.
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
 		Attributes = PS->GetAttributes();
 		InitializeAttributes();
@@ -102,6 +104,7 @@ void ACharacterBase::PossessedBy(AController* NewController)
 
 }
 
+//Client Only - 스테이트가 클라이언트에 존재하게 됩니다.
 void ACharacterBase::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
