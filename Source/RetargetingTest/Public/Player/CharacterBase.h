@@ -47,8 +47,10 @@ public:
 	virtual void GiveDefaultAbilities();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UBaseAttributeSet* GetAttributes() const;
-
 	UInventoryComponent* GetInventoryManagerCompnent() const;
+	
+	UFUNCTION(BlueprintCallable)
+	void AttackWithMotionWarp();
 protected:
 	virtual void PostInitializeComponents() override;
 

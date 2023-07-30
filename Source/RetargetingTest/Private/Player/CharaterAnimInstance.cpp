@@ -8,8 +8,9 @@
 #include "Kismet/KismetMathLibrary.h"
 
 UCharaterAnimInstance::UCharaterAnimInstance(const FObjectInitializer& ObjectInitializer)
-	:Speed(0.f),bIsInAir(false),bIsAccelerating(false),MovementOffsetYaw(0.f),LastMovementOffsetYaw(0.f),CharacterYaw(0.f),
-	CharacterYawLastFrame(0.f),RootYawOffset(0.f)
+	:Speed(0.f),bIsInAir(false),bIsAccelerating(false),MovementOffsetYaw(0.f),LastMovementOffsetYaw(0.f),TurnInPlaceCharacterYaw(0.f),
+	TurnInPlaceCharacterYawLastFrame(0.f),RootYawOffset(0.f),CharacterRotation(FRotator(0.f)),CharacterRotationLastFrame(FRotator(0.f))
+	,YawDelta(0.f)
 {
 }
 
@@ -51,7 +52,7 @@ void UCharaterAnimInstance::UpdateAnimationProperties(float DeltaTime)
 		// }
 	}
 	TurnInPlace();
-
+	Lean(DeltaTime);
 }
 
 /**
@@ -71,20 +72,20 @@ void UCharaterAnimInstance::TurnInPlace()
 	{
 		//Don't want to turn in place charater is moving
 		RootYawOffset=0.f;
-		CharacterYaw=OwnerCharacter->GetActorRotation().Yaw;
-		CharacterYawLastFrame=CharacterYaw;
+		TurnInPlaceCharacterYaw=OwnerCharacter->GetActorRotation().Yaw;
+		TurnInPlaceCharacterYawLastFrame=TurnInPlaceCharacterYaw;
 		RotationCurve=0.f;
 		RotationCurveLastFrame=0.f;
 	}
 	else
 	{
-		CharacterYawLastFrame=CharacterYaw;
-		CharacterYaw=OwnerCharacter->GetActorRotation().Yaw;
+		TurnInPlaceCharacterYawLastFrame=TurnInPlaceCharacterYaw;
+		TurnInPlaceCharacterYaw=OwnerCharacter->GetActorRotation().Yaw;
 
-		const float YawDelta{ CharacterYaw-CharacterYawLastFrame };
+		const float TurnInPlaceYawDelta{ TurnInPlaceCharacterYaw-TurnInPlaceCharacterYawLastFrame };
 
 		//root yaw offset, update and clamped to [-180,180]
-		RootYawOffset =UKismetMathLibrary::NormalizeAxis(RootYawOffset - YawDelta);
+		RootYawOffset =UKismetMathLibrary::NormalizeAxis(RootYawOffset - TurnInPlaceYawDelta);
 
 		// 1.0f if turning , 0.0 if not
 		const float Turning{GetCurveValue(TEXT("Turning"))};
@@ -105,14 +106,33 @@ void UCharaterAnimInstance::TurnInPlace()
 			}
 		}
 
-		
+		/*
 		if(GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(1,-1,FColor::Blue, FString::Printf(TEXT("CharacterYaw : %f"),CharacterYaw));
+			GEngine->AddOnScreenDebugMessage(1,-1,FColor::Blue, FString::Printf(TEXT("CharacterYaw : %f"),TurnInPlaceCharacterYaw));
 			GEngine->AddOnScreenDebugMessage(2,-1,FColor::Red, FString::Printf(TEXT("RootYawOffset : %f"),RootYawOffset));
 		}
+		*/
 	}
 	
+}
+
+void UCharaterAnimInstance::Lean(float DeltaTime)
+{
+	if(OwnerCharacter==nullptr) return;
+	CharacterRotationLastFrame=CharacterRotation;
+	CharacterRotation = OwnerCharacter->GetActorRotation();
+
+	const FRotator Delta{UKismetMathLibrary::NormalizedDeltaRotator(CharacterRotation,CharacterRotationLastFrame)};
+	
+	const float Target= {static_cast<float>(Delta.Yaw) / DeltaTime};
+
+	const float Interp{FMath::FInterpTo(YawDelta,Target,DeltaTime,6.f)};
+	YawDelta = FMath::Clamp(Interp,-90.0f, 90.0f);
+
+	if(GEngine) GEngine->AddOnScreenDebugMessage(2, -1, FColor::Cyan, FString::Printf(TEXT("YawDelta : %f"),YawDelta));
+	if(GEngine) GEngine->AddOnScreenDebugMessage(2, -1, FColor::Cyan, FString::Printf(TEXT("Delta.Yaw : %f"),Delta.Yaw));
+
 }
 
 void UCharaterAnimInstance::NativeInitializeAnimation()

@@ -33,7 +33,8 @@ void UPlayerGauge::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 	if(mChangeHp)
 	{
-		HpProgressBar->SetPercent(LerpHpValue);
+		UE_LOG(LogTemp,Warning,TEXT("Lerp Hp val %f"),LerpHpValue);
+		LerpHpValue<=0.f ? HpProgressBar->SetPercent(0.f) : HpProgressBar->SetPercent(LerpHpValue);
 		mChangeHp=false;
 	}
 	else if(mChangeStam)

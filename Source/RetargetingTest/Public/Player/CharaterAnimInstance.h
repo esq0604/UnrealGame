@@ -21,6 +21,7 @@ class RETARGETINGTEST_API UCharaterAnimInstance : public UAnimInstance
 
 
 public:
+
 	UCharaterAnimInstance(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintCallable)
@@ -39,6 +40,8 @@ protected:
 	//handle turning in place variables
 	void TurnInPlace();
 
+	//Handle calculations for leaning while running
+	void Lean(float DeltaTime);
 private:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Movement", meta=(AllowPrivateAccess="true"))
 	ACharacterBase* OwnerCharacter;
@@ -63,10 +66,10 @@ private:
 	float LastMovementOffsetYaw;
 
 	//yaw of the character this frame
-	float CharacterYaw;
+	float TurnInPlaceCharacterYaw;
 
 	//yaw of the character the previous frame
-	float CharacterYawLastFrame;
+	float TurnInPlaceCharacterYawLastFrame;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category="Turn In Place", meta=(AllowPrivateAccess=true))
 	float RootYawOffset;
@@ -75,4 +78,13 @@ private:
 	float RotationCurve;
 	//Rotation curve value last frame
 	float RotationCurveLastFrame;
+
+	//Character Yaw this frame; Only Update when standing still
+	FRotator CharacterRotation;
+	//Character Yaw last frame; 
+	FRotator CharacterRotationLastFrame;
+
+	//Yaw delta used for leaning in the running blendspace
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category=Lean, meta =(AllowPrivateAccess=true))
+	float YawDelta;
 };

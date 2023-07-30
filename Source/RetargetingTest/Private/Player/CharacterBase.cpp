@@ -16,6 +16,7 @@
 #include "Camera/CameraComponent.h"
 #include "Component/InventoryComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Player/PlayerStateBase.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
 #include "Player/CharaterAnimInstance.h"
@@ -160,6 +161,23 @@ UBaseAttributeSet* ACharacterBase::GetAttributes() const
 UInventoryComponent* ACharacterBase::GetInventoryManagerCompnent() const
 {
 	return InventoryManagerComponent;
+}
+
+void ACharacterBase::AttackWithMotionWarp()
+{
+const FVector MovementInputVector = GetLastMovementInputVector();
+if (MovementInputVector.IsZero())
+{
+	MotionWarpComponent->RemoveWarpTarget(TEXT("Warp"));
+	return;
+}
+
+const FVector PlayerLoc = GetActorLocation();
+const FVector ForwardDist = GetActorForwardVector() *100.f;
+const FVector TargetLoc = (MovementInputVector.GetSafeNormal() * ForwardDist) + PlayerLoc;
+const FRotator TargetRotator = UKismetMathLibrary::MakeRotFromX(MovementInputVector);
+
+MotionWarpComponent->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("Warp"), TargetLoc, TargetRotator);
 }
 
 void ACharacterBase::PostInitializeComponents()
