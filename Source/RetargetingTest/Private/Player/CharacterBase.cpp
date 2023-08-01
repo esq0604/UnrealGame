@@ -13,6 +13,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "MotionWarpingComponent.h"
+#include "Ability/CustomAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Component/InventoryComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -95,7 +96,7 @@ void ACharacterBase::PossessedBy(AController* NewController)
 	APlayerStateBase* PS = GetPlayerState<APlayerStateBase>();
 	if(PS)
 	{
-		AbilitySystemComponent=PS->GetAbilitySystemComponent();
+		AbilitySystemComponent=Cast<UCustomAbilitySystemComponent>(PS->GetAbilitySystemComponent());
 		//어빌리티의 OwnerActor와 InAvartActor를 설정해줍니다.
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
 		Attributes = PS->GetAttributes();
@@ -143,7 +144,7 @@ void ACharacterBase::GiveDefaultAbilities()
 	{
 		for(TSubclassOf<UGameplayAbility>& StartupAbility : DefaultAbilities)
 		{
-			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility.GetDefaultObject(),1,0));
+			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility.GetDefaultObject(),1,0,this));
 		}
 	}
 }

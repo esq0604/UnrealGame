@@ -10,6 +10,7 @@
 
 struct FGameplayTagContainer;
 class UAbilitySystemComponent;
+class UCustomAbilitySystemComponent;
 class UInputDataAsset;
 class UInputMappingContext;
 class UBaseStateManagerComponent;
@@ -69,7 +70,7 @@ protected:
 	UPlayerHUD* PlayerHUD;
 
 	UPROPERTY(EditInstanceOnly,BlueprintReadWrite,Category="AMyPlayerController | AbilitySystemComponent" , meta=(AllowPrivateAccess=true))
-	UAbilitySystemComponent* AbilitySystemComponent;
+	UCustomAbilitySystemComponent* AbilitySystemComponent;
 
 private:
 	FGameplayTagContainer RollTagContainer;

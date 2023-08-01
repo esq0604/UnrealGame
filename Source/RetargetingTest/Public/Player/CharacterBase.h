@@ -27,6 +27,7 @@ struct FDamageEvent;
 class UMotionWarpingComponent;
 class UStaticMeshComponent;
 class UAbilitySystemComponent;
+class UCustomAbilitySystemComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class AItemBase;
@@ -79,7 +80,7 @@ protected:
 	TObjectPtr<UFloatingCombatTextComponent> FloatingTextComponent;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Component")
-	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+	TWeakObjectPtr<UCustomAbilitySystemComponent> AbilitySystemComponent;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attributes")
 	UBaseAttributeSet* Attributes;

@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InterchangeResult.h"
+#include "Ability/CustomAbilitySystemComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/Character.h"
 #include "Player/PlayerStateBase.h"
@@ -59,7 +60,7 @@ void AMyPlayerController::BeginPlay()
 			PlayerHUD->AddToViewport();
 		}
 
-		AbilitySystemComponent= LocalPS->GetAbilitySystemComponent();
+		AbilitySystemComponent = Cast<UCustomAbilitySystemComponent>(LocalPS->GetAbilitySystemComponent());
 	}
 
 }

@@ -4,6 +4,7 @@
 #include "Player/PlayerStateBase.h"
 
 #include "AbilitySystemComponent.h"
+#include "Ability/CustomAbilitySystemComponent.h"
 #include "Attribute/CharacterAttributeSetBase.h"
 #include "Controller/MyPlayerController.h"
 #include "UI/PlayerGauge.h"
@@ -12,7 +13,7 @@
 // Sets default values
 APlayerStateBase::APlayerStateBase()
 {
-	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent = CreateDefaultSubobject<UCustomAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	
