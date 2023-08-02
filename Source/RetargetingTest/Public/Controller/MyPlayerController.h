@@ -9,8 +9,7 @@
 #include "MyPlayerController.generated.h"
 
 struct FGameplayTagContainer;
-class UAbilitySystemComponent;
-class UCustomAbilitySystemComponent;
+class UCharacterAbilitySystemComponent;
 class UInputDataAsset;
 class UInputMappingContext;
 class UBaseStateManagerComponent;
@@ -53,6 +52,8 @@ public:
 	
 protected:
 	virtual void BeginPlay() override;
+
+
 private:
 	virtual void SetupInputComponent() override;
 	
@@ -70,7 +71,7 @@ protected:
 	UPlayerHUD* PlayerHUD;
 
 	UPROPERTY(EditInstanceOnly,BlueprintReadWrite,Category="AMyPlayerController | AbilitySystemComponent" , meta=(AllowPrivateAccess=true))
-	UCustomAbilitySystemComponent* AbilitySystemComponent;
+	UCharacterAbilitySystemComponent* AbilitySystemComponent;
 
 private:
 	FGameplayTagContainer RollTagContainer;

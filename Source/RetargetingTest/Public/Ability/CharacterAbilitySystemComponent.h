@@ -22,4 +22,8 @@ public:
 	FReceivedDamageDelegate ReceivedDamage;
 	
 	virtual void ReceiveDamage(UCharacterAbilitySystemComponent* SourceASC, float UnmitigatedDamage, float MitigatedDamage);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure, Category = "Abilities")
+FGameplayAbilitySpecHandle FindAbilitySpecHandleForClass(TSubclassOf<UGameplayAbility> AbilityClass, UObject* OptionalSourceObject=nullptr);
+
 };

@@ -12,6 +12,9 @@
 #include "CharacterBase.generated.h"
 
 
+class ABaseWeaponInstance;
+class UCharacterGameplayAbility;
+class UCharacterAbilitySystemComponent;
 class UBaseAttributeSet;
 class UCharacterAttributeSetBase;
 class UTargetingComponent;
@@ -27,12 +30,13 @@ struct FDamageEvent;
 class UMotionWarpingComponent;
 class UStaticMeshComponent;
 class UAbilitySystemComponent;
-class UCustomAbilitySystemComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class AItemBase;
 class UInventoryComponent;
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterDied,ACharacterBase*,character);
 UCLASS(config=Game)
 class ACharacterBase : public ACharacter, public IAbilitySystemInterface//, public IAttackable
 {
@@ -43,12 +47,17 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual void PossessedBy(AController* NewController) override;
+	virtual int32 GetAbilityLevel() const;
+	virtual void RemoveCharacterAbilities();
 	virtual void OnRep_PlayerState() override;
 	virtual void InitializeAttributes();
 	virtual void GiveDefaultAbilities();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UBaseAttributeSet* GetAttributes() const;
 	UInventoryComponent* GetInventoryManagerCompnent() const;
+
+	void Die();
+	
 	
 	UFUNCTION(BlueprintCallable)
 	void AttackWithMotionWarp();
@@ -63,7 +72,7 @@ public:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="CharacterBase | Attributes")
 	TArray<TSubclassOf<UGameplayEffect>> DefaultAttributeEffects;
 
-	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="CharacterBase | Attributes")
+	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="CharacterBase | Ability")
 	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
 	
 	/** Camera boom positioning the camera behind the character */
@@ -73,14 +82,18 @@ public:
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"),Category="CharacterBase | Component")
 	TObjectPtr<UCameraComponent> FollowCamera;
-
-
+	
+	UPROPERTY(BlueprintAssignable,Category="CharacterBase| Died")
+	FOnCharacterDied OnChracterDied;
+	
+	UFUNCTION(BlueprintCallable,Category="CharacterBase| Died")
+	virtual void FinishDying();
 protected:
 	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess=true))
 	TObjectPtr<UFloatingCombatTextComponent> FloatingTextComponent;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Component")
-	TWeakObjectPtr<UCustomAbilitySystemComponent> AbilitySystemComponent;
+	TWeakObjectPtr<UCharacterAbilitySystemComponent> AbilitySystemComponent;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attributes")
 	UBaseAttributeSet* Attributes;
@@ -93,6 +106,13 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attack")
 	TWeakObjectPtr<AActor> mHitActor;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Weapon")
+	TSubclassOf<ABaseWeaponInstance> WeaponClass;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Weapon")
+	TObjectPtr<ABaseWeaponInstance> WeaponInstance;
+	// void BindASCInput();
+	// bool ASCInputBound=false;
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category="CharacterBase | Component")
 	TObjectPtr<UMotionWarpingComponent> MotionWarpComponent;

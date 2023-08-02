@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 
 UENUM(BlueprintType)
-enum class DemoAbilityID : uint8
+enum class CustomAbilityID : uint8
 {
 	None UMETA(DisplayName = "None" ),
 	Confirm UMETA(DisplayName = "Confirm" ),

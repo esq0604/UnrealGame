@@ -24,3 +24,8 @@ void ACustomTargetActor_Trace::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void ACustomTargetActor_Trace::ConfirmTargetingAndContinue()
+{
+	Super::ConfirmTargetingAndContinue();
+}
+

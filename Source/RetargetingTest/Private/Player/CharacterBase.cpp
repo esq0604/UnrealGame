@@ -13,6 +13,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "MotionWarpingComponent.h"
+#include "Ability/CharacterAbilitySystemComponent.h"
 #include "Ability/CustomAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Component/InventoryComponent.h"
@@ -21,6 +22,8 @@
 #include "Player/PlayerStateBase.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
 #include "Player/CharaterAnimInstance.h"
+#include "RetargetingTest/RetargetingTest.h"
+#include "Weapon/BaseWeaponInstance.h"
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
 
@@ -75,8 +78,14 @@ void ACharacterBase::BeginPlay()
 {
 	// Call the base class
 	Super::BeginPlay();
-	AnimInstance=Cast<UCharaterAnimInstance>(GetMesh()->GetAnimInstance());
-
+	UE_LOG(LogTemp,Warning,TEXT("C++ BeginPlay"));
+	FActorSpawnParameters SpawnInfo;
+	WeaponInstance=GetWorld()->SpawnActor<ABaseWeaponInstance>(WeaponClass,GetActorLocation(),GetActorRotation(),SpawnInfo);
+	if(WeaponInstance!=nullptr)
+	{
+		WeaponInstance->SetOwningCharacter(this);
+		WeaponInstance->AddAbilities();
+	}
 	if(!Attributes)
 	{
 		UE_LOG(LogTemp,Warning,TEXT("Player Attributes is not valid"));
@@ -89,6 +98,19 @@ void ACharacterBase::Tick(float DeltaSeconds)
 	
 }
 
+void ACharacterBase::FinishDying()
+{
+	Destroy();
+}
+
+// void ACharacterBase::BindASCInput()
+// {
+// 	FTopLevelAssetPath AbilityEnumAssetPath = FTopLevelAssetPath(FName("/Script/RetargetingTest"), FName("CustomAbilityID"));
+// 	AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(FString("ConfirmTarget"),
+// 	FString("CancelTarget"), AbilityEnumAssetPath, static_cast<int32>(CustomAbilityID::Confirm), static_cast<int32>(CustomAbilityID::Cancel)));
+// 	//AbilitySystemComponent->AbilityLocalInputPressed()
+// }
+
 //Server Only
 void ACharacterBase::PossessedBy(AController* NewController)
 {
@@ -96,7 +118,7 @@ void ACharacterBase::PossessedBy(AController* NewController)
 	APlayerStateBase* PS = GetPlayerState<APlayerStateBase>();
 	if(PS)
 	{
-		AbilitySystemComponent=Cast<UCustomAbilitySystemComponent>(PS->GetAbilitySystemComponent());
+		AbilitySystemComponent=Cast<UCharacterAbilitySystemComponent>(PS->GetAbilitySystemComponent());
 		//어빌리티의 OwnerActor와 InAvartActor를 설정해줍니다.
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
 		Attributes = PS->GetAttributes();
@@ -104,6 +126,30 @@ void ACharacterBase::PossessedBy(AController* NewController)
 		GiveDefaultAbilities();
 	}
 
+}
+
+int32 ACharacterBase::GetAbilityLevel() const
+{
+	return 1;
+}
+
+void ACharacterBase::RemoveCharacterAbilities()
+{
+	if(!AbilitySystemComponent.IsValid() || !AbilitySystemComponent->CharacterAbilitiesGiven)
+	{
+		return;
+	}
+
+	TArray<FGameplayAbilitySpecHandle> AbilitiesToRemove;
+	
+	for(const FGameplayAbilitySpec& Spec : AbilitySystemComponent->GetActivatableAbilities())
+	{
+		if(Spec.SourceObject == this && DefaultAbilities.Contains(Spec.Ability->GetClass()))
+		{
+			AbilitiesToRemove.Add(Spec.Handle);
+		}
+	}
+	
 }
 
 //Client Only - 스테이트가 클라이언트에 존재하게 됩니다.
@@ -115,6 +161,7 @@ void ACharacterBase::OnRep_PlayerState()
 	{
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
 	}
+	//BindASCInput();
 
 	InitializeAttributes();
 }
@@ -162,6 +209,20 @@ UBaseAttributeSet* ACharacterBase::GetAttributes() const
 UInventoryComponent* ACharacterBase::GetInventoryManagerCompnent() const
 {
 	return InventoryManagerComponent;
+}
+
+void ACharacterBase::Die()
+{
+	RemoveCharacterAbilities();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->GravityScale=0;
+	GetCharacterMovement()->Velocity=FVector(0);
+
+	if(AbilitySystemComponent.IsValid())
+	{
+		AbilitySystemComponent->CancelAbilities();
+		
+	}
 }
 
 void ACharacterBase::AttackWithMotionWarp()

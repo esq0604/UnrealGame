@@ -10,7 +10,7 @@
 
 class UBaseAttributeSet;
 class UAbilitySystemComponent;
-class UCustomAbilitySystemComponent;
+class UCharacterAbilitySystemComponent;
 class UPlayerHUD;
 struct FOnAttributeChangeData;
 UCLASS()
@@ -43,7 +43,7 @@ public:
 
 protected:
 	UPROPERTY()
-	UCustomAbilitySystemComponent* AbilitySystemComponent;
+	UCharacterAbilitySystemComponent* AbilitySystemComponent;
 	
 	UPROPERTY()
 	UBaseAttributeSet* Attributes;
