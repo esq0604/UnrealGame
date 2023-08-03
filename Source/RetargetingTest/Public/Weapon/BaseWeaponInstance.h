@@ -28,6 +28,9 @@ public:
 	virtual void RemoveAbilities();
 
 	void SetOwningCharacter(ACharacterBase* InOwningCharacter);
+
+	FName GetWeaponTraceStartSocketName();
+	FName GetWeaponTraceEndSocketName();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -58,6 +61,13 @@ protected:
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
 	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon|Socket")
+	FName WeaponTraceStartSocketName;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon|Socket")
+	FName WeaponTraceEndSocketName;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon|Socket")
+	FName AttachSocketName;
 private:
 
 

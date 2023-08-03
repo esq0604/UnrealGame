@@ -39,6 +39,16 @@ void ABaseWeaponInstance::SetOwningCharacter(ACharacterBase* InOwningCharacter)
 	SetOwner(InOwningCharacter);
 }
 
+FName ABaseWeaponInstance::GetWeaponTraceStartSocketName()
+{
+	return WeaponTraceStartSocketName;
+}
+
+FName ABaseWeaponInstance::GetWeaponTraceEndSocketName()
+{
+	return WeaponTraceEndSocketName;
+}
+
 // Called when the game starts or when spawned
 void ABaseWeaponInstance::BeginPlay()
 {

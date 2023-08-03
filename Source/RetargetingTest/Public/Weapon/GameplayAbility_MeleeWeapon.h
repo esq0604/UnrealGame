@@ -23,6 +23,8 @@ public:
 	//~UGameplayAbility interface
 
 protected:
-	FHitResult WeaponTrace(const FVector& StartTrace, const FVector& EndTrace, float SweapRadius, bool bIsSimulated, OUT TArray<FHitResult>& OutHitResults) const;
+	void PerformTrace(OUT TArray<FHitResult>& OutHits);
+	UFUNCTION(BlueprintCallable)
+	void StartWeaponTraceForTarget();
 	
 };
