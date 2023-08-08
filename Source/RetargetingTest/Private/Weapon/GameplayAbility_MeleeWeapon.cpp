@@ -51,4 +51,9 @@ void UGameplayAbility_MeleeWeapon::StartWeaponTraceForTarget()
 
 	TArray<FHitResult> FoundHits;
 	PerformTrace(FoundHits);
+	
+	FGameplayAbilityTargetDataHandle testhandle;
+	
+	FGameplayEffectContext  effectcontext
+	
 }
