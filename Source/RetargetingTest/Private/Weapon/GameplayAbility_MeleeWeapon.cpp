@@ -26,15 +26,14 @@ void UGameplayAbility_MeleeWeapon::PerformTrace(OUT TArray<FHitResult>& OutHits)
 	APawn* const AvatarPawn = Cast<APawn>(GetAvatarActorFromActorInfo());
 	ABaseWeaponInstance* WeaponInstance = GetWeaponInstance();
 
-#if ENABLE_DRAW_DEBUG
-	
-	//static float DebugThickness = 2.0f;
-	//DrawDebugLine(GetWorld(), InputData.StartTrace, InputData.StartTrace + (InputData.AimDir * 100.0f), FColor::Yellow, false, LyraConsoleVariables::DrawBulletTracesDuration, 0, DebugThickness);
-	FTransform StartTraceTransform =WeaponInstance->GetWeaponStateMeshComponent()->GetSocketTransform(WeaponInstance->GetWeaponTraceStartSocketName());
-	FTransform EndTraceTransform = WeaponInstance->GetWeaponStateMeshComponent()->GetSocketTransform(WeaponInstance->GetWeaponTraceEndSocketName()); 
-	UE_LOG(LogTemp,Warning,TEXT("DrawDebug Sphere"));
-
-#endif
+// #if ENABLE_DRAW_DEBUG
+// 	
+// 	//static float DebugThickness = 2.0f;
+// 	//DrawDebugLine(GetWorld(), InputData.StartTrace, InputData.StartTrace + (InputData.AimDir * 100.0f), FColor::Yellow, false, LyraConsoleVariables::DrawBulletTracesDuration, 0, DebugThickness);
+// 	FTransform StartTraceTransform =WeaponInstance->GetWeaponStateMeshComponent()->GetSocketTransform(WeaponInstance->GetWeaponTraceStartSocketName());
+// 	FTransform EndTraceTransform = WeaponInstance->GetWeaponStateMeshComponent()->GetSocketTransform(WeaponInstance->GetWeaponTraceEndSocketName()); 
+//
+// #endif
 
 }
 
@@ -52,8 +51,5 @@ void UGameplayAbility_MeleeWeapon::StartWeaponTraceForTarget()
 	TArray<FHitResult> FoundHits;
 	PerformTrace(FoundHits);
 	
-	FGameplayAbilityTargetDataHandle testhandle;
-	
-	FGameplayEffectContext  effectcontext
 	
 }
