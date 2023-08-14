@@ -110,7 +110,7 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Weapon")
 	TSubclassOf<ABaseWeaponInstance> WeaponClass;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Weapon")
-	TObjectPtr<ABaseWeaponInstance> WeaponInstance;
+	ABaseWeaponInstance* WeaponInstance;
 	// void BindASCInput();
 	// bool ASCInputBound=false;
 private:

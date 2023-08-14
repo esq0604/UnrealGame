@@ -70,7 +70,7 @@ ACharacterBase::ACharacterBase()
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
 
 	InventoryManagerComponent =CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryManagerComponent"));
-	
+	//WeaponInstance = CreateDefaultSubobject<ABaseWeaponInstance>(TEXT("Weapon"));
 	//TargetingComponent=CreateDefaultSubobject<UTargetingComponent>("TargetingComponent");
 }
 
@@ -81,10 +81,13 @@ void ACharacterBase::BeginPlay()
 	UE_LOG(LogTemp,Warning,TEXT("C++ BeginPlay"));
 	FActorSpawnParameters SpawnInfo;
 	WeaponInstance=GetWorld()->SpawnActor<ABaseWeaponInstance>(WeaponClass,GetActorLocation(),GetActorRotation(),SpawnInfo);
+	
 	if(WeaponInstance!=nullptr)
 	{
+		UE_LOG(LogTemp,Warning,TEXT("Weapon Instance is valid"));
 		WeaponInstance->SetOwningCharacter(this);
 		WeaponInstance->AddAbilities();
+		WeaponInstance->OnEquipped();
 	}
 	if(!Attributes)
 	{

@@ -12,6 +12,7 @@
 struct FGameplayAbilitySpecHandle;
 class UGameplayAbility;
 class ACharacterBase;
+class UCollisionComponent;
 UCLASS()
 class RETARGETINGTEST_API ABaseWeaponInstance : public AActor, public IAbilitySystemInterface
 {
@@ -28,7 +29,9 @@ public:
 	virtual void RemoveAbilities();
 
 	void SetOwningCharacter(ACharacterBase* InOwningCharacter);
-
+	
+	void OnEquipped();
+	
 	FName GetWeaponTraceStartSocketName();
 	FName GetWeaponTraceEndSocketName();
 protected:
@@ -40,17 +43,17 @@ public:
 	FGameplayTag WeaponTag;
 	
 	UFUNCTION(BlueprintCallable)
-	UStaticMesh* GetWeaponMesh() const {return WeaponMesh;}
+	UStaticMesh* GetWeaponMesh() const {return WeaponStaticMesh;}
 
 	UFUNCTION(BlueprintCallable)
-	UStaticMeshComponent* GetWeaponStateMeshComponent() const {return WeaponMeshCompnent;}
+	UStaticMeshComponent* GetWeaponStateMeshComponent() const {return WeaponStaticMeshCompnent;}
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=ture))
-	UStaticMeshComponent* WeaponMeshCompnent;
+	UStaticMeshComponent* WeaponStaticMeshCompnent;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
-	UStaticMesh* WeaponMesh;
-
+	UStaticMesh* WeaponStaticMesh;
+	
 	UPROPERTY(BlueprintReadOnly, Category = "Weapon|")
 	ACharacterBase* OwningCharacter;
 
@@ -68,7 +71,10 @@ protected:
 	FName WeaponTraceEndSocketName;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon|Socket")
 	FName AttachSocketName;
-private:
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="Weapon|Component")
+	TObjectPtr<UCollisionComponent> CollisionComp;	
+private:
+	void OnHitDelegateFunction(FHitResult HitResult);
 
 };

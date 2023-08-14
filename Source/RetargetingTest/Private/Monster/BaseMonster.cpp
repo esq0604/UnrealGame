@@ -37,8 +37,6 @@ ABaseMonster::ABaseMonster()
  */
 void ABaseMonster::PostInitializeComponents()
 {
-
-	UE_LOG(LogTemp,Warning,TEXT("PostInitComp"));
 	Super::PostInitializeComponents();
 	InitializeAttributes();
 	GiveDefaultAbilities();

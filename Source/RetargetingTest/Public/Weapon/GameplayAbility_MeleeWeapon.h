@@ -19,7 +19,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Game|Ability")
 	ABaseWeaponInstance* GetWeaponInstance();
-
+	
 	//~UGameplayAbility interface
 
 protected:
