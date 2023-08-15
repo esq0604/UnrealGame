@@ -37,7 +37,6 @@ void UCollisionComponent::CollisionEnable()
 	{
 		if(CanHitActor(hitResult.GetActor()))
 		{
-			UE_LOG(LogTemp,Warning,TEXT("%s"),*hitResult.GetActor()->GetName());
 			OnHitDelegate.Execute(hitResult);
 		}
 	}

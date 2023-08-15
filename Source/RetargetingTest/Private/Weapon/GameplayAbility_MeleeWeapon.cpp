@@ -6,6 +6,8 @@
 #include "Engine/HitResult.h"
 #include "Weapon/BaseWeaponInstance.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayTag.h"
+
 
 
 UGameplayAbility_MeleeWeapon::UGameplayAbility_MeleeWeapon(const FObjectInitializer& ObjectInitializer)
@@ -19,6 +21,17 @@ ABaseWeaponInstance* UGameplayAbility_MeleeWeapon::GetWeaponInstance()
 		return Cast<ABaseWeaponInstance>(Spec->SourceObject.Get());
 	}
 	return nullptr;
+}
+
+void UGameplayAbility_MeleeWeapon::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
+	const FGameplayEventData* TriggerEventData)
+{
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	CommitAbility(Handle,ActorInfo,ActivationInfo);
+
+	
 }
 
 void UGameplayAbility_MeleeWeapon::PerformTrace(OUT TArray<FHitResult>& OutHits)
@@ -35,21 +48,4 @@ void UGameplayAbility_MeleeWeapon::PerformTrace(OUT TArray<FHitResult>& OutHits)
 //
 // #endif
 
-}
-
-void UGameplayAbility_MeleeWeapon::StartWeaponTraceForTarget()
-{
-	check(CurrentActorInfo);
-	AActor* AvartaActor = CurrentActorInfo->AvatarActor.Get();
-	
-	UAbilitySystemComponent* MyAbilityComponent = CurrentActorInfo->AbilitySystemComponent.Get();
-	check(MyAbilityComponent);
-
-	AController* Controller = CurrentActorInfo->PlayerController.Get();
-	check(Controller);
-
-	TArray<FHitResult> FoundHits;
-	PerformTrace(FoundHits);
-	
-	
 }

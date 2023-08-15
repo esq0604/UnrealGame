@@ -19,12 +19,31 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Game|Ability")
 	ABaseWeaponInstance* GetWeaponInstance();
-	
-	//~UGameplayAbility interface
 
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	
 protected:
 	void PerformTrace(OUT TArray<FHitResult>& OutHits);
-	UFUNCTION(BlueprintCallable)
-	void StartWeaponTraceForTarget();
+
+protected:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
+	FHitResult mHitResult;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="MeleeWeapon|Initialize")
+	float mRadius;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="MeleeWeapon|Initialize")
+	float mHalfHeight;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="MeleeWeapon|Initialize")
+	TArray<TEnumAsByte<EObjectTypeQuery>> mTraceObjectType;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Collision|Initialize")
+	TArray<AActor*> mTraceActorToIgnore;
 	
+	UPROPERTY()
+	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
+
+	UPROPERTY()
+	TWeakObjectPtr<ACharacter> Owner;
 };

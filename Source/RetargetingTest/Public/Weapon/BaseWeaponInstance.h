@@ -72,8 +72,14 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon|Socket")
 	FName AttachSocketName;
 
+	// UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="Weapon|Component")
+	// TObjectPtr<UCollisionComponent> CollisionComp;
+
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="Weapon|Component")
-	TObjectPtr<UCollisionComponent> CollisionComp;	
+	FGameplayTagContainer AttackAbilityTagContainer;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="Weapon|Component")
+	UGameplayAbility* AttackAbility;
 private:
 	void OnHitDelegateFunction(FHitResult HitResult);
 

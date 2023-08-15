@@ -7,6 +7,9 @@
 #include "Component/CollisionComponent.h"
 #include "RetargetingTest/Public/Controller/MyPlayerController.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
+#include "Weapon/GameplayAbility_MeleeWeapon.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemGlobals.h"
 
 // Sets default values
 ABaseWeaponInstance::ABaseWeaponInstance()
@@ -14,7 +17,8 @@ ABaseWeaponInstance::ABaseWeaponInstance()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	//PrimaryActorTick.bCanEverTick = true;
 	WeaponStaticMeshCompnent=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
-	CollisionComp=CreateDefaultSubobject<UCollisionComponent>(TEXT("CollisionComp"));
+	//CollisionComp=CreateDefaultSubobject<UCollisionComponent>(TEXT("CollisionComp"));
+	AbilitySystemComponent=CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComp"));
 }
 
 UAbilitySystemComponent* ABaseWeaponInstance::GetAbilitySystemComponent() const
@@ -26,27 +30,29 @@ void ABaseWeaponInstance::AddAbilities()
 {
 	for (TSubclassOf<UGameplayAbility>& Ability : Abilities)
 	{
-		AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability.GetDefaultObject(),1,0,this));
-	
+		AbilitySpecHandles.Add(AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability.GetDefaultObject(),1,0,this)));
 	}
 }
 
 void ABaseWeaponInstance::RemoveAbilities()
 {
+	for(FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
+	{
+		AbilitySystemComponent->ClearAbility(SpecHandle);
+	}
 }
 
 void ABaseWeaponInstance::SetOwningCharacter(ACharacterBase* InOwningCharacter)
 {
 	OwningCharacter = InOwningCharacter;
-	AbilitySystemComponent = OwningCharacter->GetAbilitySystemComponent();
 	SetOwner(InOwningCharacter);
+	AbilitySystemComponent=UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
 }
 
 void ABaseWeaponInstance::OnEquipped()
 {
 	ACharacter* character = Cast<ACharacter>(GetOwner());
 	
-	//AttachToActor(character,FAttachmentTransformRules::SnapToTargetIncludingScale,AttachSocketName);
 	AttachToComponent(character->GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,AttachSocketName);
 }
 
@@ -64,23 +70,29 @@ FName ABaseWeaponInstance::GetWeaponTraceEndSocketName()
 void ABaseWeaponInstance::BeginPlay()
 {
 	Super::BeginPlay();
-	WeaponStaticMeshCompnent->SetStaticMesh(WeaponStaticMesh);
-	
-
+	WeaponStaticMeshCompnent->SetStaticMesh(WeaponStaticMesh);		
 }
 
 void ABaseWeaponInstance::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	CollisionComp->SetCollisionMeshComp(WeaponStaticMeshCompnent);
-
-	CollisionComp->OnHitDelegate.BindUObject(this,&ABaseWeaponInstance::OnHitDelegateFunction);
+	//CollisionComp->SetCollisionMeshComp(WeaponStaticMeshCompnent);
+	//CollisionComp->OnHitDelegate.BindUObject(this,&ABaseWeaponInstance::OnHitDelegateFunction);
 }
 
-void ABaseWeaponInstance::OnHitDelegateFunction(FHitResult HitResult)
-{
-	UE_LOG(LogTemp,Warning,TEXT("OnHit DelegateFunction do Something"));
-	//TODO : Attack Ability를 가져와서. HitResult를 넘겨줘야합니다, 별도의 캐스팅없이 실행하도록 해야합니다.
-	Cast<ACharacterBase>(GetOwner())->GetAbilitySystemComponent()->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag("Weapon.State.EnableCollision"));
-
-}
+// void ABaseWeaponInstance::OnHitDelegateFunction(FHitResult HitResult)
+// {
+// 	TArray<FGameplayAbilitySpec*> StoreSpec;
+// 	for(FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
+// 	{
+// 		AbilitySystemComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(AttackAbilityTagContainer,StoreSpec);
+// 		for(FGameplayAbilitySpec* Spec : StoreSpec)
+// 		{
+// 			if(Spec->IsActive())
+// 			{
+// 				Cast<UGameplayAbility_MeleeWeapon>(Spec->Ability)->SetHitResult(HitResult);
+// 			}
+// 		}
+// 	}
+// 	UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner())->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag("Weapon.State.EnableCollision"));
+// }
