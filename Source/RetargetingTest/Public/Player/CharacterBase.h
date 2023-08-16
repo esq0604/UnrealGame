@@ -8,6 +8,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayEffect.h"
 #include "Interface/Attackable.h"
+#include "Interface/Combat.h"
 #include "Weapon/EHitReaction.h"
 #include "CharacterBase.generated.h"
 
@@ -38,7 +39,7 @@ class UInventoryComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterDied,ACharacterBase*,character);
 UCLASS(config=Game)
-class ACharacterBase : public ACharacter, public IAbilitySystemInterface//, public IAttackable
+class ACharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombat//, public IAttackable
 {
 	GENERATED_BODY()
 
@@ -68,6 +69,7 @@ protected:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
 
+	virtual void ToggleWeaponCollision_Implementation(bool IsEnable) override;
 public:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="CharacterBase | Attributes")
 	TArray<TSubclassOf<UGameplayEffect>> DefaultAttributeEffects;

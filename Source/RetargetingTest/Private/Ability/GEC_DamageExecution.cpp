@@ -53,6 +53,7 @@ void UGEC_DamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
 	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
 
+	
 	//Aggregator Evaluate Parameters used during  the attribute capture.
 	FAggregatorEvaluateParameters EvaluateParameters;
 	EvaluateParameters.SourceTags=SourceTags;

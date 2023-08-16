@@ -8,7 +8,6 @@
 #include "RetargetingTest/Public/Controller/MyPlayerController.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
 #include "Weapon/GameplayAbility_MeleeWeapon.h"
-#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemGlobals.h"
 
 // Sets default values
@@ -17,7 +16,7 @@ ABaseWeaponInstance::ABaseWeaponInstance()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	//PrimaryActorTick.bCanEverTick = true;
 	WeaponStaticMeshCompnent=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
-	//CollisionComp=CreateDefaultSubobject<UCollisionComponent>(TEXT("CollisionComp"));
+	CollisionComp=CreateDefaultSubobject<UCollisionComponent>(TEXT("CollisionComp"));
 	AbilitySystemComponent=CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComp"));
 }
 
@@ -30,7 +29,13 @@ void ABaseWeaponInstance::AddAbilities()
 {
 	for (TSubclassOf<UGameplayAbility>& Ability : Abilities)
 	{
-		AbilitySpecHandles.Add(AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability.GetDefaultObject(),1,0,this)));
+		 AbilitySpecHandles.Add(AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability.GetDefaultObject(),1,0,this)));
+	}
+
+	for(FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
+	{
+		FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromHandle(SpecHandle);
+		AbilityInstances.Add((Spec->Ability));
 	}
 }
 
@@ -66,6 +71,11 @@ FName ABaseWeaponInstance::GetWeaponTraceEndSocketName()
 	return WeaponTraceEndSocketName;
 }
 
+TWeakObjectPtr<UCollisionComponent> ABaseWeaponInstance::GetCollisionComponet()
+{
+	return CollisionComp;
+}
+
 // Called when the game starts or when spawned
 void ABaseWeaponInstance::BeginPlay()
 {
@@ -76,23 +86,24 @@ void ABaseWeaponInstance::BeginPlay()
 void ABaseWeaponInstance::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	//CollisionComp->SetCollisionMeshComp(WeaponStaticMeshCompnent);
-	//CollisionComp->OnHitDelegate.BindUObject(this,&ABaseWeaponInstance::OnHitDelegateFunction);
+	CollisionComp->SetCollisionMeshComp(WeaponStaticMeshCompnent);
+	CollisionComp->OnHitDelegate.BindUObject(this,&ABaseWeaponInstance::OnHitDelegateFunction);
 }
 
-// void ABaseWeaponInstance::OnHitDelegateFunction(FHitResult HitResult)
-// {
-// 	TArray<FGameplayAbilitySpec*> StoreSpec;
-// 	for(FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
-// 	{
-// 		AbilitySystemComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(AttackAbilityTagContainer,StoreSpec);
-// 		for(FGameplayAbilitySpec* Spec : StoreSpec)
-// 		{
-// 			if(Spec->IsActive())
-// 			{
-// 				Cast<UGameplayAbility_MeleeWeapon>(Spec->Ability)->SetHitResult(HitResult);
-// 			}
-// 		}
-// 	}
-// 	UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner())->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag("Weapon.State.EnableCollision"));
-// }
+// 현재 공격중인 게임플레이 태그를 가져와서 해당 공격 태그에 맞는 어빌리티의 HitResult에 값을 대입해줘야합니다.
+void ABaseWeaponInstance::OnHitDelegateFunction(FHitResult HitResult)
+{
+	TArray<FGameplayAbilitySpec*> StoreSpec;
+	for(FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
+	{
+		AbilitySystemComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(AttackAbilityTagContainer,StoreSpec);
+		for(FGameplayAbilitySpec* Spec : StoreSpec)
+		{
+			if(Spec->IsActive())
+			{
+				Cast<UGameplayAbility_MeleeWeapon>(Spec->Ability)->SetHitResult(HitResult);
+			}
+		}
+	}
+	UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner())->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag("Weapon.State.EnableCollision"));
+}

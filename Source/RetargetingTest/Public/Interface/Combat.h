@@ -22,4 +22,7 @@ class RETARGETINGTEST_API ICombat
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category="Combat")
+	void ToggleWeaponCollision(bool IsEnable);
+	virtual void ToggleWeaponCollision_Implementation(bool IsEnable) =0;
 };

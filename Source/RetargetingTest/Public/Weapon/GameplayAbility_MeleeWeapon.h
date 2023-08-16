@@ -21,10 +21,8 @@ public:
 	ABaseWeaponInstance* GetWeaponInstance();
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-	
-protected:
-	void PerformTrace(OUT TArray<FHitResult>& OutHits);
 
+	void SetHitResult(FHitResult HitResult);
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	FHitResult mHitResult;

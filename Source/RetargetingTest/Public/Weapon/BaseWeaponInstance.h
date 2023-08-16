@@ -9,6 +9,7 @@
 #include "GameFramework/Actor.h"
 #include "BaseWeaponInstance.generated.h"
 
+class UGameplayAbility_MeleeWeapon;
 struct FGameplayAbilitySpecHandle;
 class UGameplayAbility;
 class ACharacterBase;
@@ -31,9 +32,11 @@ public:
 	void SetOwningCharacter(ACharacterBase* InOwningCharacter);
 	
 	void OnEquipped();
-	
+
+	//	Getter
 	FName GetWeaponTraceStartSocketName();
 	FName GetWeaponTraceEndSocketName();
+	TWeakObjectPtr<UCollisionComponent> GetCollisionComponet();
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -47,40 +50,39 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UStaticMeshComponent* GetWeaponStateMeshComponent() const {return WeaponStaticMeshCompnent;}
-protected:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=ture))
-	UStaticMeshComponent* WeaponStaticMeshCompnent;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
-	UStaticMesh* WeaponStaticMesh;
+private:
+	void OnHitDelegateFunction(FHitResult HitResult);
 	
+protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Weapon|")
 	ACharacterBase* OwningCharacter;
 
+	// Ability 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon|Abilities")
 	UAbilitySystemComponent* AbilitySystemComponent;
-
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon|Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> Abilities;
 	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
 
+	// WeaponInfo for CollisionComponent 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon|Socket")
 	FName WeaponTraceStartSocketName;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon|Socket")
 	FName WeaponTraceEndSocketName;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon|Socket")
 	FName AttachSocketName;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=ture))
+	UStaticMeshComponent* WeaponStaticMeshCompnent;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
+	UStaticMesh* WeaponStaticMesh;
 
-	// UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="Weapon|Component")
-	// TObjectPtr<UCollisionComponent> CollisionComp;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="Weapon|Component")
+	TObjectPtr<UCollisionComponent> CollisionComp;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="Weapon|Component")
 	FGameplayTagContainer AttackAbilityTagContainer;
-
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="Weapon|Component")
-	UGameplayAbility* AttackAbility;
-private:
-	void OnHitDelegateFunction(FHitResult HitResult);
-
+	TArray<TObjectPtr<UGameplayAbility>> AbilityInstances;
 };
