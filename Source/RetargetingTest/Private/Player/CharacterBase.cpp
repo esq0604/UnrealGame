@@ -16,7 +16,7 @@
 #include "Ability/CharacterAbilitySystemComponent.h"
 #include "Ability/CustomAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
-#include "Component/CollisionComponent.h"
+#include "Component/WeaponCollisionComponent.h"
 #include "Component/InventoryComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -104,7 +104,7 @@ void ACharacterBase::Tick(float DeltaSeconds)
 
 void ACharacterBase::ToggleWeaponCollision_Implementation(bool IsEnable)
 {
-	WeaponInstance->GetCollisionComponet().Get()->SetCollisionEnable(IsEnable);
+	WeaponInstance->GetCollisionComponent().Get()->SetCollisionEnable(IsEnable);
 }
 
 void ACharacterBase::FinishDying()

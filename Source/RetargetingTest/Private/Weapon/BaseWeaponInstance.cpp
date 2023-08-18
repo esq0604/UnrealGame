@@ -4,19 +4,22 @@
 #include "RetargetingTest/Public/Weapon/BaseWeaponInstance.h"
 
 #include "Ability/CharacterGameplayAbility.h"
-#include "Component/CollisionComponent.h"
+#include "Component/WeaponCollisionComponent.h"
 #include "RetargetingTest/Public/Controller/MyPlayerController.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
 #include "Weapon/GameplayAbility_MeleeWeapon.h"
 #include "AbilitySystemGlobals.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "Abilities/GameplayAbilityTypes.h"
+
 
 // Sets default values
 ABaseWeaponInstance::ABaseWeaponInstance()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	//PrimaryActorTick.bCanEverTick = true;
-	WeaponStaticMeshCompnent=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
-	CollisionComp=CreateDefaultSubobject<UCollisionComponent>(TEXT("CollisionComp"));
+	WeaponStaticMeshComponent=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
+	CollisionComp=CreateDefaultSubobject<UWeaponCollisionComponent>(TEXT("CollisionComp"));
 	AbilitySystemComponent=CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComp"));
 }
 
@@ -32,9 +35,9 @@ void ABaseWeaponInstance::AddAbilities()
 		 AbilitySpecHandles.Add(AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability.GetDefaultObject(),1,0,this)));
 	}
 
-	for(FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
+	for(const FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
 	{
-		FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromHandle(SpecHandle);
+		const FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromHandle(SpecHandle);
 		AbilityInstances.Add((Spec->Ability));
 	}
 }
@@ -56,22 +59,22 @@ void ABaseWeaponInstance::SetOwningCharacter(ACharacterBase* InOwningCharacter)
 
 void ABaseWeaponInstance::OnEquipped()
 {
-	ACharacter* character = Cast<ACharacter>(GetOwner());
+	const ACharacter* character = Cast<ACharacter>(GetOwner());
 	
 	AttachToComponent(character->GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,AttachSocketName);
 }
 
-FName ABaseWeaponInstance::GetWeaponTraceStartSocketName()
+FName ABaseWeaponInstance::GetWeaponTraceStartSocketName() const
 {
 	return WeaponTraceStartSocketName;
 }
 
-FName ABaseWeaponInstance::GetWeaponTraceEndSocketName()
+FName ABaseWeaponInstance::GetWeaponTraceEndSocketName() const
 {
 	return WeaponTraceEndSocketName;
 }
 
-TWeakObjectPtr<UCollisionComponent> ABaseWeaponInstance::GetCollisionComponet()
+TWeakObjectPtr<UWeaponCollisionComponent> ABaseWeaponInstance::GetCollisionComponent() const
 {
 	return CollisionComp;
 }
@@ -80,30 +83,34 @@ TWeakObjectPtr<UCollisionComponent> ABaseWeaponInstance::GetCollisionComponet()
 void ABaseWeaponInstance::BeginPlay()
 {
 	Super::BeginPlay();
-	WeaponStaticMeshCompnent->SetStaticMesh(WeaponStaticMesh);		
+	WeaponStaticMeshComponent->SetStaticMesh(WeaponStaticMesh);
+	CollisionComp->SetCollisionMeshComp(WeaponStaticMeshComponent);
 }
 
 void ABaseWeaponInstance::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	CollisionComp->SetCollisionMeshComp(WeaponStaticMeshCompnent);
 	CollisionComp->OnHitDelegate.BindUObject(this,&ABaseWeaponInstance::OnHitDelegateFunction);
 }
 
-// 현재 공격중인 게임플레이 태그를 가져와서 해당 공격 태그에 맞는 어빌리티의 HitResult에 값을 대입해줘야합니다.
-void ABaseWeaponInstance::OnHitDelegateFunction(FHitResult HitResult)
+/**
+ * WeaponCollisionComp에서 OnHit 델리게이트에 의해 호출됩니다. 게임플레이어빌리티에 이벤트를 넘겨주고 Payload데이터로 히트된 타겟을 넘겨줍니다.
+ * @param EventData : Payload Data입니다.
+ */
+void ABaseWeaponInstance::OnHitDelegateFunction(const FGameplayEventData& EventData)
 {
 	TArray<FGameplayAbilitySpec*> StoreSpec;
-	for(FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
+
+	for(const FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
 	{
-		AbilitySystemComponent->GetActivatableGameplayAbilitySpecsByAllMatchingTags(AttackAbilityTagContainer,StoreSpec);
-		for(FGameplayAbilitySpec* Spec : StoreSpec)
+		const FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromHandle(SpecHandle);
+		if(Spec->Ability->AbilityTags==AttackAbilityTagContainer)
 		{
 			if(Spec->IsActive())
 			{
-				Cast<UGameplayAbility_MeleeWeapon>(Spec->Ability)->SetHitResult(HitResult);
+				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(),FGameplayTag::RequestGameplayTag("Ability.Attack.Melee"),EventData);
+				return;
 			}
 		}
 	}
-	UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner())->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag("Weapon.State.EnableCollision"));
 }

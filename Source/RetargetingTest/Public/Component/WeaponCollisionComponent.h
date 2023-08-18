@@ -4,18 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "CollisionComponent.generated.h"
+#include "WeaponCollisionComponent.generated.h"
 
-DECLARE_DELEGATE_OneParam(FOnHitSignature,FHitResult)
+struct FGameplayEventData;
+
+DECLARE_DELEGATE_OneParam(FOnHitSignature,const FGameplayEventData&)
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class RETARGETINGTEST_API UCollisionComponent : public UActorComponent
+class RETARGETINGTEST_API UWeaponCollisionComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this component's properties
-	UCollisionComponent();
+	UWeaponCollisionComponent();
 
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
@@ -63,10 +65,6 @@ protected:
 private:
 	//	Collision Enable
 	bool mCollisionEnable;
-	
-
-
-
 	//	Check Trace Actor
 	TArray<AActor*> AlreadyHitActor;
 	

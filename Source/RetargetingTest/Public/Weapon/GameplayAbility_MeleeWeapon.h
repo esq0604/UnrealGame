@@ -17,31 +17,24 @@ class RETARGETINGTEST_API UGameplayAbility_MeleeWeapon : public UGameplayAbility
 public:
 	explicit UGameplayAbility_MeleeWeapon(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	UFUNCTION(BlueprintCallable, Category="Game|Ability")
+	UFUNCTION(BlueprintCallable, Category="Ability|MeleeWeapon")
 	ABaseWeaponInstance* GetWeaponInstance();
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-
-	void SetHitResult(FHitResult HitResult);
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+	void AbilityFinish();
 protected:
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
-	FHitResult mHitResult;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="MeleeWeapon|Initialize")
-	float mRadius;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="MeleeWeapon|Initialize")
-	float mHalfHeight;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="MeleeWeapon|Initialize")
-	TArray<TEnumAsByte<EObjectTypeQuery>> mTraceObjectType;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Collision|Initialize")
-	TArray<AActor*> mTraceActorToIgnore;
-	
 	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Ability|MeleeWeapon")
+	UAnimMontage* MontageToPlay;
+	
 	UPROPERTY()
 	TWeakObjectPtr<ACharacter> Owner;
+
+	FGameplayAbilitySpecHandle mAbilitySpecHandle;
+	const FGameplayAbilityActorInfo* mActorInfo;
+	FGameplayAbilityActivationInfo mActivationInfo;
+	
 };
