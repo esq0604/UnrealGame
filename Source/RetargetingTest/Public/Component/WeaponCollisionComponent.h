@@ -8,7 +8,7 @@
 
 struct FGameplayEventData;
 
-DECLARE_DELEGATE_OneParam(FOnHitSignature,const FGameplayEventData&)
+DECLARE_DELEGATE_TwoParams(FOnHitSignature,const FGameplayEventData&, const FHitResult&)
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RETARGETINGTEST_API UWeaponCollisionComponent : public UActorComponent

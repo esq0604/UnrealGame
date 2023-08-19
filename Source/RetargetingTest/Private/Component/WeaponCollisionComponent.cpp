@@ -45,7 +45,7 @@ void UWeaponCollisionComponent::CollisionEnable()
 			FGameplayEventData Data;
 			Data.Instigator=GetOwner();
 			Data.Target=hitResult.GetActor();
-			OnHitDelegate.Execute(Data);
+			OnHitDelegate.Execute(Data,hitResult);
 		}
 	}
 }

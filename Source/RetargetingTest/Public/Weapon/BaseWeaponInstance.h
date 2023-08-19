@@ -54,7 +54,7 @@ public:
 	UStaticMeshComponent* GetWeaponStateMeshComponent() const {return WeaponStaticMeshComponent;}
 
 private:
-	void OnHitDelegateFunction(const FGameplayEventData& HitResult);
+	void OnHitDelegateFunction(const FGameplayEventData& EventData,const FHitResult& HitResult);
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Weapon|")

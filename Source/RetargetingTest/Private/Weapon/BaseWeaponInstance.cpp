@@ -30,6 +30,8 @@ UAbilitySystemComponent* ABaseWeaponInstance::GetAbilitySystemComponent() const
 
 void ABaseWeaponInstance::AddAbilities()
 {
+	check(AbilitySystemComponent)
+	
 	for (TSubclassOf<UGameplayAbility>& Ability : Abilities)
 	{
 		 AbilitySpecHandles.Add(AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability.GetDefaultObject(),1,0,this)));
@@ -54,7 +56,7 @@ void ABaseWeaponInstance::SetOwningCharacter(ACharacterBase* InOwningCharacter)
 {
 	OwningCharacter = InOwningCharacter;
 	SetOwner(InOwningCharacter);
-	AbilitySystemComponent=UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
+	AbilitySystemComponent=InOwningCharacter->GetAbilitySystemComponent();
 }
 
 void ABaseWeaponInstance::OnEquipped()
@@ -96,8 +98,9 @@ void ABaseWeaponInstance::PostInitializeComponents()
 /**
  * WeaponCollisionComp에서 OnHit 델리게이트에 의해 호출됩니다. 게임플레이어빌리티에 이벤트를 넘겨주고 Payload데이터로 히트된 타겟을 넘겨줍니다.
  * @param EventData : Payload Data입니다.
+ * @param HitResult : EffectContext에 넣어줄 HitReulst입니다. GameplayCue에서 타겟과 소스액터의 방향을 구하기 위해 사용합니다.
  */
-void ABaseWeaponInstance::OnHitDelegateFunction(const FGameplayEventData& EventData)
+void ABaseWeaponInstance::OnHitDelegateFunction(const FGameplayEventData& EventData,const FHitResult& HitResult)
 {
 	TArray<FGameplayAbilitySpec*> StoreSpec;
 
@@ -108,6 +111,8 @@ void ABaseWeaponInstance::OnHitDelegateFunction(const FGameplayEventData& EventD
 		{
 			if(Spec->IsActive())
 			{
+				FGameplayEffectContextHandle ContextHandle=EventData.ContextHandle;
+				ContextHandle.AddHitResult(HitResult);
 				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(),FGameplayTag::RequestGameplayTag("Ability.Attack.Melee"),EventData);
 				return;
 			}

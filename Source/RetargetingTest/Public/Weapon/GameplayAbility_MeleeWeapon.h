@@ -15,24 +15,36 @@ class RETARGETINGTEST_API UGameplayAbility_MeleeWeapon : public UGameplayAbility
 {
 	GENERATED_BODY()
 public:
-	explicit UGameplayAbility_MeleeWeapon(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-
+	UGameplayAbility_MeleeWeapon(const FObjectInitializer& Initializer);
+	
 	UFUNCTION(BlueprintCallable, Category="Ability|MeleeWeapon")
 	ABaseWeaponInstance* GetWeaponInstance();
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+
+	UFUNCTION()
 	void AbilityFinish();
+
+	UFUNCTION()
+	void ApplyGameplayDamageEffect(FGameplayEventData Payload);
+
+protected:
+	
 protected:
 	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Ability|MeleeWeapon")
-	UAnimMontage* MontageToPlay;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Ability|MeleeWeapon")
+	TObjectPtr<UAnimMontage> MontageToPlay;
 	
 	UPROPERTY()
 	TWeakObjectPtr<ACharacter> Owner;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Ability|MeleeWeapon")
+	TSubclassOf<UGameplayEffect> mDamageGameplayEffectClass;
+
+	// Ability Active Init
 	FGameplayAbilitySpecHandle mAbilitySpecHandle;
 	const FGameplayAbilityActorInfo* mActorInfo;
 	FGameplayAbilityActivationInfo mActivationInfo;
