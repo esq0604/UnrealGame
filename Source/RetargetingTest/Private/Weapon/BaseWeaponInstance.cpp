@@ -30,6 +30,7 @@ UAbilitySystemComponent* ABaseWeaponInstance::GetAbilitySystemComponent() const
 
 void ABaseWeaponInstance::AddAbilities()
 {
+	AbilitySystemComponent=UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
 	check(AbilitySystemComponent)
 	
 	for (TSubclassOf<UGameplayAbility>& Ability : Abilities)
@@ -40,7 +41,6 @@ void ABaseWeaponInstance::AddAbilities()
 	for(const FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
 	{
 		const FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromHandle(SpecHandle);
-		AbilityInstances.Add((Spec->Ability));
 	}
 }
 
@@ -50,13 +50,6 @@ void ABaseWeaponInstance::RemoveAbilities()
 	{
 		AbilitySystemComponent->ClearAbility(SpecHandle);
 	}
-}
-
-void ABaseWeaponInstance::SetOwningCharacter(ACharacterBase* InOwningCharacter)
-{
-	OwningCharacter = InOwningCharacter;
-	SetOwner(InOwningCharacter);
-	AbilitySystemComponent=InOwningCharacter->GetAbilitySystemComponent();
 }
 
 void ABaseWeaponInstance::OnEquipped()

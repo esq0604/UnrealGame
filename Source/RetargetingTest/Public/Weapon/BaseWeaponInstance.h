@@ -31,7 +31,6 @@ public:
 
 	virtual void RemoveAbilities();
 
-	void SetOwningCharacter(ACharacterBase* InOwningCharacter);
 	
 	void OnEquipped();
 

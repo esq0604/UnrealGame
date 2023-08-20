@@ -86,7 +86,7 @@ void ACharacterBase::BeginPlay()
 	if(WeaponInstance!=nullptr)
 	{
 		UE_LOG(LogTemp,Warning,TEXT("Weapon Instance is valid"));
-		WeaponInstance->SetOwningCharacter(this);
+		WeaponInstance->SetOwner(this);
 		WeaponInstance->AddAbilities();
 		WeaponInstance->OnEquipped();
 	}
