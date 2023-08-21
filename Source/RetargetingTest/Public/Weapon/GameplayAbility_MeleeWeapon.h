@@ -23,14 +23,18 @@ public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
+
 	UFUNCTION()
 	void AbilityFinish();
 
 	UFUNCTION()
 	void ApplyGameplayDamageEffect(FGameplayEventData Payload);
 
+	UFUNCTION()
+	void SetHitResult(const FHitResult& HitResult);
 protected:
-	
+	void ActiveMontage();
+	void WaitGameplayTagForApplyDamageEffect();
 protected:
 	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
@@ -48,5 +52,10 @@ protected:
 	FGameplayAbilitySpecHandle mAbilitySpecHandle;
 	const FGameplayAbilityActorInfo* mActorInfo;
 	FGameplayAbilityActivationInfo mActivationInfo;
-	
+
+	//HitResult for EffectContext
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	FHitResult mHitResult;
 };
+
+

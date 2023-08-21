@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
+#include "Interface/Combat.h"
 #include "BaseMonster.generated.h"
 
+class UWeaponCollisionComponent;
 class UBaseAttributeSet;
 class UBehaviorTree;
 class UWidgetComponent;
@@ -22,8 +24,9 @@ class UMonsterGauge;
 
 struct FOnAttributeChangeData;
 struct FDamageEvent;
+
 UCLASS()
-class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface//, public IAttackable,public ITargeting
+class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface,public ICombat//, public IAttackable,public ITargeting
 {
 	GENERATED_BODY()
 
@@ -43,6 +46,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
+
+	virtual void ToggleWeaponCollision_Implementation(bool IsEnable) override;
+	virtual UAnimMontage* GetHitReaction_Implementation(EHitDirection HitDirection) override;
 private:
 	virtual void HealthChange(const FOnAttributeChangeData& Data);
 
@@ -52,6 +58,10 @@ public:
 	
 
 protected:
+	/**
+	 * 컴포넌트
+	 */
+	TObjectPtr<UWeaponCollisionComponent> WeaponCollisionComponent;
 	/**
 	 * 어빌리티 및 어트리뷰트
 	 */
@@ -70,10 +80,10 @@ protected:
 	/**
 	 * 에너미 위젯
 	 */
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Component")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Component")
 	TObjectPtr<UWidgetComponent> HPWidgetComponent;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | HPWidget")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | HPWidget")
 	TWeakObjectPtr<UMonsterGauge> HPBarWidget;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | UI")
@@ -81,11 +91,20 @@ protected:
 	/**
 	 * 초기화
 	 */
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize | Anim")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize | Anim")
 	TObjectPtr<UBaseMonsterAnimInstance> mAnimInstacne;
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize |Anim")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize |Anim")
 	TObjectPtr<UAnimMontage> DeadAnim;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize |Anim")
+	TObjectPtr<UAnimMontage> ForwardHitReaction;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize |Anim")
+	TObjectPtr<UAnimMontage> BackWardHitReaction;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize |Anim")
+	TObjectPtr<UAnimMontage> LeftHitReaction;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize |Anim")
+	TObjectPtr<UAnimMontage> RightHitReaction;
+
 
 	/*
 	 * 몬스터 적 액터정보

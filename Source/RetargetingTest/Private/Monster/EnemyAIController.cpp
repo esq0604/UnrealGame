@@ -34,7 +34,7 @@ void AEnemyAIController::BeginPlay()
 	
 }
 
-void AEnemyAIController::OnPerceptionUpdate(AActor* UpdatedActor, FAIStimulus const Simulus)
+void AEnemyAIController::OnPerceptionUpdate(AActor* UpdatedActor,const FAIStimulus Simulus)
 {
 	if(Blackboard)
 	{

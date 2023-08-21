@@ -6,6 +6,14 @@
 #include "UObject/Interface.h"
 #include "Combat.generated.h"
 
+UENUM()
+enum class EHitDirection
+{
+	Forward,
+	Backward,
+	Left,
+	Right
+};
 // This class does not need to be modified.
 UINTERFACE()
 class UCombat : public UInterface
@@ -25,4 +33,8 @@ public:
 	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category="Combat")
 	void ToggleWeaponCollision(bool IsEnable);
 	virtual void ToggleWeaponCollision_Implementation(bool IsEnable) =0;
+
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category="Combat")
+	UAnimMontage* GetHitReaction(EHitDirection HitDirection);
+	virtual UAnimMontage* GetHitReaction_Implementation(EHitDirection HitDirection)=0;
 };

@@ -6,6 +6,7 @@
 #include "Abilities/GameplayAbilityTypes.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Components/SceneComponent.h"
+#include "Interfaces/ITargetDevice.h"
 
 
 // Sets default values for this component's properties

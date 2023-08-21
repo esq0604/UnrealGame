@@ -24,9 +24,10 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void BeginPlay() override;
 	
-	void OnPerceptionUpdate(AActor* UpdatedActor,FAIStimulus const Simulus);
 	void SetPerceptionSystem();
-	
+	UFUNCTION()
+	void OnPerceptionUpdate(AActor* UpdatedActor,const FAIStimulus Simulus);
+
 protected:
 	TWeakObjectPtr<ABaseMonster> BaseEnemy;
 

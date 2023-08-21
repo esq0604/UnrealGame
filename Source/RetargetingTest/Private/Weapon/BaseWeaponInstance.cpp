@@ -28,20 +28,27 @@ UAbilitySystemComponent* ABaseWeaponInstance::GetAbilitySystemComponent() const
 	return AbilitySystemComponent;
 }
 
+/**
+ * 무기가 가지고 있는 어빌리티 클래스들을 Owner에게 적용시킵니다.
+ */
 void ABaseWeaponInstance::AddAbilities()
 {
 	AbilitySystemComponent=UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
 	check(AbilitySystemComponent)
-	
-	for (TSubclassOf<UGameplayAbility>& Ability : Abilities)
-	{
-		 AbilitySpecHandles.Add(AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability.GetDefaultObject(),1,0,this)));
-	}
 
-	for(const FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
+	if(Abilities.Num()>0)
 	{
-		const FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromHandle(SpecHandle);
+		for (TSubclassOf<UGameplayAbility>& Ability : Abilities)
+		{
+			AbilitySpecHandles.Add(AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability.GetDefaultObject(),1,0,this)));
+		}
+
+		for(const FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
+		{
+			const FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromHandle(SpecHandle);
+		}
 	}
+	
 }
 
 void ABaseWeaponInstance::RemoveAbilities()
@@ -93,7 +100,7 @@ void ABaseWeaponInstance::PostInitializeComponents()
  * @param EventData : Payload Data입니다.
  * @param HitResult : EffectContext에 넣어줄 HitReulst입니다. GameplayCue에서 타겟과 소스액터의 방향을 구하기 위해 사용합니다.
  */
-void ABaseWeaponInstance::OnHitDelegateFunction(const FGameplayEventData& EventData,const FHitResult& HitResult)
+void ABaseWeaponInstance::OnHitDelegateFunction(FGameplayEventData& EventData,const FHitResult& HitResult)
 {
 	TArray<FGameplayAbilitySpec*> StoreSpec;
 
@@ -104,8 +111,11 @@ void ABaseWeaponInstance::OnHitDelegateFunction(const FGameplayEventData& EventD
 		{
 			if(Spec->IsActive())
 			{
-				FGameplayEffectContextHandle ContextHandle=EventData.ContextHandle;
-				ContextHandle.AddHitResult(HitResult);
+				FGameplayEffectContextHandle EffectContextHandle = AbilitySystemComponent->MakeEffectContext();
+				EffectContextHandle.AddHitResult(HitResult);
+
+				EventData.ContextHandle=EffectContextHandle;
+				EventData.Instigator=GetOwner();
 				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(),FGameplayTag::RequestGameplayTag("Ability.Attack.Melee"),EventData);
 				return;
 			}

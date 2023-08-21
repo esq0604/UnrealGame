@@ -39,19 +39,13 @@ void UGameplayAbility_MeleeWeapon::ActivateAbility(const FGameplayAbilitySpecHan
 	mActorInfo = ActorInfo;
 	mActivationInfo=ActivationInfo;
 
+
+	
 	//Play Attack Montage
-	check(MontageToPlay)
-	UAbilityTask_PlayMontageAndWait* MontageProxy=UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this,FName("None"),MontageToPlay);
-	MontageProxy->OnCancelled.AddDynamic(this,&UGameplayAbility_MeleeWeapon::AbilityFinish);
-	MontageProxy->OnCompleted.AddDynamic(this,&UGameplayAbility_MeleeWeapon::AbilityFinish);
-	MontageProxy->OnInterrupted.AddDynamic(this,&UGameplayAbility_MeleeWeapon::AbilityFinish);
-	MontageProxy->OnBlendOut.AddDynamic(this,&UGameplayAbility_MeleeWeapon::AbilityFinish);
-	MontageProxy->Activate();
+	ActiveMontage();
 	
 	//Wait GameplayEvent 
-	UAbilityTask_WaitGameplayEvent* WaitGameplayEvent=UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this,FGameplayTag::RequestGameplayTag("Ability.Attack.Melee"),nullptr,true,true);
-	WaitGameplayEvent->EventReceived.AddDynamic(this,&UGameplayAbility_MeleeWeapon::ApplyGameplayDamageEffect);
-	WaitGameplayEvent->Activate();
+	WaitGameplayTagForApplyDamageEffect();
 }
 
 void UGameplayAbility_MeleeWeapon::EndAbility(const FGameplayAbilitySpecHandle Handle,
@@ -73,17 +67,35 @@ void UGameplayAbility_MeleeWeapon::AbilityFinish()
 void UGameplayAbility_MeleeWeapon::ApplyGameplayDamageEffect(FGameplayEventData Payload)
 {
 	AActor* TargetActor = const_cast<AActor*>(Payload.Target.Get());
-
-	const UAbilitySystemComponent* TargetAbilityComp = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(TargetActor);
-
-	check(TargetAbilityComp);
-	FGameplayEffectContextHandle EffectContextHandle= Payload.ContextHandle;
+	UAbilitySystemComponent* TargetAbilityComp = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(TargetActor);
 	
-	const FGameplayAbilityTargetDataHandle TargetDataHandle=UAbilitySystemBlueprintLibrary::AbilityTargetDataFromActor(TargetActor);
-
+	check(TargetAbilityComp);
+	//const FGameplayAbilityTargetDataHandle TargetDataHandle=UAbilitySystemBlueprintLibrary::AbilityTargetDataFromActor(TargetActor);
+	
+	UAbilitySystemComponent* OwnerActorAbilityComp = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwningActorFromActorInfo());
 	// ReSharper disable once CppExpressionWithoutSideEffects
-	ApplyGameplayEffectToTarget(mAbilitySpecHandle,mActorInfo,mActivationInfo,TargetDataHandle,mDamageGameplayEffectClass,0.f);
+	OwnerActorAbilityComp->ApplyGameplayEffectToTarget(mDamageGameplayEffectClass.GetDefaultObject(),TargetAbilityComp,0.0f,Payload.ContextHandle);
 }
 
+void UGameplayAbility_MeleeWeapon::SetHitResult(const FHitResult& HitResult)
+{
+	mHitResult=HitResult;
+}
 
+void UGameplayAbility_MeleeWeapon::ActiveMontage()
+{
+	check(MontageToPlay)
+	UAbilityTask_PlayMontageAndWait* MontageProxy=UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this,FName("None"),MontageToPlay);
+	MontageProxy->OnCancelled.AddDynamic(this,&UGameplayAbility_MeleeWeapon::AbilityFinish);
+	MontageProxy->OnCompleted.AddDynamic(this,&UGameplayAbility_MeleeWeapon::AbilityFinish);
+	MontageProxy->OnInterrupted.AddDynamic(this,&UGameplayAbility_MeleeWeapon::AbilityFinish);
+	MontageProxy->OnBlendOut.AddDynamic(this,&UGameplayAbility_MeleeWeapon::AbilityFinish);
+	MontageProxy->Activate();
+}
 
+void UGameplayAbility_MeleeWeapon::WaitGameplayTagForApplyDamageEffect()
+{
+	UAbilityTask_WaitGameplayEvent* WaitGameplayEvent=UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this,FGameplayTag::RequestGameplayTag("Ability.Attack.Melee"),nullptr,true,true);
+	WaitGameplayEvent->EventReceived.AddDynamic(this,&UGameplayAbility_MeleeWeapon::ApplyGameplayDamageEffect);
+	WaitGameplayEvent->Activate();
+}

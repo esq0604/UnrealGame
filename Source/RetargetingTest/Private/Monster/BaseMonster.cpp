@@ -5,6 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "Attribute/BaseAttributeSet.h"
+#include "Component/WeaponCollisionComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Materials/Material.h"
 #include "Engine/DamageEvents.h"
@@ -25,7 +26,7 @@ ABaseMonster::ABaseMonster()
 	HPWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPWidgetComponent"));
 	HPWidgetComponent->SetupAttachment(RootComponent);
 
-
+	WeaponCollisionComponent=CreateDefaultSubobject<UWeaponCollisionComponent>(TEXT("WeaponCollisionComponent"));
 
 }
 
@@ -40,6 +41,28 @@ void ABaseMonster::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	InitializeAttributes();
 	GiveDefaultAbilities();
+}
+
+void ABaseMonster::ToggleWeaponCollision_Implementation(bool IsEnable)
+{
+	WeaponCollisionComponent->SetCollisionEnable(IsEnable);
+}
+
+UAnimMontage* ABaseMonster::GetHitReaction_Implementation(EHitDirection HitDirection)
+{
+	switch (HitDirection)
+	{
+	case EHitDirection::Forward:
+		return ForwardHitReaction;
+	case EHitDirection::Backward:
+		return BackWardHitReaction;
+	case EHitDirection::Left:
+		return LeftHitReaction;
+	case EHitDirection::Right:
+		return RightHitReaction;
+	default:
+		return nullptr;
+	}
 }
 
 

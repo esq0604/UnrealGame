@@ -6,7 +6,6 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
-#include "Interface/Attackable.h"
 #include "Interface/Targeting.h"
 #include "Kismet/KismetSystemLibrary.h"
 

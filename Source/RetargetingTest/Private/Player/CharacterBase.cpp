@@ -107,6 +107,23 @@ void ACharacterBase::ToggleWeaponCollision_Implementation(bool IsEnable)
 	WeaponInstance->GetCollisionComponent().Get()->SetCollisionEnable(IsEnable);
 }
 
+UAnimMontage* ACharacterBase::GetHitReaction_Implementation(EHitDirection HitDirection)
+{
+	switch (HitDirection)
+	{
+	case EHitDirection::Forward:
+		return ForwardHitReaction;
+	case EHitDirection::Backward:
+		return BackWardHitReaction;
+	case EHitDirection::Left:
+		return LeftHitReaction;
+	case EHitDirection::Right:
+		return RightHitReaction;
+	default:
+		return nullptr;
+	}
+}
+
 void ACharacterBase::FinishDying()
 {
 	Destroy();

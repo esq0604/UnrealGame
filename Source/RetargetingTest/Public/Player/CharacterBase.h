@@ -7,7 +7,6 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystemInterface.h"
 #include "GameplayEffect.h"
-#include "Interface/Attackable.h"
 #include "Interface/Combat.h"
 #include "Weapon/EHitReaction.h"
 #include "CharacterBase.generated.h"
@@ -70,6 +69,7 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void ToggleWeaponCollision_Implementation(bool IsEnable) override;
+	virtual UAnimMontage* GetHitReaction_Implementation(EHitDirection HitDirection) override;
 public:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="CharacterBase | Attributes")
 	TArray<TSubclassOf<UGameplayEffect>> DefaultAttributeEffects;
@@ -104,15 +104,26 @@ protected:
 	TObjectPtr<UCharaterAnimInstance> AnimInstance;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attack")
-	EHitReaction mHitReaction;
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attack")
 	TWeakObjectPtr<AActor> mHitActor;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Weapon")
 	TSubclassOf<ABaseWeaponInstance> WeaponClass;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Weapon")
 	ABaseWeaponInstance* WeaponInstance;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Montage |HitReaction")
+	TObjectPtr<UAnimMontage> ForwardHitReaction;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Montage |HitReaction")
+	TObjectPtr<UAnimMontage> BackWardHitReaction;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Montage |HitReaction")
+	TObjectPtr<UAnimMontage> LeftHitReaction;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Montage |HitReaction")
+	TObjectPtr<UAnimMontage> RightHitReaction;
+
+	
 	// void BindASCInput();
 	// bool ASCInputBound=false;
 private:
