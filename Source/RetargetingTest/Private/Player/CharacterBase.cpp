@@ -14,7 +14,6 @@
 #include "AbilitySystemComponent.h"
 #include "MotionWarpingComponent.h"
 #include "Ability/CharacterAbilitySystemComponent.h"
-#include "Ability/CustomAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Component/WeaponCollisionComponent.h"
 #include "Component/InventoryComponent.h"
@@ -22,8 +21,6 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Player/PlayerStateBase.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
-#include "Player/CharaterAnimInstance.h"
-#include "RetargetingTest/RetargetingTest.h"
 #include "Weapon/BaseWeaponInstance.h"
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
@@ -71,8 +68,8 @@ ACharacterBase::ACharacterBase()
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
 
 	InventoryManagerComponent =CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryManagerComponent"));
-	//WeaponInstance = CreateDefaultSubobject<ABaseWeaponInstance>(TEXT("Weapon"));
 	//TargetingComponent=CreateDefaultSubobject<UTargetingComponent>("TargetingComponent");
+	
 }
 
 void ACharacterBase::BeginPlay()

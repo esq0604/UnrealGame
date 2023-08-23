@@ -6,8 +6,10 @@
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "Interface/Combat.h"
+#include "Interface/Targeting.h"
 #include "BaseMonster.generated.h"
 
+class ABaseWeaponInstance;
 class UWeaponCollisionComponent;
 class UBaseAttributeSet;
 class UBehaviorTree;
@@ -26,7 +28,7 @@ struct FOnAttributeChangeData;
 struct FDamageEvent;
 
 UCLASS()
-class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface,public ICombat//, public IAttackable,public ITargeting
+class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface,public ICombat, public ITargeting
 {
 	GENERATED_BODY()
 
@@ -34,9 +36,10 @@ public:
 	// Sets default values for this character's properties
 	ABaseMonster();
 	
-	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void InitializeAttributes();
 	virtual void GiveDefaultAbilities();
+
+	//	IAbilitySystemInterface
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	void SpawnInit();
@@ -47,21 +50,27 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 
+	// ICombat
 	virtual void ToggleWeaponCollision_Implementation(bool IsEnable) override;
 	virtual UAnimMontage* GetHitReaction_Implementation(EHitDirection HitDirection) override;
+
+	// ITargeting
+	virtual void OnTargeted_Implementation(bool bIsTargeted) override;
+	virtual bool CanBeTargeted_Implementation() override;
+	
 private:
 	virtual void HealthChange(const FOnAttributeChangeData& Data);
 
 
 public:
 	FMonsterDieSignature MonsterDieDelegate;
-	
+	 
 
 protected:
 	/**
 	 * 컴포넌트
 	 */
-	TObjectPtr<UWeaponCollisionComponent> WeaponCollisionComponent;
+
 	/**
 	 * 어빌리티 및 어트리뷰트
 	 */
@@ -80,10 +89,16 @@ protected:
 	/**
 	 * 에너미 위젯
 	 */
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="EnemyBase | Componnet")
+	TObjectPtr<UWidgetComponent> TargetWidgetComponent;
+	
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | UI")
+	TSubclassOf<UUserWidget> TargetWidgetClass;
+	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Component")
 	TObjectPtr<UWidgetComponent> HPWidgetComponent;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | HPWidget")
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | UI")
 	TWeakObjectPtr<UMonsterGauge> HPBarWidget;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | UI")
@@ -91,9 +106,9 @@ protected:
 	/**
 	 * 초기화
 	 */
+	// Anim
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize | Anim")
 	TObjectPtr<UBaseMonsterAnimInstance> mAnimInstacne;
-	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize |Anim")
 	TObjectPtr<UAnimMontage> DeadAnim;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize |Anim")
@@ -104,7 +119,13 @@ protected:
 	TObjectPtr<UAnimMontage> LeftHitReaction;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize |Anim")
 	TObjectPtr<UAnimMontage> RightHitReaction;
+	// Weapon
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize | Weapon")
+	TObjectPtr<ABaseWeaponInstance> WeaponInstance;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize | Weapon")
+	TSubclassOf<ABaseWeaponInstance> WeaponClass;
 
+	
 
 	/*
 	 * 몬스터 적 액터정보

@@ -36,4 +36,9 @@ void UMonsterGauge::UpdateHPWidget(float NewHPPercent, float OldHPPercent)
 	mOldHpPercent=OldHPPercent;
 	CurrentTime=0;
 }
+
+void UMonsterGauge::Init()
+{
+	
+}
  

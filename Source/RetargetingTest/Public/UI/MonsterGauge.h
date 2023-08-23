@@ -18,12 +18,13 @@ class RETARGETINGTEST_API UMonsterGauge : public UUserWidget
 public:
 	UFUNCTION(BlueprintCallable)
 	void UpdateHPWidget(float NewHPPercent, float OldHPPercent);
+
+	UFUNCTION(BlueprintCallable)
+	void Init();
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
-
-public:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))

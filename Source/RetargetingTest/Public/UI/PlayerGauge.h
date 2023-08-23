@@ -9,6 +9,8 @@
 /**
  * 
  */
+
+// 체력바클래스를 하나로 통합한다음. 타입을 통해 다르게 업데이트하는건 ? 
 class UProgressBar;
 class ACharacterBase;
 UCLASS()
@@ -20,7 +22,6 @@ public:
 	void UpdateHPWidget(float NewHPPercent, float OldHPPercent);
 	void UpdateStaminaWidget(float NewStamPercent, float OldStamPercent);
 	void SetCharacter(ACharacterBase* NewPlayer);
-
 	
 	UFUNCTION(BlueprintCallable)
 	void Init();

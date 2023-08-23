@@ -8,10 +8,10 @@
 #include "Component/WeaponCollisionComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Materials/Material.h"
-#include "Engine/DamageEvents.h"
 
 #include "RetargetingTest/Public/Monster/BaseMonsterAnimInstance.h"
 #include "UI/MonsterGauge.h"
+#include "Weapon/BaseWeaponInstance.h"
 
 ABaseMonster::ABaseMonster()
 {
@@ -26,8 +26,8 @@ ABaseMonster::ABaseMonster()
 	HPWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPWidgetComponent"));
 	HPWidgetComponent->SetupAttachment(RootComponent);
 
-	WeaponCollisionComponent=CreateDefaultSubobject<UWeaponCollisionComponent>(TEXT("WeaponCollisionComponent"));
-
+	TargetWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("TargetWidgetComponent"));
+	TargetWidgetComponent->SetupAttachment(GetMesh());
 }
 
 /**
@@ -45,7 +45,7 @@ void ABaseMonster::PostInitializeComponents()
 
 void ABaseMonster::ToggleWeaponCollision_Implementation(bool IsEnable)
 {
-	WeaponCollisionComponent->SetCollisionEnable(IsEnable);
+	WeaponInstance->GetCollisionComponent().Get()->SetCollisionEnable(IsEnable);
 }
 
 UAnimMontage* ABaseMonster::GetHitReaction_Implementation(EHitDirection HitDirection)
@@ -65,6 +65,16 @@ UAnimMontage* ABaseMonster::GetHitReaction_Implementation(EHitDirection HitDirec
 	}
 }
 
+void ABaseMonster::OnTargeted_Implementation(bool bIsTargeted)
+{
+	TargetWidgetComponent->SetVisibility(bIsTargeted);
+}
+
+bool ABaseMonster::CanBeTargeted_Implementation()
+{
+	return true;
+}
+
 
 /**
  * 몬스터마다 HPBarWidget은 존재하나. WidgetComponent는 일반몬스터에만 존재합니다(몬스터의 위에 체력바를 보여주기 위하여). 
@@ -77,11 +87,7 @@ void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 		const float OldHealthPercent=Data.OldValue/EnemyAttributesSet->GetMaxHealth();
 	
 		HPBarWidget->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
-
-		if(HPWidgetComponent)
-		{
-			HPWidgetComponent->UpdateWidget();
-		}
+		HPWidgetComponent->UpdateWidget();
 		// if(EnemyAttributesSet->GetHealth()<=0)
 		// {
 		// 	SetActorHiddenInGame(true);
@@ -106,48 +112,35 @@ TObjectPtr<UBehaviorTree> ABaseMonster::GetBehaviorTree() const
 void ABaseMonster::BeginPlay()
 {
 	Super::BeginPlay();
-	if(!EnemyAttributesSet)
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Attributes not vaild"));
-	}
-	if(AbilitySystemComponent)
-	{
-		if(EnemyAttributesSet)
-		{
-			HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(EnemyAttributesSet->GetHealthAttribute()).AddUObject(this,&ABaseMonster::HealthChange);
-		}
-	}
 	
-	if(HPWidgetComponent)
-	{
-		if(HPWidgetComponent->GetWidget())
-		{
-			HPBarWidget=Cast<UMonsterGauge>(HPWidgetComponent->GetWidget());
-		}
-	}
-	else
-	{
-		//HPBarWidget=Cast<UMonsterGauge>(CreateWidget(GetController(),HpWidgetClass));
-	}
-	
-	if(HPBarWidget.IsValid())
-	{
-		HPBarWidget->UpdateHPWidget(1.0f,1.0f);
-	}
+		
+	HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(EnemyAttributesSet->GetHealthAttribute()).AddUObject(this,&ABaseMonster::HealthChange);
 	mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
+	
+	if(HPWidgetComponent->GetWidget())
+	{
+		HPBarWidget=Cast<UMonsterGauge>(HPWidgetComponent->GetWidget());
+		if(HPBarWidget.IsValid())
+		{
+			HPBarWidget->UpdateHPWidget(1.0f,1.0f);
+		}
+	}
+	
+	// TargetWidgetComponent->SetWidgetClass(TargetWidgetClass);
+	// TargetWidgetComponent->SetVisibility(false);
+	
+	// Weapon 클래스로 Weapon을 스폰 및 무기가 가지고 있는 어빌리티를 추가해줍니다.
+	if(WeaponClass)
+	{
+		const FActorSpawnParameters SpawnInfo;
+		WeaponInstance=GetWorld()->SpawnActor<ABaseWeaponInstance>(WeaponClass,GetActorLocation(),GetActorRotation(),SpawnInfo);
+		WeaponInstance->SetOwner(this);
+		WeaponInstance->AddAbilities();
+		WeaponInstance->OnEquipped();
+	}
 }
 
-/**
- * 몬스터의 데미지 피격 함수입니다. 피격 애니메이션을 실행하고, 체력을 감소합니다.
- * 스탯컴포넌트의 GetDamaged를 통해 Hp를 조절합니다.
- * @param DamageAmount - 받는 데미지의 양입니다. 플레이어의 공격력이 전달됩니다.
- */
-float ABaseMonster::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
-	AActor* DamageCauser)
-{
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
-}
+
 
 void ABaseMonster::InitializeAttributes()
 {
