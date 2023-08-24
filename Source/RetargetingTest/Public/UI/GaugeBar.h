@@ -22,12 +22,15 @@ class RETARGETINGTEST_API UGaugeBar : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	UGaugeBar(EGaugeType Type);
-
-	void UpdateWidget();
-
+	void UpdateWidget(float NewPercent, float OldPercent);
+	void SetType(EGaugeType Type);
+	void SetCharacter(ACharacter* NewCharacter);
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UProgressBar> ProgressBar;
 private:
 	EGaugeType mType;
+
+	UPROPERTY()
+	ACharacter* mCharacter;
 };

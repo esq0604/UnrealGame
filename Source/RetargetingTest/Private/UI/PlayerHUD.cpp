@@ -6,8 +6,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
 #include "RetargetingTest/Public/UI/Inventory.h"
-#include "RetargetingTest/Public/UI/PlayerGauge.h"
 #include "RetargetingTest/Public/UI/QuickSlot.h"
+#include "UI/GaugeBar.h"
 
 
 /**
@@ -20,8 +20,8 @@ void UPlayerHUD::Init()
 	if(Player!=nullptr)
 	{
 		//Gauge->BindActorStat(Character->GetStatComponent());
-		Gauge->SetCharacter(Player);
-		Gauge->Init();
+		HPGauge->SetCharacter(Player);
+		StaminaGauge->SetCharacter(Player);
 		
 		QuickSlot->SetCharacter(Player);
 		QuickSlot->Init();
@@ -38,9 +38,14 @@ void UPlayerHUD::NativeConstruct()
 
 }
 
-UPlayerGauge* UPlayerHUD::GetGauge() const
+UGaugeBar* UPlayerHUD::GetGauge(EGaugeType Type) const
 {
-	return Gauge;
+	if(Type==EGaugeType::HP)
+		return HPGauge;
+	else if(Type == EGaugeType::Stamina)
+		return StaminaGauge;
+
+	return nullptr;
 }
 
 UQuickSlot* UPlayerHUD::GetQuickSlot() const
@@ -53,9 +58,18 @@ UInventory* UPlayerHUD::GetInventory() const
 	return Inventory;
 }
 
-void UPlayerHUD::SetGauge(UPlayerGauge* NewGauge)
+void UPlayerHUD::SetGauge(UGaugeBar* NewGauge,EGaugeType Type)
 {
-	Gauge=NewGauge;
+	if(Type == EGaugeType::HP)
+	{
+		HPGauge=NewGauge;
+		HPGauge->SetType(Type);
+	}
+	else if(Type == EGaugeType::Stamina)
+	{
+		StaminaGauge=NewGauge;
+		StaminaGauge->SetType(Type);
+	}	
 }
 
 void UPlayerHUD::SetQuickSlot(UQuickSlot* NewQuickSlot)
@@ -69,9 +83,9 @@ void UPlayerHUD::SetInventory(UInventory* NewInventory)
 }
 
 
-void UPlayerHUD::SetCharacter(ACharacterBase* NewPlayer)
+void UPlayerHUD::SetCharacter(ACharacter* NewPlayer)
 {
-	Player = NewPlayer;
+	Player = Cast<ACharacterBase>(NewPlayer);
 }
 
 /**

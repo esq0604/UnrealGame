@@ -187,9 +187,9 @@ UPlayerHUD* AMyPlayerController::GetPlayerHUD() const
 	}
 }
 
-UPlayerGauge* AMyPlayerController::GetGauge() const
+UGaugeBar* AMyPlayerController::GetGauge(EGaugeType Type) const
 {
-	return PlayerHUD->GetGauge();
+	return PlayerHUD->GetGauge(Type);
 }
 
 void AMyPlayerController::Block(const FInputActionValue& Value)

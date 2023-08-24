@@ -8,6 +8,7 @@
 #include "GameFramework/PlayerController.h"
 #include "MyPlayerController.generated.h"
 
+class UGaugeBar;
 struct FGameplayTagContainer;
 class UCharacterAbilitySystemComponent;
 class UInputDataAsset;
@@ -16,6 +17,7 @@ class UBaseStateManagerComponent;
 class UPlayerHUD;
 class UPlayerGauge;
 struct FInputActionValue;
+enum class EGaugeType;
 /**
  * 
  */
@@ -46,7 +48,7 @@ public:
 	void BlockEnd_Implementation(const FInputActionValue& Value);
 	void TargetLook(const FInputActionValue& Value);
 	UPlayerHUD* GetPlayerHUD() const;
-	UPlayerGauge* GetGauge() const;
+	UGaugeBar* GetGauge(EGaugeType Type) const;
 	//bool 변수가 아닌 나중에 EquipState, Ability에서 수정되어야합니다.
 	bool IsEquipWeapon=false;
 	

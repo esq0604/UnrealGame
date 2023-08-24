@@ -3,14 +3,22 @@
 
 #include "UI/GaugeBar.h"
 
-UGaugeBar::UGaugeBar(EGaugeType Type)
+#include "Components/ProgressBar.h"
+
+
+
+void UGaugeBar::UpdateWidget(float NewPercent, float OldPercent)
 {
-	
-	//ProgressBar=CreateDefaultSubobject(TEXT(""))
-	mType =Type;
+	ProgressBar->SetPercent(NewPercent);
 }
 
-void UGaugeBar::UpdateWidget()
+void UGaugeBar::SetType(EGaugeType Type)
 {
-	
+	mType=Type;
 }
+
+void UGaugeBar::SetCharacter(ACharacter* NewCharacter)
+{
+	mCharacter=NewCharacter;
+}
+
