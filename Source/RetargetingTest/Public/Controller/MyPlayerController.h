@@ -15,7 +15,6 @@ class UInputDataAsset;
 class UInputMappingContext;
 class UBaseStateManagerComponent;
 class UPlayerHUD;
-class UPlayerGauge;
 struct FInputActionValue;
 enum class EGaugeType;
 /**

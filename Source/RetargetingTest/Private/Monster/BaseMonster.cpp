@@ -81,11 +81,16 @@ bool ABaseMonster::CanBeTargeted_Implementation()
  */
 void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 {
-	if(Data.NewValue>=0.0f)
+	if(Data.NewValue <= 0.f)
+	{
+		// 죽음 설정
+		HPBarWidget->UpdateHPWidget(0.f,0.f);
+		HPWidgetComponent->UpdateWidget();
+	}
+	else
 	{
 		const float NewHealthPercent=(Data.NewValue/EnemyAttributesSet->GetMaxHealth());
 		const float OldHealthPercent=Data.OldValue/EnemyAttributesSet->GetMaxHealth();
-	
 		HPBarWidget->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
 		HPWidgetComponent->UpdateWidget();
 		// if(EnemyAttributesSet->GetHealth()<=0)
@@ -96,11 +101,6 @@ void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 		// 	//MonsterDieDelegate.Execute(this);
 		// }
 	}
-	else
-	{
-		
-	}
-
 }
 
 TObjectPtr<UBehaviorTree> ABaseMonster::GetBehaviorTree() const

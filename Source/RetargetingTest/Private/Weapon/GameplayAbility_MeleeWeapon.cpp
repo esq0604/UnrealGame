@@ -32,7 +32,6 @@ void UGameplayAbility_MeleeWeapon::ActivateAbility(const FGameplayAbilitySpecHan
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	UE_LOG(LogTemp,Warning,TEXT("MeleeWeapon Activate"));
 	CommitAbility(Handle,ActorInfo,ActivationInfo);
 
 	mAbilitySpecHandle = Handle;

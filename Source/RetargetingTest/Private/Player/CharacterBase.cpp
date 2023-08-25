@@ -76,20 +76,17 @@ void ACharacterBase::BeginPlay()
 {
 	// Call the base class
 	Super::BeginPlay();
-	UE_LOG(LogTemp,Warning,TEXT("C++ BeginPlay"));
 	FActorSpawnParameters SpawnInfo;
 	WeaponInstance=GetWorld()->SpawnActor<ABaseWeaponInstance>(WeaponClass,GetActorLocation(),GetActorRotation(),SpawnInfo);
 	
 	if(WeaponInstance!=nullptr)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Weapon Instance is valid"));
 		WeaponInstance->SetOwner(this);
 		WeaponInstance->AddAbilities();
 		WeaponInstance->OnEquipped();
 	}
 	if(!Attributes)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Player Attributes is not valid"));
 	}
 }
 

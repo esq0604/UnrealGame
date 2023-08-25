@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MonsterGauge.generated.h"
 
+class UGaugeBar;
 /**
  * 
  */
@@ -28,7 +29,7 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))
-	TObjectPtr<UProgressBar> HpProgressBar;
+	TObjectPtr<UGaugeBar> HPGaugeBar;
 private:
 	float CurrentTime=0;
 	float LerpTime=1.0f;

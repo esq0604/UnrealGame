@@ -12,33 +12,34 @@
 
 AEnemyAIController::AEnemyAIController()
 {
-	SetPerceptionSystem();
+	//SetPerceptionSystem();
+	BTComp=CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BTComp"));
 }
 
 void AEnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-	BaseEnemy=Cast<ABaseMonster>(InPawn);
-
-	if(Blackboard)
-	{
-		Blackboard->InitializeBlackboard(*BehaviorTree->GetBlackboardAsset());
-	}
+	OwnerEnemy=Cast<ABaseMonster>(InPawn);
+	BehaviorTree = OwnerEnemy->GetBehaviorTree();
+	UBlackboardComponent* BlackboardComponent = Blackboard.Get();
+	UseBlackboard(BBAsset,BlackboardComponent);
+	Blackboard=BlackboardComponent;
+	BTComp->StartTree(*BehaviorTree);
 }
 
 void AEnemyAIController::BeginPlay()
 {
-	//AIPerceptionCompnent->OnPerceptionUpdated.AddDynamic(this,&AEnemyAIController::OnPerceptionUpdate);
-	UE_LOG(LogTemp,Warning,TEXT("RunBehaviorTree"));
-	RunBehaviorTree(BehaviorTree);
-	
+	//RunBehaviorTree(BehaviorTree);
+
 }
 
-void AEnemyAIController::OnPerceptionUpdate(AActor* UpdatedActor,const FAIStimulus Simulus)
+void AEnemyAIController::OnPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus)
 {
+		
 	if(Blackboard)
 	{
-		Blackboard->SetValueAsObject(FName("Target"),UpdatedActor);
+		Blackboard->SetValueAsObject(FName("TargetActor"),Actor);
+		TargetActor=Actor;
 	}
 }
 
@@ -46,8 +47,8 @@ void AEnemyAIController::SetPerceptionSystem()
 {
 	SightConfig = CreateOptionalDefaultSubobject<UAISenseConfig_Sight>("Sight Config");
 	DamageConfig = CreateOptionalDefaultSubobject<UAISenseConfig_Damage>("Damage Config");
-	AIPerceptionCompnent=CreateDefaultSubobject<UAIPerceptionComponent>("AIPerceptionComponent");
-	SetPerceptionComponent(*AIPerceptionCompnent);
+	AIPerceptionComponent=CreateDefaultSubobject<UAIPerceptionComponent>("AIPerceptionComponent");
+	SetPerceptionComponent(*AIPerceptionComponent);
 
 	SightConfig->SightRadius=AISightRadius;
 	SightConfig->LoseSightRadius=AILoseSightRadius;

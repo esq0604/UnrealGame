@@ -21,6 +21,8 @@ ABaseWeaponInstance::ABaseWeaponInstance()
 	WeaponStaticMeshComponent=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
 	CollisionComp=CreateDefaultSubobject<UWeaponCollisionComponent>(TEXT("CollisionComp"));
 	AbilitySystemComponent=CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComp"));
+
+	SetRootComponent(WeaponStaticMeshComponent);
 }
 
 UAbilitySystemComponent* ABaseWeaponInstance::GetAbilitySystemComponent() const

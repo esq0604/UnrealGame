@@ -9,7 +9,6 @@
 #include "Attribute/CharacterAttributeSetBase.h"
 #include "Controller/MyPlayerController.h"
 #include "UI/GaugeBar.h"
-#include "UI/PlayerGauge.h"
 #include "UI/PlayerHUD.h"
 
 // Sets default values

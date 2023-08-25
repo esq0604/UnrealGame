@@ -14,7 +14,6 @@ class ACharacterBase;
  */
 class UQuickSlot;
 class UInventory;
-class UPlayerGauge;
 enum class EGaugeType;
 
 UCLASS()

@@ -10,6 +10,9 @@
 class UAISenseConfig_Damage;
 class ABaseMonster;
 class UAISenseConfig_Sight;
+class UBehaviorTreeComponent;
+class UBehaviorTree;
+class UBlackboardData;
 struct FAIStimulus;
 /**
  * 
@@ -26,25 +29,32 @@ protected:
 	
 	void SetPerceptionSystem();
 	UFUNCTION()
-	void OnPerceptionUpdate(AActor* UpdatedActor,const FAIStimulus Simulus);
+	void OnPerceptionUpdate(AActor* Actor, FAIStimulus Stimulus);
 
 protected:
-	TWeakObjectPtr<ABaseMonster> BaseEnemy;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="AIController")
+	TWeakObjectPtr<ABaseMonster> OwnerEnemy;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="AIController | Component")
-	TObjectPtr<UAIPerceptionComponent> AIPerceptionCompnent;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="AIController | Component",meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UAIPerceptionComponent> AIPerceptionComponent;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="AIController")
 	TWeakObjectPtr<AActor> TargetActor;
 
-	UPROPERTY(EditInstanceOnly,BlueprintReadWrite,Category="AIController | Perception Config")
+	UPROPERTY(EditInstanceOnly,BlueprintReadWrite,Category="AIController | Perception Config",meta = (AllowPrivateAccess = "true"))
 	TWeakObjectPtr<UAISenseConfig_Sight> SightConfig;
 
-	UPROPERTY(EditInstanceOnly,BlueprintReadWrite,Category="AIController | Perception Config")
+	UPROPERTY(EditInstanceOnly,BlueprintReadWrite,Category="AIController | Perception Config",meta = (AllowPrivateAccess = "true"))
 	TWeakObjectPtr<UAISenseConfig_Damage> DamageConfig;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AIController | AI", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UBehaviorTree> BehaviorTree;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AIController | AI", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UBlackboardData> BBAsset;
+
+	TObjectPtr<UBehaviorTreeComponent> BTComp;
+
 public:
 
 	//SightConfig Properties Init 
