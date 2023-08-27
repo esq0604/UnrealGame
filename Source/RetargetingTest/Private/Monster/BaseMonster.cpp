@@ -45,11 +45,13 @@ void ABaseMonster::PostInitializeComponents()
 
 void ABaseMonster::ToggleWeaponCollision_Implementation(bool IsEnable)
 {
+	//ICombat::ToggleWeaponCollision_Implementation(IsEnable);
 	WeaponInstance->GetCollisionComponent().Get()->SetCollisionEnable(IsEnable);
 }
 
 UAnimMontage* ABaseMonster::GetHitReaction_Implementation(EHitDirection HitDirection)
 {
+	//ICombat::GetHitReaction_Implementation(HitDirection);
 	switch (HitDirection)
 	{
 	case EHitDirection::Forward:
@@ -103,9 +105,9 @@ void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 	}
 }
 
-TObjectPtr<UBehaviorTree> ABaseMonster::GetBehaviorTree() const
+UBehaviorTree* ABaseMonster::GetBehaviorTree() const
 {
-	return BehaviorTree;
+	return BehaviorTreeAsset;
 }
 
 // Called when the game starts or when spawned
@@ -126,8 +128,8 @@ void ABaseMonster::BeginPlay()
 		}
 	}
 	
-	// TargetWidgetComponent->SetWidgetClass(TargetWidgetClass);
-	// TargetWidgetComponent->SetVisibility(false);
+	TargetWidgetComponent->SetWidgetClass(TargetWidgetClass);
+	TargetWidgetComponent->SetVisibility(false);
 	
 	// Weapon 클래스로 Weapon을 스폰 및 무기가 가지고 있는 어빌리티를 추가해줍니다.
 	if(WeaponClass)

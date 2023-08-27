@@ -6,7 +6,6 @@
 #include "Abilities/GameplayAbilityTypes.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Components/SceneComponent.h"
-#include "Interfaces/ITargetDevice.h"
 
 
 // Sets default values for this component's properties
@@ -24,7 +23,7 @@ void UWeaponCollisionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	//커스텀 오브젝트 타입을 가져와서 추가해주기. 
-	mTraceObjectType.Add(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel3));
+	//TraceObjectType.Add(UEngineTypes::ConvertToObjectType(ECC_GameTraceChannel3));
 	// ...
 }
 
@@ -35,9 +34,9 @@ void UWeaponCollisionComponent::CollisionEnable()
 {
 	TArray<FHitResult> HitResults;
 
-	const FVector WeaponStartLoc =  mCollisionMeshComponent->GetSocketLocation(mWeaponStartName);
-	const FVector WeaponEndLoc = mCollisionMeshComponent->GetSocketLocation(mWeaponEndName);
-	UKismetSystemLibrary::SphereTraceMultiForObjects(GetWorld(),WeaponStartLoc,WeaponEndLoc,mTraceRadius,mTraceObjectType,false,mTraceActorToIgnore,EDrawDebugTrace::ForDuration,HitResults,true,FColor::Red,FColor::Green,mDebugTime);
+	const FVector WeaponStartLoc =  CollisionMeshComponent->GetSocketLocation(WeaponStartName);
+	const FVector WeaponEndLoc = CollisionMeshComponent->GetSocketLocation(WeaponEndName);
+	UKismetSystemLibrary::SphereTraceMultiForObjects(GetWorld(),WeaponStartLoc,WeaponEndLoc,TraceRadius,TraceObjectType,false,TraceActorToIgnore,EDrawDebugTrace::ForDuration,HitResults,true,FColor::Red,FColor::Green,DebugTime);
 	
 	for(FHitResult hitResult : HitResults)
 	{
@@ -66,12 +65,12 @@ void UWeaponCollisionComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 
 void UWeaponCollisionComponent::SetWeaponStart(FName WeaponStart)
 {
-	mWeaponStartName=WeaponStart;
+	WeaponStartName=WeaponStart;
 }
 
 void UWeaponCollisionComponent::SetWeaponEnd(FName WeaponEnd)
 {
-	mWeaponEndName=WeaponEnd;
+	WeaponEndName=WeaponEnd;
 }
 
 void UWeaponCollisionComponent::SetCollisionEnable(bool CollisionEnable)
@@ -86,7 +85,7 @@ void UWeaponCollisionComponent::SetCollisionEnable(bool CollisionEnable)
 
 void UWeaponCollisionComponent::SetCollisionMeshComp(UPrimitiveComponent* CollisionMesh)
 {
-	mCollisionMeshComponent=CollisionMesh;
+	CollisionMeshComponent=CollisionMesh;
 }
 
 /**

@@ -24,17 +24,19 @@ public:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void AbilityFinish();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void ApplyGameplayDamageEffect(FGameplayEventData Payload);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetHitResult(const FHitResult& HitResult);
 protected:
+	UFUNCTION(BlueprintCallable)
 	void ActiveMontage();
-	void WaitGameplayTagForApplyDamageEffect();
+	UFUNCTION(BlueprintCallable)
+	void WaitGameplayEventForApplyDamageEffect();
 protected:
 	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;

@@ -32,19 +32,19 @@ void UGameplayAbility_MeleeWeapon::ActivateAbility(const FGameplayAbilitySpecHan
 	const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	CommitAbility(Handle,ActorInfo,ActivationInfo);
-
-	mAbilitySpecHandle = Handle;
-	mActorInfo = ActorInfo;
-	mActivationInfo=ActivationInfo;
-
-
-	
-	//Play Attack Montage
-	ActiveMontage();
-	
-	//Wait GameplayEvent 
-	WaitGameplayTagForApplyDamageEffect();
+	// CommitAbility(Handle,ActorInfo,ActivationInfo);
+	//
+	// mAbilitySpecHandle = Handle;
+	// mActorInfo = ActorInfo;
+	// mActivationInfo=ActivationInfo;
+	//
+	//
+	//
+	// //Play Attack Montage
+	// ActiveMontage();
+	//
+	// //Wait GameplayEvent 
+	// WaitGameplayEventForApplyDamageEffect();
 }
 
 void UGameplayAbility_MeleeWeapon::EndAbility(const FGameplayAbilitySpecHandle Handle,
@@ -65,10 +65,11 @@ void UGameplayAbility_MeleeWeapon::AbilityFinish()
  */
 void UGameplayAbility_MeleeWeapon::ApplyGameplayDamageEffect(FGameplayEventData Payload)
 {
+	UE_LOG(LogTemp,Warning,TEXT("ApplyEffect"));
 	AActor* TargetActor = const_cast<AActor*>(Payload.Target.Get());
 	UAbilitySystemComponent* TargetAbilityComp = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(TargetActor);
 	
-	check(TargetAbilityComp);
+	ensure(TargetAbilityComp);
 	//const FGameplayAbilityTargetDataHandle TargetDataHandle=UAbilitySystemBlueprintLibrary::AbilityTargetDataFromActor(TargetActor);
 	
 	UAbilitySystemComponent* OwnerActorAbilityComp = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwningActorFromActorInfo());
@@ -92,7 +93,7 @@ void UGameplayAbility_MeleeWeapon::ActiveMontage()
 	MontageProxy->Activate();
 }
 
-void UGameplayAbility_MeleeWeapon::WaitGameplayTagForApplyDamageEffect()
+void UGameplayAbility_MeleeWeapon::WaitGameplayEventForApplyDamageEffect()
 {
 	UAbilityTask_WaitGameplayEvent* WaitGameplayEvent=UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this,FGameplayTag::RequestGameplayTag("Ability.Attack.Melee"),nullptr,true,true);
 	WaitGameplayEvent->EventReceived.AddDynamic(this,&UGameplayAbility_MeleeWeapon::ApplyGameplayDamageEffect);

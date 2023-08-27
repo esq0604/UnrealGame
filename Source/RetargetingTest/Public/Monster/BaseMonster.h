@@ -30,7 +30,7 @@ struct FDamageEvent;
 UCLASS()
 class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface,public ICombat, public ITargeting
 {
-	GENERATED_BODY()
+	GENERATED_BODY() //Generated.h생성 매크로
 
 public:
 	// Sets default values for this character's properties
@@ -43,16 +43,17 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	void SpawnInit();
+	UBehaviorTree* GetBehaviorTree() const;
+
 	
-	TObjectPtr<UBehaviorTree> GetBehaviorTree() const;
+	// ICombat
+	virtual void ToggleWeaponCollision_Implementation(bool IsEnable) override;
+	virtual UAnimMontage* GetHitReaction_Implementation(EHitDirection HitDirection) override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 
-	// ICombat
-	virtual void ToggleWeaponCollision_Implementation(bool IsEnable) override;
-	virtual UAnimMontage* GetHitReaction_Implementation(EHitDirection HitDirection) override;
 
 	// ITargeting
 	virtual void OnTargeted_Implementation(bool bIsTargeted) override;
@@ -124,8 +125,9 @@ protected:
 	TObjectPtr<ABaseWeaponInstance> WeaponInstance;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize | Weapon")
 	TSubclassOf<ABaseWeaponInstance> WeaponClass;
-
-	
+	// AI
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize | AI")
+	UBehaviorTree* BehaviorTreeAsset;
 
 	/*
 	 * 몬스터 적 액터정보
@@ -135,8 +137,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true), Category="EnemyBase | Combat")
 	TObjectPtr<AActor> TargetActor;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize | AI")
-	TObjectPtr<UBehaviorTree> BehaviorTree;
+
 	
 	FDelegateHandle HealthChangeDelegateHandle;
 	FDelegateHandle MaxHealthChangeDelegateHandle;

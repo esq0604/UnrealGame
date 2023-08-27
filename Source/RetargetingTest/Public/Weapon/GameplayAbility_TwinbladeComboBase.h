@@ -15,6 +15,16 @@ class RETARGETINGTEST_API UGameplayAbility_TwinbladeComboBase : public UGameplay
 {
 	GENERATED_BODY()
 
+public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+	UFUNCTION()
+	void NextAttackEventReceived(FGameplayEventData Payload);
 	
+	void MotionWarp();
+protected:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	bool IsFirstAttack;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
+	bool DoMotionWarp;
 };

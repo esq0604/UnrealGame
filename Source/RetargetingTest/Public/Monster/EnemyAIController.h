@@ -48,13 +48,15 @@ protected:
 	TWeakObjectPtr<UAISenseConfig_Damage> DamageConfig;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AIController | AI", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UBehaviorTree> BehaviorTree;
+	UBehaviorTree* BehaviorTree;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AIController | AI", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UBlackboardData> BBAsset;
+	UBlackboardData* BBAsset;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AIController | AI", meta = (AllowPrivateAccess = "true"))
+	UBehaviorTreeComponent* BTComp;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "AIController | AI", meta = (AllowPrivateAccess = "true"))
 
-	TObjectPtr<UBehaviorTreeComponent> BTComp;
-
+	UBlackboardComponent* BBComp;
 public:
 
 	//SightConfig Properties Init 

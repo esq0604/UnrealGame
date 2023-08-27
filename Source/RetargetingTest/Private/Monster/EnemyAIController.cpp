@@ -14,17 +14,22 @@ AEnemyAIController::AEnemyAIController()
 {
 	//SetPerceptionSystem();
 	BTComp=CreateDefaultSubobject<UBehaviorTreeComponent>(TEXT("BTComp"));
+	BBComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("BlackBoardComp"));
+
 }
 
 void AEnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
+	UE_LOG(LogTemp,Warning,TEXT("OnPossess"));
+	
 	OwnerEnemy=Cast<ABaseMonster>(InPawn);
 	BehaviorTree = OwnerEnemy->GetBehaviorTree();
 	UBlackboardComponent* BlackboardComponent = Blackboard.Get();
-	UseBlackboard(BBAsset,BlackboardComponent);
-	Blackboard=BlackboardComponent;
-	BTComp->StartTree(*BehaviorTree);
+	UseBlackboard(BehaviorTree->GetBlackboardAsset(),BlackboardComponent);
+	RunBehaviorTree(BehaviorTree);
+	this->Blackboard=BlackboardComponent;
+
 }
 
 void AEnemyAIController::BeginPlay()

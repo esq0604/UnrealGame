@@ -8,7 +8,7 @@
 
 struct FGameplayEventData;
 
-DECLARE_DELEGATE_TwoParams(FOnHitSignature,FGameplayEventData&, const FHitResult&)
+DECLARE_DELEGATE_TwoParams(FOnHitSignature,FGameplayEventData, const FHitResult)
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RETARGETINGTEST_API UWeaponCollisionComponent : public UActorComponent
@@ -47,25 +47,26 @@ public:
 protected:
 	//	Draw Trace 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Collision|Initialize")
-	float mTraceRadius{20.f};
+	float TraceRadius{20.f};
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Collision|Initialize")
-	float mDebugTime{5.0f};
+	float DebugTime{5.0f};
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Collision|Initialize")
-	FName mWeaponStartName;
+	FName WeaponStartName;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Collision|Initialize")
-	FName mWeaponEndName;
+	FName WeaponEndName;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Collision|Initialize")
-	TArray<AActor*> mTraceActorToIgnore;
+	TArray<AActor*> TraceActorToIgnore;
+	UPROPERTY()
+	TObjectPtr<UPrimitiveComponent> CollisionMeshComponent;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Collision|Initialize")
-	TObjectPtr<UPrimitiveComponent> mCollisionMeshComponent;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Collision|Initialize")
-	TArray<TEnumAsByte<EObjectTypeQuery>> mTraceObjectType;
+	TArray<TEnumAsByte<EObjectTypeQuery>> TraceObjectType;
 	FHitResult LastHit;
 
 private:
 	//	Collision Enable
 	bool mCollisionEnable;
 	//	Check Trace Actor
+	UPROPERTY()
 	TArray<AActor*> AlreadyHitActor;
 	
 };

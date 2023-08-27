@@ -10,9 +10,11 @@ void UAnimNotifyState_WeaponCollisionToggle::NotifyBegin(USkeletalMeshComponent*
                                                          float TotalDuration, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
-	if(UKismetSystemLibrary::DoesImplementInterface(MeshComp->GetOwner(),UCombat::StaticClass()))
+	//캐스팅을 통해 인터페이스를 상속받았는지 확인합니다.
+	ICombat* CombatInterface = Cast<ICombat>(MeshComp->GetOwner());
+	if(CombatInterface)
 	{
-		Cast<ICombat>(MeshComp->GetOwner())->Execute_ToggleWeaponCollision(MeshComp->GetOwner(),true);
+		CombatInterface->ToggleWeaponCollision_Implementation(true);
 	}
 }
 
@@ -20,8 +22,10 @@ void UAnimNotifyState_WeaponCollisionToggle::NotifyEnd(USkeletalMeshComponent* M
 	const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
-	if(UKismetSystemLibrary::DoesImplementInterface(MeshComp->GetOwner(),UCombat::StaticClass()))
+	//캐스팅을 통해 인터페이스를 상속받았는지 확인합니다.
+	ICombat* CombatInterface = Cast<ICombat>(MeshComp->GetOwner());
+	if(CombatInterface)
 	{
-		Cast<ICombat>(MeshComp->GetOwner())->Execute_ToggleWeaponCollision(MeshComp->GetOwner(),false);
+		CombatInterface->ToggleWeaponCollision_Implementation(false);
 	}
 }

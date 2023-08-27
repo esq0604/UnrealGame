@@ -98,11 +98,13 @@ void ACharacterBase::Tick(float DeltaSeconds)
 
 void ACharacterBase::ToggleWeaponCollision_Implementation(bool IsEnable)
 {
+	//ICombat::ToggleWeaponCollision_Implementation(IsEnable);
 	WeaponInstance->GetCollisionComponent().Get()->SetCollisionEnable(IsEnable);
 }
 
 UAnimMontage* ACharacterBase::GetHitReaction_Implementation(EHitDirection HitDirection)
 {
+	//ICombat::GetHitReaction_Implementation(HitDirection);
 	switch (HitDirection)
 	{
 	case EHitDirection::Forward:
@@ -255,8 +257,8 @@ if (MovementInputVector.IsZero())
 }
 
 const FVector PlayerLoc = GetActorLocation();
-const FVector ForwardDist = GetActorForwardVector() *100.f;
-const FVector TargetLoc = (MovementInputVector.GetSafeNormal() * ForwardDist) + PlayerLoc;
+//const FVector ForwardDist = GetActorForwardVector() *100.f;
+const FVector TargetLoc = (MovementInputVector.GetSafeNormal() * 100.f) + PlayerLoc;
 const FRotator TargetRotator = UKismetMathLibrary::MakeRotFromX(MovementInputVector);
 
 MotionWarpComponent->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("Warp"), TargetLoc, TargetRotator);

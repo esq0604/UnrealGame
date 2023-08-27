@@ -3,7 +3,6 @@
 
 #include "RetargetingTest/Public/Weapon/BaseWeaponInstance.h"
 
-#include "Ability/CharacterGameplayAbility.h"
 #include "Component/WeaponCollisionComponent.h"
 #include "RetargetingTest/Public/Controller/MyPlayerController.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
@@ -102,13 +101,15 @@ void ABaseWeaponInstance::PostInitializeComponents()
  * @param EventData : Payload Data입니다.
  * @param HitResult : EffectContext에 넣어줄 HitReulst입니다. GameplayCue에서 타겟과 소스액터의 방향을 구하기 위해 사용합니다.
  */
-void ABaseWeaponInstance::OnHitDelegateFunction(FGameplayEventData& EventData,const FHitResult& HitResult)
+void ABaseWeaponInstance::OnHitDelegateFunction(FGameplayEventData EventData,const FHitResult HitResult)
 {
 	TArray<FGameplayAbilitySpec*> StoreSpec;
 
 	for(const FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
 	{
 		const FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromHandle(SpecHandle);
+
+		//어빌리티가 공격어빌리티 태그를 가지고있다면 GameplayEffect를 적용시키기 위한 정보를 담아서 GameplayEventData로 넘겨주게됩니다. 
 		if(Spec->Ability->AbilityTags==AttackAbilityTagContainer)
 		{
 			if(Spec->IsActive())

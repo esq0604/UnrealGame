@@ -53,7 +53,7 @@ public:
 	UStaticMeshComponent* GetWeaponStateMeshComponent() const {return WeaponStaticMeshComponent;}
 
 private:
-	void OnHitDelegateFunction(FGameplayEventData& EventData,const FHitResult& HitResult);
+	void OnHitDelegateFunction(FGameplayEventData EventData,const FHitResult HitResult);
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Weapon|")
@@ -78,7 +78,7 @@ protected:
 	UStaticMeshComponent* WeaponStaticMeshComponent;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	UStaticMesh* WeaponStaticMesh;
-
+	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="Weapon|Component")
 	TObjectPtr<UWeaponCollisionComponent> CollisionComp;
 
