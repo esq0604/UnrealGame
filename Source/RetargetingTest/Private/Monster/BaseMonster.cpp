@@ -46,7 +46,7 @@ void ABaseMonster::PostInitializeComponents()
 void ABaseMonster::ToggleWeaponCollision_Implementation(bool IsEnable)
 {
 	//ICombat::ToggleWeaponCollision_Implementation(IsEnable);
-	WeaponInstance->GetCollisionComponent().Get()->SetCollisionEnable(IsEnable);
+	WeaponInstance->GetCollisionComponent()->SetCollisionEnable(IsEnable);
 }
 
 UAnimMontage* ABaseMonster::GetHitReaction_Implementation(EHitDirection HitDirection)

@@ -99,7 +99,7 @@ void ACharacterBase::Tick(float DeltaSeconds)
 void ACharacterBase::ToggleWeaponCollision_Implementation(bool IsEnable)
 {
 	//ICombat::ToggleWeaponCollision_Implementation(IsEnable);
-	WeaponInstance->GetCollisionComponent().Get()->SetCollisionEnable(IsEnable);
+	WeaponInstance->GetCollisionComponent()->SetCollisionEnable(IsEnable);
 }
 
 UAnimMontage* ACharacterBase::GetHitReaction_Implementation(EHitDirection HitDirection)

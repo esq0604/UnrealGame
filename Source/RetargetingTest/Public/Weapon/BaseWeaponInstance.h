@@ -37,7 +37,7 @@ public:
 	//	Getter
 	FName GetWeaponTraceStartSocketName() const;
 	FName GetWeaponTraceEndSocketName() const; 
-	TWeakObjectPtr<UWeaponCollisionComponent> GetCollisionComponent() const;
+	UWeaponCollisionComponent* GetCollisionComponent() const;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -79,8 +79,8 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	UStaticMesh* WeaponStaticMesh;
 	
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="Weapon|Component")
-	TObjectPtr<UWeaponCollisionComponent> CollisionComp;
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="Weapon|Component")
+	TObjectPtr<UWeaponCollisionComponent> WeaponCollisionComp;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="Weapon|Abilities")
 	FGameplayTagContainer AttackAbilityTagContainer;

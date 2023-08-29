@@ -18,7 +18,10 @@ ABaseWeaponInstance::ABaseWeaponInstance()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	//PrimaryActorTick.bCanEverTick = true;
 	WeaponStaticMeshComponent=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
-	CollisionComp=CreateDefaultSubobject<UWeaponCollisionComponent>(TEXT("CollisionComp"));
+	WeaponCollisionComp=CreateDefaultSubobject<UWeaponCollisionComponent>(TEXT("WeaponCollisionComp"));
+	WeaponCollisionComp->OnHitDelegate.BindUObject(this,&ABaseWeaponInstance::OnHitDelegateFunction);
+
+
 	AbilitySystemComponent=CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComp"));
 
 	SetRootComponent(WeaponStaticMeshComponent);
@@ -77,9 +80,9 @@ FName ABaseWeaponInstance::GetWeaponTraceEndSocketName() const
 	return WeaponTraceEndSocketName;
 }
 
-TWeakObjectPtr<UWeaponCollisionComponent> ABaseWeaponInstance::GetCollisionComponent() const
+UWeaponCollisionComponent* ABaseWeaponInstance::GetCollisionComponent() const
 {
-	return CollisionComp;
+	return WeaponCollisionComp;
 }
 
 // Called when the game starts or when spawned
@@ -87,13 +90,12 @@ void ABaseWeaponInstance::BeginPlay()
 {
 	Super::BeginPlay();
 	WeaponStaticMeshComponent->SetStaticMesh(WeaponStaticMesh);
-	CollisionComp->SetCollisionMeshComp(WeaponStaticMeshComponent);
+	WeaponCollisionComp->SetCollisionMeshComp(WeaponStaticMeshComponent);
 }
 
 void ABaseWeaponInstance::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	CollisionComp->OnHitDelegate.BindUObject(this,&ABaseWeaponInstance::OnHitDelegateFunction);
 }
 
 /**
