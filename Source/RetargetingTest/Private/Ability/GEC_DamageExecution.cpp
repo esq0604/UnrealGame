@@ -51,8 +51,18 @@ void UGEC_DamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 	//변수와 태그를 사용하도록 게임플레이 이펙스펙을 가져옵니다.
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
-	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
+	TArray<FGameplayTag> Tags;
 
+	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
+	TargetTags->GetGameplayTagArray(Tags);
+	for(FGameplayTag Tag : Tags)
+	{
+		if(Tag==FGameplayTag::RequestGameplayTag("Ability.Parry"))
+		{
+			UE_LOG(LogTemp,Warning,TEXT("Parry In GEC"));
+			OutExecutionOutput.MarkGameplayCuesHandledManually();
+		}
+	}
 	
 	//Aggregator Evaluate Parameters used during  the attribute capture.
 	FAggregatorEvaluateParameters EvaluateParameters;

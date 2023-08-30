@@ -41,8 +41,8 @@ UCLASS(config=Game)
 class ACharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombat//, public IAttackable
 {
 	GENERATED_BODY()
-
-public:
+ 
+public: 
 	ACharacterBase();
 
 	UFUNCTION(BlueprintCallable)

@@ -112,18 +112,17 @@ void ABaseWeaponInstance::OnHitDelegateFunction(FGameplayEventData EventData,con
 		const FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromHandle(SpecHandle);
 
 		//어빌리티가 공격어빌리티 태그를 가지고있다면 GameplayEffect를 적용시키기 위한 정보를 담아서 GameplayEventData로 넘겨주게됩니다. 
-		if(Spec->Ability->AbilityTags==AttackAbilityTagContainer)
-		{
+		// if(Spec->Ability->AbilityTags==AttackAbilityTagContainer.HasTag())
+		// {
 			if(Spec->IsActive())
 			{
 				FGameplayEffectContextHandle EffectContextHandle = AbilitySystemComponent->MakeEffectContext();
 				EffectContextHandle.AddHitResult(HitResult);
-
 				EventData.ContextHandle=EffectContextHandle;
 				EventData.Instigator=GetOwner();
 				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(GetOwner(),FGameplayTag::RequestGameplayTag("Ability.Attack.Melee"),EventData);
 				return;
 			}
-		}
+		//}
 	}
 }

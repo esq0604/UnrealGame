@@ -6,8 +6,8 @@
 #include "UObject/Interface.h"
 #include "Combat.generated.h"
 
-UENUM()
-enum class EHitDirection
+UENUM(BlueprintType)
+enum class EHitDirection : uint8
 {
 	Forward,
 	Backward,

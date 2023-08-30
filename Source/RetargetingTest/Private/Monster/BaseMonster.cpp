@@ -174,7 +174,7 @@ void ABaseMonster::GiveDefaultAbilities()
 		//GiveAbility called with an invalid Ability Class
 		for(TSubclassOf<UGameplayAbility>& StartupAbility : DefaultAbilities)
 		{
-			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility.GetDefaultObject(),1,0));
+			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility.GetDefaultObject(),1,0,this));
 		}
 	}
 }
