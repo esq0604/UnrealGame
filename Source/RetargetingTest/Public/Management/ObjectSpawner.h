@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MonsterObjectPool.h"
+#include "ObjectPool.h"
 #include "GameFramework/Actor.h"
 #include "MonsterSpawner.generated.h"
 class UMonsterPool;
