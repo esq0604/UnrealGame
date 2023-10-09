@@ -3,10 +3,12 @@
 
 #include "RetargetingTest/Public/UI/PlayerHUD.h"
 
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
-#include "RetargetingTest/Public/UI/Inventory.h"
+#include "RetargetingTest/Public/UI/InventoryUI.h"
 #include "RetargetingTest/Public/UI/QuickSlot.h"
+#include "UI/EquipmentUI.h"
 #include "UI/GaugeBar.h"
 
 
@@ -19,16 +21,13 @@ void UPlayerHUD::Init()
 	
 	if(Player!=nullptr)
 	{
-		//Gauge->BindActorStat(Character->GetStatComponent());
 		HPGauge->SetCharacter(Player);
+		HPGauge->SetType(EGaugeType::HP);
 		StaminaGauge->SetCharacter(Player);
+		StaminaGauge->SetType(EGaugeType::Stamina);
 		
-		QuickSlot->SetCharacter(Player);
+		QuickSlot->SetInventoryComponent(Player->GetInventoryManagerComponent());
 		QuickSlot->Init();
-	
-		Inventory->SetCharacter(Player);
-		Inventory->SetVisibility(ESlateVisibility::Hidden);
-		Inventory->Init();
 	}
 }
 
@@ -53,11 +52,6 @@ UQuickSlot* UPlayerHUD::GetQuickSlot() const
 	return QuickSlot;
 }
 
-UInventory* UPlayerHUD::GetInventory() const
-{
-	return Inventory;
-}
-
 void UPlayerHUD::SetGauge(UGaugeBar* NewGauge,EGaugeType Type)
 {
 	if(Type == EGaugeType::HP)
@@ -77,33 +71,19 @@ void UPlayerHUD::SetQuickSlot(UQuickSlot* NewQuickSlot)
 	QuickSlot=NewQuickSlot;
 }
 
-void UPlayerHUD::SetInventory(UInventory* NewInventory)
-{
-	Inventory=NewInventory;
-}
-
 
 void UPlayerHUD::SetCharacter(ACharacter* NewPlayer)
 {
 	Player = Cast<ACharacterBase>(NewPlayer);
 }
 
-/**
- * 인벤토리 토글함수입니다. 현재 보이고있으면 안보이게하고, 안보이고있다면 보이도록합니다.
- */
-void UPlayerHUD::ToggleInventory()
+FReply UPlayerHUD::NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
 {
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
-
-	if(Inventory->GetVisibility()==ESlateVisibility::Collapsed)
-	{
-		Inventory->SetVisibility(ESlateVisibility::Visible);
-		PlayerController->SetShowMouseCursor(true);
-	}
-	else
-	{
-		Inventory->SetVisibility(ESlateVisibility::Collapsed);
-		PlayerController->SetShowMouseCursor(false);
-	}
-	
+	return Super::NativeOnKeyDown(InGeometry, InKeyEvent);
 }
+
+/**
+ * 인벤토리 토글입니다. 현재 보이고있으면 안보이게하고, 안보이고있다면 보이도록합니다.
+ */
+
+

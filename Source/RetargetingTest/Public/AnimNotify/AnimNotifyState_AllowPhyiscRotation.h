@@ -3,14 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/Object.h"
+#include "Animation/AnimNotifies/AnimNotifyState.h"
 #include "AnimNotifyState_AllowPhyiscRotation.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RETARGETINGTEST_API UAnimNotifyState_AllowPhyiscRotation : public UObject
+class RETARGETINGTEST_API UAnimNotifyState_AllowPhyiscRotation : public UAnimNotifyState
 {
 	GENERATED_BODY()
+public:
+	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, float TotalDuration, const FAnimNotifyEventReference& EventReference) override;
+	virtual void NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
+
 };

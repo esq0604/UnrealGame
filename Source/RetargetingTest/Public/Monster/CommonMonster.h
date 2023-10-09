@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "BaseMonster.h"
 #include "CommonMonster.generated.h"
 
 UCLASS()
-class RETARGETINGTEST_API ACommonMonster : public AActor
+class RETARGETINGTEST_API ACommonMonster : public ABaseMonster
 {
 	GENERATED_BODY()
 
@@ -22,4 +22,11 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void ShowHpWidget(bool bShow) override final;
+
+
+private:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Component")
+	TObjectPtr<UWidgetComponent> HPWidgetComponent;
 };

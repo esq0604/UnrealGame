@@ -33,7 +33,10 @@ UGEC_DamageExecution::UGEC_DamageExecution()
 	RelevantAttributesToCapture.Add(DamageStatics().DamageDef);
 }
 
-
+/**
+ * @param ExecutionParams : 계산을 위한 파라미터
+ * @param OutExecutionOutput : 계산의 출력을 위한 파라미터
+ */
 void UGEC_DamageExecution::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
                                                  FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
@@ -46,23 +49,13 @@ void UGEC_DamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 
 	UAbilitySystemComponent* SourceABSC = ExecutionParams.GetSourceAbilitySystemComponent();
 	AActor* SourceActor = SourceABSC ? SourceABSC->GetAvatarActor() : nullptr;
-
+	
 	//Get the owning GameplayEffect Spec so that you can its variables and tags;
 	//변수와 태그를 사용하도록 게임플레이 이펙스펙을 가져옵니다.
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
-	TArray<FGameplayTag> Tags;
-
 	const FGameplayTagContainer* TargetTags = Spec.CapturedTargetTags.GetAggregatedTags();
-	TargetTags->GetGameplayTagArray(Tags);
-	for(FGameplayTag Tag : Tags)
-	{
-		if(Tag==FGameplayTag::RequestGameplayTag("Ability.Parry"))
-		{
-			UE_LOG(LogTemp,Warning,TEXT("Parry In GEC"));
-			OutExecutionOutput.MarkGameplayCuesHandledManually();
-		}
-	}
+	
 	
 	//Aggregator Evaluate Parameters used during  the attribute capture.
 	FAggregatorEvaluateParameters EvaluateParameters;
@@ -76,5 +69,7 @@ void UGEC_DamageExecution::Execute_Implementation(const FGameplayEffectCustomExe
 	//Performing the actual damage calculation
 
 	//Final execution output. We can add more thane one AddOutputModifier to change multiple parameter at time base on complicated calculations. 
+
 	OutExecutionOutput.AddOutputModifier(FGameplayModifierEvaluatedData(DamageStatics().HealthProperty,EGameplayModOp::Additive,-BaseDamage));
+
 }

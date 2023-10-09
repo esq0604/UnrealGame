@@ -4,10 +4,13 @@
 #include "Component/InventoryComponent.h"
 
 #include "Controller/MyPlayerController.h"
+#include "Interface/Countable.h"
+#include "Interface/Useable.h"
 #include "Object/ItemBase.h"
+#include "Object/EquipmentItem.h"
 #include "Player/CharacterBase.h"
-#include "UI/Inventory.h"
-#include "UI/PlayerHUD.h"
+#include "UI/EquipmentUI.h"
+#include "UI/InventoryUI.h"
 #include "UI/Slot.h"
 
 // Sets default values for this component's properties
@@ -17,71 +20,172 @@ UInventoryComponent::UInventoryComponent()
 	// off to improve performance if you don't need them.
 	// ...
 	ComponentOwner=Cast<ACharacterBase>(GetOwner());
+	Equipments.Init(nullptr,4);
 }
 
-bool UInventoryComponent::AddItemToInventory(AItemBase* Item)
+// Called when the game starts
+void UInventoryComponent::BeginPlay()
 {
-	if (Item != nullptr)
+	Super::BeginPlay();
+
+	const ACharacterBase* Character=Cast<ACharacterBase>(GetOwner());
+	const AMyPlayerController* PC = Cast<AMyPlayerController>(Character->GetController());
+	if(ensure(PC))
+	{
+		InventoryUI = PC->GetInventoryUI();
+		EquipmentUI = PC->GetEquipmentUI();
+	}
+}
+
+bool UInventoryComponent::AddItemToInventory(AItemBase* AddedItem)
+{
+	if (AddedItem != nullptr)
 	{
 		const int32 AvaliableSlot = Inventory.Find(nullptr);
 		if (AvaliableSlot != INDEX_NONE)
 		{
-			Inventory[AvaliableSlot] = Item;
-			Inventory[AvaliableSlot]=Item;
+			Inventory[AvaliableSlot] = AddedItem;
+			Inventory[AvaliableSlot]= AddedItem;
 
 			if(Inventory[AvaliableSlot]==nullptr)
-				UE_LOG(LogTemp,Warning,TEXT("Character Inven[AvaliableSlot nullptr"));
-
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,TEXT("You cant carry any more items"));
+				return false;
+			}
 			InventoryUI->RefreshSlotByIndex(AvaliableSlot);
-			
 			return true;
 		}
 		else
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,TEXT("You cant carry any more items"));
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,TEXT("Item null ptr"));
 		}
 	}
 	return false;
 }
 
-void UInventoryComponent::UseItemAtInventorySlot(int32 SlotNum)
+bool UInventoryComponent::AddItemToEquipment(AItemBase* AddedItem)
 {
-	if (Inventory[SlotNum] != nullptr && SlotNum != -1)
+	if (AddedItem != nullptr)
 	{
-		TArray<USlot*> TempSlot;
-		Inventory[SlotNum]->UseItem(ComponentOwner);
-
-		//레퍼런스 슬롯이 없다면 인벤토리만 갱신합니다.
-		if (Inventory[SlotNum]->ReferenceSlot.IsEmpty())
+		const int32 AvaliableSlot = Equipments.Find(nullptr);
+		if (AvaliableSlot != INDEX_NONE)
 		{
-			if (Inventory[SlotNum]->GetCount() == 0)
+			//Equipment[AvaliableSlot] = AddedItem;
+			//Equipment[AvaliableSlot]=AddedItem;
+
+			if(Equipments[AvaliableSlot]==nullptr)
 			{
-				Inventory[SlotNum] = nullptr;
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,TEXT("You cant carry any more items"));
+				return false;
 			}
-			InventoryUI->RefreshSlotByIndex(SlotNum);
+			EquipmentUI->RefreshSlotByIndex(AvaliableSlot);
+			return true;
 		}
-		//있다면 레퍼런스 슬롯을 옮겨줍니다.
 		else
 		{
-			for (USlot* eachSlot : Inventory[SlotNum]->ReferenceSlot)
-			{
-				TempSlot.Add(eachSlot);
-			}
-			if (Inventory[SlotNum]->GetCount() == 0)
-			{
-				Inventory[SlotNum] = nullptr;
-			}
-			for (USlot* eachSlot : TempSlot)
-			{
-				if (eachSlot != nullptr)
-				{
-					eachSlot->Refresh();
-				}
-			}
-			//TODO : 인벤토리를 사용 후 갱신해야할때, 너무 경로가 긴거같음.
-			InventoryUI->RefreshAllSlot();
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,TEXT("Item null ptr"));
 		}
 	}
+	return false;
+}
+
+/**
+ *  인벤토리에있는 아이템을사용합니다. 장비아이템의 경우 장착을하고, 소비아이템인경우 사용 및 퀵슬롯 연결여부에 따른 행동을합니다.
+ *  인벤토리에 있는 아이템을 사용 후, UI를 새로고침 합니다.
+ *  @param SlotNum : 사용할 인벤토리의 슬롯넘버입니다.
+ */
+void UInventoryComponent::UseItemAtInventorySlot(int32 SlotNum)
+{
+	IUseable* UseableItem = Cast<IUseable>(Inventory[SlotNum]);
+	ICountable* CountableItem = Cast<ICountable>(Inventory[SlotNum]);
+
+	if(UseableItem==nullptr || Inventory[SlotNum] ==nullptr ||SlotNum == NOT_INITIALIZED_SLOT)
+		return;
+
+	switch (Inventory[SlotNum]->ItemType)
+	{
+	case EItemType::ITEM_EQUIPMENT:
+		{
+			UseableItem->UseItem_Implementation(ComponentOwner);
+			AEquipmentItem* EquipItem = dynamic_cast<AEquipmentItem*>(Inventory[SlotNum]);
+
+			if(EquipItem !=nullptr)
+			{
+				Equipments[static_cast<int32>(EquipItem->GetEquipItemType())]=EquipItem;
+				Inventory[SlotNum]=nullptr;
+				InventoryUI->RefreshSlotByIndex(SlotNum);
+				EquipmentUI->RefreshSlotByEquipmentType(EquipItem->GetEquipItemType());
+			}
+			break;
+		}
+	case EItemType::ITEM_CONSUME:
+		if (Inventory[SlotNum] != nullptr && SlotNum != NOT_INITIALIZED_SLOT)
+		{
+			TArray<USlot*> TempSlot;
+
+			//인벤토리 슬롯에 있는 아이템이 사용가능한지 여부를 확인합니다.
+			
+			//레퍼런스 슬롯이 없다면 인벤토리만 갱신합니다.
+			if (Inventory[SlotNum]->ReferenceSlot.IsEmpty())
+			{
+				// if (Inventory[SlotNum]->GetCount() == 0)
+				// {
+				// 	Inventory[SlotNum] = nullptr;
+				// }
+				Inventory[SlotNum]=nullptr;
+				InventoryUI->RefreshSlotByIndex(SlotNum);
+			}
+			//있다면 레퍼런스 슬롯을 옮겨줍니다.
+			else
+			{
+				for (USlot* eachSlot : Inventory[SlotNum]->ReferenceSlot)
+				{
+					TempSlot.Add(eachSlot);
+				}
+				if (CountableItem)
+				{
+					if(CountableItem->GetCont_Implementation()==0)
+						Inventory[SlotNum] = nullptr;
+				}
+				Inventory[SlotNum]=nullptr;
+				for (USlot* eachSlot : TempSlot)
+				{
+					if (eachSlot != nullptr)
+					{
+						eachSlot->Refresh();
+					}
+				}
+				InventoryUI->RefreshAllSlot();
+			}
+		}
+		break;
+
+	}
+	
+}
+
+/**
+ * Equipment UI의 슬롯을 사용합니다.
+ * 장비장착을 해제하고 인벤토리에 넣도록합니다.
+ * @param SlotNum : 사용할 슬롯의 인덱스입니다.
+ * TODO : 슬롯인덱스를 사용할것이 아닌, 장비의 종류에따른 행동을 하도록 수정해야합니다.
+ */
+void UInventoryComponent::UseItemAtEquipmentSlot(int32 SlotNum,EEquipment_Type EquipmentType)
+{
+	
+	IUseable* UseableItem= Cast<IUseable>(GetItemAtEquipments(EquipmentType));
+	if(UseableItem)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("UseEquipSlot"));
+		UseableItem->UseItem_Implementation(ComponentOwner);
+			
+		Inventory[SlotNum] = GetItemAtEquipments(EquipmentType);
+		Equipments[static_cast<int32>(GetItemAtEquipments(EquipmentType)->GetEquipItemType())] =nullptr;
+		EquipmentUI->RefreshSlotByEquipmentType(EquipmentType);
+		InventoryUI->RefreshSlotByIndex(SlotNum);
+	}
+	
+	
 }
 
 AItemBase* UInventoryComponent::GetItemAtInventory(int32 SlotNum) const
@@ -94,8 +198,30 @@ TArray<AItemBase*> UInventoryComponent::GetInventory() const
 	return Inventory;
 }
 
+TArray<AEquipmentItem*> UInventoryComponent::GetEquipments() const
+{
+	return Equipments;
+}
+
+AEquipmentItem* UInventoryComponent::GetItemAtEquipments(EEquipment_Type EquipmentType) const
+{
+	for(AEquipmentItem* Item : Equipments)
+	{
+		if(Item!=nullptr)
+		{
+			if(Item->GetEquipItemType()==EquipmentType)
+			{
+				return Item;
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 UTexture2D* UInventoryComponent::GetThumbnailAtInventorySlot(int32 SlotIdx) const
 {
+	
 	if(Inventory[SlotIdx])
 	{
 		return Inventory[SlotIdx]->PickupThumbnail;
@@ -104,21 +230,15 @@ UTexture2D* UInventoryComponent::GetThumbnailAtInventorySlot(int32 SlotIdx) cons
 	return nullptr;
 }
 
-
-// Called when the game starts
-void UInventoryComponent::BeginPlay()
+UTexture2D* UInventoryComponent::GetThumbnailAtEquipment(EEquipment_Type Type) const
 {
-	Super::BeginPlay();
+	AEquipmentItem* Item = GetItemAtEquipments(Type);
+	if(Item!=nullptr)
+		return Item->GetThumbnail();
 
-	const ACharacterBase* Character=Cast<ACharacterBase>(GetOwner());
-	const AMyPlayerController* PC = Cast<AMyPlayerController>(Character->GetController());
-	if(PC!=nullptr)
-	{
-		const UPlayerHUD* newPlayerHUD=PC->GetPlayerHUD();
-		if(newPlayerHUD!=nullptr)
-		{
-			InventoryUI=newPlayerHUD->GetInventory();
-		}
-	}
+	return nullptr;
 }
+
+
+
 

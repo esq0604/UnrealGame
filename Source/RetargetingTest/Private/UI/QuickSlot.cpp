@@ -24,8 +24,7 @@ void UQuickSlot::Init()
 		}
 
 		slot->SetType(ESlotType::SLOT_QUICK);
-		slot->SetCharacter(Player);
-		slot->SetInventoryCompnent(Player->GetInventoryManagerCompnent());
+		slot->SetInventoryComponent(InventoryComponent);
 		slot->Init();
 		Slots[slot->SlotNum]=slot;
 	}
@@ -41,7 +40,8 @@ void UQuickSlot::Use(int UsedSlotIdx)
 	Slots[UsedSlotIdx]->Action();
 }
 
-void UQuickSlot::SetCharacter(ACharacterBase* NewPlayer)
+void UQuickSlot::SetInventoryComponent(UInventoryComponent* NewInventoryComponent)
 {
-	Player=NewPlayer;
+	InventoryComponent=NewInventoryComponent;	
 }
+

@@ -5,15 +5,16 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "InterchangeResult.h"
-#include "Ability/CharacterAbilitySystemComponent.h"
 #include "Ability/CustomAbilitySystemComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/Character.h"
 #include "Player/PlayerStateBase.h"
+#include "RetargetingTest/RetargetingTest.h"
 #include "RetargetingTest/Public/Controller/InputDataAsset.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
+#include "UI/EquipmentUI.h"
 #include "UI/PlayerHUD.h"
+#include "UI/InventoryUI.h"
 
 AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -26,7 +27,7 @@ AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitial
 	AttackTag = FGameplayTag::RequestGameplayTag("Ability.Attack.Combo");
 	AttackTagContainer.AddTag(AttackTag);
 
-	BlockStateTag =FGameplayTag::RequestGameplayTag("Player.State.IsBlocking");
+	BlockStateTag =FGameplayTag::RequestGameplayTag("Character.IsBlocking");
 	BlockTag = FGameplayTag::RequestGameplayTag("Ability.Block");
 	BlockTagContainer.AddTag(BlockTag);
 	BlockStateTagContainer.AddTag(BlockStateTag);
@@ -61,11 +62,28 @@ void AMyPlayerController::BeginPlay()
 			PlayerHUD->AddToViewport();
 		}
 
-		AbilitySystemComponent = Cast<UCharacterAbilitySystemComponent>(LocalPS->GetAbilitySystemComponent());
+		AbilitySystemComponent = Cast<UAbilitySystemComponent>(LocalPS->GetAbilitySystemComponent());
 	}
-
+	
+	ACharacterBase* OwerPlayer = Cast<ACharacterBase>(GetCharacter());
+	InventoryUI=Cast<UInventoryUI>(CreateWidget(this,InventoryUIClass));
+	EquipmentUI=Cast<UEquipmentUI>(CreateWidget(this,EquipmentUIclass));
+	if(ensure(OwerPlayer) && ensure(InventoryUI) && ensure(EquipmentUI))
+	{
+		InventoryUI->SetCharacter(OwerPlayer);
+		InventoryUI->Init();
+		EquipmentUI->SetCharacter(OwerPlayer);
+		EquipmentUI->Init();
+	}
 }
 
+void AMyPlayerController::BindInputASC()
+{
+	if(!AbilitySystemComponent)
+		return;
+	FTopLevelAssetPath EnumAssetPath = FTopLevelAssetPath(FName("/Script/RetargetingTest"),FName("EAbilityID"));
+	AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent,FGameplayAbilityInputBinds(FString("Confirm"),FString("Cancel"),EnumAssetPath,static_cast<int32>(EAbilityInputID::Confirm), static_cast<int32>(EAbilityInputID::Cancel)));
+}
 void AMyPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -76,50 +94,40 @@ void AMyPlayerController::SetupInputComponent()
 
 	UEnhancedInputComponent* EnhancedInputComp= Cast<UEnhancedInputComponent>(InputComponent);
 
-	EnhancedInputComp->BindAction(InputAction->InputMove,ETriggerEvent::Triggered,this,&AMyPlayerController::Move);
 	EnhancedInputComp->BindAction(InputAction->InputSprint,ETriggerEvent::Triggered,this,&AMyPlayerController::Sprint);
-	EnhancedInputComp->BindAction(InputAction->InputSprint,ETriggerEvent::Completed,this,&AMyPlayerController::SprintEnd);
 	//EnhancedInputComp->BindAction(InputAction->InputAttack,ETriggerEvent::Triggered,this,&AMyPlayerController::Attack);
 	EnhancedInputComp->BindAction(InputAction->InputLook,ETriggerEvent::Triggered,this,&AMyPlayerController::Look);
 	EnhancedInputComp->BindAction(InputAction->InputJump,ETriggerEvent::Started,this,&AMyPlayerController::Jump);
 	//EnhancedInputComp->BindAction(InputAction->InputJump,ETriggerEvent::Completed,this,&AMyPlayerController::JumpStop);
 	EnhancedInputComp->BindAction(InputAction->InputInteract,ETriggerEvent::Triggered,this,&AMyPlayerController::Interact);
-	EnhancedInputComp->BindAction(InputAction->InputToggleInventory,ETriggerEvent::Triggered,this,&AMyPlayerController::ToggleInventory);
+	EnhancedInputComp->BindAction(InputAction->InputToggleInventory,ETriggerEvent::Started,this,&AMyPlayerController::ToggleInventory);
 	EnhancedInputComp->BindAction(InputAction->InputEquipUnEquip,ETriggerEvent::Triggered,this,&AMyPlayerController::EquipUnEquip);
 	EnhancedInputComp->BindAction(InputAction->InputRoll,ETriggerEvent::Triggered,this,&AMyPlayerController::Roll);
 	//EnhancedInputComp->BindAction(InputAction->InputBlock,ETriggerEvent::Started,this,&AMyPlayerController::Block);
-	//EnhancedInputComp->BindAction(InputAction->InputBlock,ETriggerEvent::Canceled,this,&AMyPlayerController::BlockEnd_Implementation);
 	EnhancedInputComp->BindAction(InputAction->InputTargetLook,ETriggerEvent::Started,this,&AMyPlayerController::TargetLook);
+	EnhancedInputComp->BindAction(InputAction->InputToggleEquipment,ETriggerEvent::Started,this,&AMyPlayerController::ToggleEquipment);
+	BindInputASC();
 }
-void AMyPlayerController::Move(const FInputActionValue& Value)
+
+void AMyPlayerController::SendAbilityLocalInput(const FInputActionValue& Value, int32 InputID)
 {
-	// FVector2D MovementVector = Value.Get<FVector2D>();
-	// // find out which way is forward
-	// const FRotator Rotation = GetControlRotation();
-	// const FRotator YawRotation(0, Rotation.Yaw, 0);
-	//
-	// // get forward vector
-	// const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	//
-	// // get right vector 
-	// const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-	//
-	// // add movement 
-	// GetCharacter()->AddMovementInput(ForwardDirection, MovementVector.Y);
-	// GetCharacter()->AddMovementInput(RightDirection, MovementVector.X);
-	
+	if(!AbilitySystemComponent)
+		return;
+	if(Value.Get<bool>())
+	{
+		AbilitySystemComponent->AbilityLocalInputPressed(InputID);
+	}
+	else
+	{
+		AbilitySystemComponent->AbilityLocalInputReleased(InputID);
+	}
 }
 
 void AMyPlayerController::Sprint(const FInputActionValue& Value)
 {
-	//const FGameplayTag SprintTag = FGameplayTag::RequestGameplayTag("State.Sprint");
-	//StateManagerComponent->TryPerformStateOfClass(StateManagerComponent->GetStateOfGameplayTag(SprintTag)->GetClass(),true);
+	SendAbilityLocalInput(Value,static_cast<int32>(EAbilityInputID::Sprint));
 }
 
-void AMyPlayerController::SprintEnd(const FInputActionValue& Value)
-{
-
-}
 /**
  * 
  */
@@ -159,7 +167,34 @@ void AMyPlayerController::Interact(const FInputActionValue& Value)
 
 void AMyPlayerController::ToggleInventory(const FInputActionValue& Value)
 {
-	PlayerHUD->ToggleInventory();
+	if(!IsInventoryUIOpen)
+	{
+		InventoryUI->AddToViewport();
+		InventoryUI->SetVisibility(ESlateVisibility::Visible);
+		IsInventoryUIOpen=true;
+	}
+	else
+	{
+		InventoryUI->RemoveFromParent();
+		IsInventoryUIOpen=false;
+	}
+	///PlayerHUD->ToggleInventory();
+	
+}
+
+void AMyPlayerController::ToggleEquipment(const FInputActionValue& Value)
+{
+	if(!IsEquipmentUIOpen)
+	{
+		EquipmentUI->AddToViewport();
+		EquipmentUI->SetVisibility(ESlateVisibility::Visible);
+		IsEquipmentUIOpen=true;
+	}
+	else
+	{
+		EquipmentUI->RemoveFromParent();
+		IsEquipmentUIOpen=false;
+	}
 }
 
 void AMyPlayerController::EquipUnEquip(const FInputActionValue& Value)
@@ -192,18 +227,20 @@ UGaugeBar* AMyPlayerController::GetGauge(EGaugeType Type) const
 	return PlayerHUD->GetGauge(Type);
 }
 
+UEquipmentUI* AMyPlayerController::GetEquipmentUI() const
+{
+	return EquipmentUI;
+}
+
+UInventoryUI* AMyPlayerController::GetInventoryUI() const
+{
+	return InventoryUI;
+}
+
 void AMyPlayerController::Block(const FInputActionValue& Value)
 {
-	AbilitySystemComponent->TryActivateAbilitiesByTag(BlockTagContainer);
+//	AbilitySystemComponent->TryActivateAbilitiesByTag(BlockTagContainer);
 }
-
-void AMyPlayerController::BlockEnd_Implementation(const FInputActionValue& Value)
-{
-	UE_LOG(LogTemp,Warning,TEXT("BlockEnd"));
-	AbilitySystemComponent->RemoveActiveEffectsWithGrantedTags(BlockStateTagContainer);
-	//AbilitySystemComponent->CancelAbilities(&BlockStateTagContainer);
-}
-
 
 void AMyPlayerController::TargetLook(const FInputActionValue& Value)
 {

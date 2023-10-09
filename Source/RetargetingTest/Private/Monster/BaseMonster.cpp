@@ -4,6 +4,7 @@
 #include "RetargetingTest/Public/Monster/BaseMonster.h"
 
 #include "AbilitySystemComponent.h"
+#include "MotionWarpingComponent.h"
 #include "Attribute/BaseAttributeSet.h"
 #include "Component/WeaponCollisionComponent.h"
 #include "Components/WidgetComponent.h"
@@ -11,7 +12,7 @@
 
 #include "RetargetingTest/Public/Monster/BaseMonsterAnimInstance.h"
 #include "UI/MonsterGauge.h"
-#include "Weapon/BaseWeaponInstance.h"
+#include "Object/BaseWeaponInstance.h"
 
 ABaseMonster::ABaseMonster()
 {
@@ -21,13 +22,11 @@ ABaseMonster::ABaseMonster()
 	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
-
-
-	HPWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPWidgetComponent"));
-	HPWidgetComponent->SetupAttachment(RootComponent);
-
+	
 	TargetWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("TargetWidgetComponent"));
 	TargetWidgetComponent->SetupAttachment(GetMesh());
+
+	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComp"));
 }
 
 /**
@@ -67,6 +66,22 @@ UAnimMontage* ABaseMonster::GetHitReaction_Implementation(EHitDirection HitDirec
 	}
 }
 
+UAnimMontage* ABaseMonster::GetParryMontage_Implementation(EHitDirection HitDirection)
+{
+	return nullptr;
+}
+
+bool ABaseMonster::CanReceivedDamaged_Implementation()
+{
+	UE_LOG(LogTemp,Warning,TEXT("Implementation BlueprintFunction"));
+	return false;
+}
+
+void ABaseMonster::SetIFrame_Implementation(bool bEnabled)
+{
+	bIFrame=bEnabled;
+}
+
 void ABaseMonster::OnTargeted_Implementation(bool bIsTargeted)
 {
 	TargetWidgetComponent->SetVisibility(bIsTargeted);
@@ -77,31 +92,41 @@ bool ABaseMonster::CanBeTargeted_Implementation()
 	return true;
 }
 
+void ABaseMonster::MotionWarpForwardToDistance(float MoveDistance)
+{
+	const FVector CurLocation = GetActorLocation();
+	const FVector ForwardVec  = GetActorForwardVector();
+
+	const FVector TargetLoc = GetActorLocation() + (GetActorForwardVector() * MoveDistance);
+
+	MotionWarpingComponent->AddOrUpdateWarpTargetFromLocation(TEXT("Warp"),TargetLoc);
+}
+
 
 /**
  * 몬스터마다 HPBarWidget은 존재하나. WidgetComponent는 일반몬스터에만 존재합니다(몬스터의 위에 체력바를 보여주기 위하여). 
  */
 void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 {
-	if(Data.NewValue <= 0.f)
+	if(HPBarWidget.Get())
 	{
-		// 죽음 설정
-		HPBarWidget->UpdateHPWidget(0.f,0.f);
-		HPWidgetComponent->UpdateWidget();
+		if(Data.NewValue <= 0.f)
+		{
+			// 죽음 설정
+			HPBarWidget->UpdateHPWidget(0.f,0.f);
+			DoDead();
+		}
+		else
+		{
+			const float NewHealthPercent=(Data.NewValue/EnemyAttributesSet->GetMaxHealth());
+			const float OldHealthPercent=Data.OldValue/EnemyAttributesSet->GetMaxHealth();
+		
+			HPBarWidget->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
+		}
 	}
 	else
 	{
-		const float NewHealthPercent=(Data.NewValue/EnemyAttributesSet->GetMaxHealth());
-		const float OldHealthPercent=Data.OldValue/EnemyAttributesSet->GetMaxHealth();
-		HPBarWidget->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
-		HPWidgetComponent->UpdateWidget();
-		// if(EnemyAttributesSet->GetHealth()<=0)
-		// {
-		// 	SetActorHiddenInGame(true);
-		// 	SetActorEnableCollision(false);
-		// 	SetActorTickEnabled(false);
-		// 	//MonsterDieDelegate.Execute(this);
-		// }
+		UE_LOG(LogTemp,Warning,TEXT("Hp bar widget null in basemonster"));
 	}
 }
 
@@ -119,14 +144,7 @@ void ABaseMonster::BeginPlay()
 	HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(EnemyAttributesSet->GetHealthAttribute()).AddUObject(this,&ABaseMonster::HealthChange);
 	mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
 	
-	if(HPWidgetComponent->GetWidget())
-	{
-		HPBarWidget=Cast<UMonsterGauge>(HPWidgetComponent->GetWidget());
-		if(HPBarWidget.IsValid())
-		{
-			HPBarWidget->UpdateHPWidget(1.0f,1.0f);
-		}
-	}
+
 	
 	TargetWidgetComponent->SetWidgetClass(TargetWidgetClass);
 	TargetWidgetComponent->SetVisibility(false);
@@ -138,7 +156,7 @@ void ABaseMonster::BeginPlay()
 		WeaponInstance=GetWorld()->SpawnActor<ABaseWeaponInstance>(WeaponClass,GetActorLocation(),GetActorRotation(),SpawnInfo);
 		WeaponInstance->SetOwner(this);
 		WeaponInstance->AddAbilities();
-		WeaponInstance->OnEquipped();
+		WeaponInstance->OnEquipped(this);
 	}
 }
 

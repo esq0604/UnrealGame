@@ -9,33 +9,35 @@
 /**
  * 
  */
+UENUM()
+enum class EItemType : uint8
+{
+	ITEM_EQUIPMENT,
+	ITEM_CONSUME,
+};
 
+class UBoxComponent;
 class ACharacterBase;
 UCLASS()
-class RETARGETINGTEST_API AItemBase : public AActor ,public IInteractable
+class RETARGETINGTEST_API AItemBase : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	AItemBase();
-
-	virtual void Interact_Implementation() override;
-
-	UFUNCTION(BlueprintCallable)
-	void OnPickup();
 	
 	void AddReferenceSlot(class USlot*& Slot);
 	void RemoveReferenceSlot(class USlot*& Slot);
-	virtual void UseItem(ACharacterBase* Character) ;
-	virtual int GetCount() const;
-	//void UseItem(ACharacterBase* Character);
-
+	
 	UTexture2D* GetThumbnail() const;
 protected:
 	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintCallable)
+	void OnPickup();
+private:
+
 public:
-	UPROPERTY(EditAnywhere, Category="InteractableProperties")
-	class UStaticMeshComponent* InteractableMesh;
+
 	UPROPERTY(EditAnywhere, Category="InteractableProperties")
 	FString InteractableHelpText;
 	UPROPERTY(EditAnywhere, Category="InteractableProperties")
@@ -49,6 +51,9 @@ public:
 	
 	UPROPERTY()
 	TArray<USlot*> ReferenceSlot;
+
+	UPROPERTY(EditAnywhere,Category="ItemType")
+	EItemType ItemType;
 	
 protected:
 

@@ -15,8 +15,8 @@ class RETARGETINGTEST_API AThrowingItem : public AItemBase,public IUseable
 {
 	GENERATED_BODY()
 
-	virtual void UseItem(ACharacterBase* Character) override;
-	virtual void Use(ACharacterBase* Character) override;
-
+	//virtual void UseItem(ACharacterBase* Character) override;
+	//virtual void Use(ACharacterBase* Character) override;
+	virtual void UseItem_Implementation(ACharacterBase* Character) override;
 protected:
 };

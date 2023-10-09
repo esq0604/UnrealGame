@@ -3,12 +3,42 @@
 
 #include "RetargetingTest/Public/UI/FloatingTextWidget.h"
 
-#include <string>
-
 #include "Components/TextBlock.h"
+
+
+UWidgetAnimation* UFloatingTextWidget::GetFloatUoWidgetAnimation() const
+{
+	return FloatUp;
+}
 
 void UFloatingTextWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	DamageText=Cast<UTextBlock>(GetWidgetFromName("FloatingDamage"));
 }
+
+void UFloatingTextWidget::NativeOnInitialized()
+{
+	Super::NativeOnInitialized();
+	
+	//AnimFinishedDelegate.BindDynamic(this,&UFloatingTextWidget::AnimFinishedDelegateFunction);
+	//BindToAnimationFinished(FloatUp,AnimFinishedDelegate);
+	PlayAnimation(FloatUp);
+}
+
+void UFloatingTextWidget::SetDamageText(const FText& Text)
+{
+	FloatingDamage->SetText(Text);
+}
+
+// void UFloatingTextWidget::AnimFinishedDelegateFunction()
+// {
+// 	UE_LOG(LogTemp,Warning,TEXT("Anim Finished"));
+// 	AnimFinishedDelegateForActor.Execute();
+// }
+//
+// void UFloatingTextWidget::OnAnimationFinished_Implementation(const UWidgetAnimation* Animation)
+// {
+// 	Super::OnAnimationFinished_Implementation(Animation);
+// }
+
+

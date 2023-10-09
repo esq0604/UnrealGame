@@ -5,20 +5,20 @@
 #include "CoreMinimal.h"
 #include "ObjectPool.h"
 #include "GameFramework/Actor.h"
-#include "MonsterSpawner.generated.h"
+#include "ObjectSpawner.generated.h"
 class UMonsterPool;
 
 UCLASS()
-class RETARGETINGTEST_API AMonsterSpawner : public AActor
+class RETARGETINGTEST_API AObjectSpawner : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	AMonsterSpawner();
+	AObjectSpawner();
 
 	UFUNCTION()
-	void SpawnMonster(bool IsPoolFull);
+	void SpawnObject(bool IsPoolFull);
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,7 +26,7 @@ protected:
 	
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	TObjectPtr<UMonsterObjectPool> ObjectPool;
+	TObjectPtr<UObjectPool> ObjectPool;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float ReSpawnTime=5;

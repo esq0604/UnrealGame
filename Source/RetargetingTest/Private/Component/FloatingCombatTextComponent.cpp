@@ -4,6 +4,7 @@
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
 
 #include "Blueprint/WidgetLayoutLibrary.h"
+#include "Controller/MyPlayerController.h"
 #include "Engine/UserInterfaceSettings.h"
 #include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
@@ -14,8 +15,8 @@ UFloatingCombatTextComponent::UFloatingCombatTextComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false;
-
+	PrimaryComponentTick.bCanEverTick = true;
+	
 	// ...
 }
 
@@ -38,14 +39,15 @@ void UFloatingCombatTextComponent::TickComponent(float DeltaTime, ELevelTick Tic
                                                  FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 	// ...
 	const FVector2D ViewPortSize = UWidgetLayoutLibrary::GetViewportSize(this);
 
 	//bad viewport size
 	if(ViewPortSize.X<=0.0f || ViewPortSize.Y <=0.0f)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("ViewPort Size Zero"));
 		return;
-
+	}
 	//get the viewport scale(the dpi scale)
 	const int32 viewportX = FGenericPlatformMath::FloorToInt(ViewPortSize.X);
 	const int32 viewportY = FGenericPlatformMath::FloorToInt(ViewPortSize.Y);
@@ -55,8 +57,19 @@ void UFloatingCombatTextComponent::TickComponent(float DeltaTime, ELevelTick Tic
 		return;
 
 	//소유 플레이어의 카메라 위치 가져오기
-	const FVector cameraLocation=GetOwner<APawn>()->GetController<APlayerController>()->PlayerCameraManager->GetCameraLocation();
-
+	FVector cameraLocation;
+	const ACharacter* Character=GetOwner<ACharacter>();
+	const APlayerController* playercontroller =Character->GetController<APlayerController>();
+	//player
+	if(playercontroller)
+	{
+		cameraLocation=playercontroller->PlayerCameraManager->GetCameraLocation();
+	}
+	//enemy
+	else
+	{
+		cameraLocation=GetOwner()->GetActorLocation();
+	}
 	//뷰포트 크기와 스케일에 따라 활성 텍스트 액터의 세로 위치를 조정하여 화면에 쌓여 보이도록 합니다.
 	for(int32 i=1; i<ActiveFloatingDamageActors.Num(); ++i)
 	{

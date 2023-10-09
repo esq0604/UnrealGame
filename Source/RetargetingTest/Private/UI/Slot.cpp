@@ -7,16 +7,18 @@
 #include "Component/InventoryComponent.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
+#include "Object/EquipmentItem.h"
 #include "RetargetingTest/Public/Object/ItemBase.h"
 #include "RetargetingTest/Public/Object/SlotDragDrop.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
+#include "UI/EquipmentSlot.h"
 
 
 void USlot::NativeConstruct()
 {
 	Super::NativeConstruct();
-	if(Player)
-		InventoryComponent=Player->GetInventoryManagerCompnent();
+	
 }
 
 /**
@@ -31,19 +33,18 @@ void USlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEven
 	if(OutOperation ==nullptr)
 	{
 		USlotDragDrop* oper =NewObject<USlotDragDrop>();
-		oper->From =this;
-		oper->Player=this->Player;
+		oper->SetFrom(this);
+		oper->SetInventoryComponent(InventoryComponent);
 		OutOperation=oper;
 
 		if (DragVisualClass != nullptr)
 		{
-			USlot* visual = CreateWidget<USlot>(Cast<APlayerController>(Player->Controller), DragVisualClass);
+			USlot* visual = CreateWidget<USlot>(UGameplayStatics::GetPlayerController(GetWorld(),0),DragVisualClass);
 			if(visual!=nullptr)
 			{
 				visual->SlotType = this->SlotType;
-				visual->Player = this->Player;
+				visual->SetInventoryComponent(InventoryComponent);
 				visual->Index = this->Index;
-				visual->InventoryComponent=Player->GetInventoryManagerCompnent();
 				visual->Refresh();
 			}
 
@@ -62,11 +63,11 @@ bool USlot::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDr
 	UDragDropOperation* InOperation)
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+
 	USlotDragDrop* Operator = Cast<USlotDragDrop>(InOperation);
 
 	if (Operator != nullptr)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("NatvieOnDrop : oper != nullptr"));
 		Operator->Drop(this);
 		return true;
 	}
@@ -85,14 +86,15 @@ FReply USlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointe
 
 	if(InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton)==true)
 	{
-		if(InventoryComponent->GetItemAtInventory(Index) !=nullptr)
-		{
-			if(Index<0 || InventoryComponent->GetItemAtInventory(Index)!=nullptr)
-			{
-				InventoryComponent->UseItemAtInventorySlot(Index);
+		// if(InventoryComponent->GetItemAtInventory(Index) !=nullptr || )
+		// {
+		// 	if(Index<0 || InventoryComponent->GetItemAtInventory(Index)!=nullptr)
+		// 	{
+				this->Action();
+				//InventoryComponent->UseItemAtInventorySlot(Index);
 				return reply.NativeReply;
-			}
-		}
+		// 	}
+		// }
 	}
 	else if(InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton)==true)
 	{
@@ -123,6 +125,9 @@ void USlot::Init()
 		Index=-1;
 		CountText->SetVisibility(ESlateVisibility::Hidden);
 		break;
+	case ESlotType::SLOT_EQUIP:
+		CountText->SetVisibility(ESlateVisibility::Hidden);
+		break;
 	}
 }
 
@@ -131,16 +136,18 @@ void USlot::Init()
  */
 void USlot::Refresh()
 {
-	if(Player->GetInventoryManagerCompnent()!=nullptr)
+	if(InventoryComponent!=nullptr)
 	{
 		TArray<AItemBase*> Inventory= InventoryComponent->GetInventory();
+		TArray<AEquipmentItem*> Equipment= InventoryComponent->GetEquipments();
+
 		switch(SlotType)
 		{
 		case ESlotType::SLOT_INVENTORY:
 			{
 				if(Inventory[Index]!=nullptr)
 				{
-					Count=Inventory[Index]->GetCount();
+					//Count=Inventory[Index]->GetCount();
 				}
 			
 				UTexture2D* Tex= InventoryComponent->GetThumbnailAtInventorySlot(Index);
@@ -175,7 +182,7 @@ void USlot::Refresh()
 				{
 					if(Inventory[Index]!=nullptr)
 					{
-						Count= Inventory[Index]->GetCount();
+						//Count= Inventory[Index]->GetCount();
 					}
 					UTexture2D* Tex=InventoryComponent->GetThumbnailAtInventorySlot(Index);
 					Img->SetBrushFromTexture(Tex);
@@ -190,6 +197,12 @@ void USlot::Refresh()
 					}
 					break;
 				}
+			}
+		case ESlotType::SLOT_EQUIP:
+			{
+				
+
+				
 			}
 		default:
 			return;
@@ -206,11 +219,6 @@ void USlot::SetType(ESlotType NewSlotType)
 	SlotType=NewSlotType;
 }
 
-void USlot::SetCharacter(ACharacterBase* NewCharacter)
-{
-	Player=NewCharacter;
-}
-
 void USlot::SetIndex(int32 NewIndex)
 {
 	Index=NewIndex;
@@ -221,7 +229,7 @@ void USlot::SetImg(UTexture2D* NewImg)
 	Img->SetBrushFromTexture(NewImg);
 }
 
-void USlot::SetInventoryCompnent(UInventoryComponent* NewInventoryComponent)
+void USlot::SetInventoryComponent(UInventoryComponent* NewInventoryComponent)
 {
 	InventoryComponent=NewInventoryComponent;
 }
@@ -231,13 +239,30 @@ void USlot::SetInventoryCompnent(UInventoryComponent* NewInventoryComponent)
  */
 void USlot::Action()
 {
+	
 	switch(SlotType)
 	{
 	case ESlotType::SLOT_INVENTORY:
+		{
+			UE_LOG(LogTemp,Warning,TEXT("SlotInven : Action"));
+
+			InventoryComponent->UseItemAtInventorySlot(Index);
+			//Refresh();
+			break;
+		}
 	case ESlotType::SLOT_QUICK:
-		//Player->UseItemAtInventorySlot(Index);
-		break;
-		
+		{
+			InventoryComponent->UseItemAtInventorySlot(Index);
+			Refresh();
+			break;
+		}
+	case ESlotType::SLOT_EQUIP:
+		{
+			UE_LOG(LogTemp,Warning,TEXT("SlotEquip : Action"));
+			UEquipmentSlot* TempSlot = dynamic_cast<UEquipmentSlot*>(this);
+			InventoryComponent->UseItemAtEquipmentSlot(Index,TempSlot->GetEquipItemType());
+			break;
+		}
 	default:
 		break;
 	}

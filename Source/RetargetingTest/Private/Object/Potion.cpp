@@ -2,22 +2,26 @@
 
 
 #include "RetargetingTest/Public/Object/Potion.h"
+
+#include "Attribute/BaseAttributeSet.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
 
 
-void APotion::UseItem(ACharacterBase* Character)
+void APotion::UseItem_Implementation(ACharacterBase* Character)
 {
-	Super::UseItem(Character);
-	Use(Character);
+	if(Count>0)
+	{
+		FGameplayAttributeData Health= Character->GetAttributes()->Health;
+		Health.SetCurrentValue(RecoveryAmount);
+		Count--;
+	}
+
+	return;
 }
 
-/**
- * 아이템을 사용하고 개수를 차감합니다.
- */
-void APotion::Use(ACharacterBase* Character)
+int32 APotion::GetCount_Implementation()
 {
-	// const float CurrentCharacterHp=Character->GetStatComponent()->GetCurrentHp();
-	// Character->GetStatComponent()->SetHP(CurrentCharacterHp+HpValue);
-	// Count--;
+	return Count;
 }
+
 

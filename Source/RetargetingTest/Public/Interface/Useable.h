@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "Useable.generated.h"
 
+class ACharacterBase;
 // This class does not need to be modified.
 UINTERFACE()
 class UUseable : public UInterface
@@ -22,5 +23,7 @@ class RETARGETINGTEST_API IUseable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void Use(class ACharacterBase* Character)=0;
+	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category="Useable")
+	void UseItem(ACharacterBase* Character);
+	virtual void UseItem_Implementation(ACharacterBase* Character)=0;
 };

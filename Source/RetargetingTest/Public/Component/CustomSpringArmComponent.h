@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "CustomSpringArm.generated.h"
+#include "CustomSpringArmComponent.generated.h"
 
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class RETARGETINGTEST_API UCustomSpringArm : public UActorComponent
+class RETARGETINGTEST_API UCustomSpringArmComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this component's properties
-	UCustomSpringArm();
+	UCustomSpringArmComponent();
 
 protected:
 	// Called when the game starts
@@ -25,4 +25,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
+private:
+
+protected:
+	
 };

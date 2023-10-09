@@ -8,7 +8,7 @@
 #include "AbilitySystemGlobals.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Engine/HitResult.h"
-#include "Weapon/BaseWeaponInstance.h"
+#include "Object/BaseWeaponInstance.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 
 
@@ -59,22 +59,24 @@ void UGameplayAbility_MeleeWeapon::AbilityFinish()
 	EndAbility(mAbilitySpecHandle,mActorInfo,mActivationInfo,true,false);
 }
 
-/**
+/**k
  *	게임플레이이펙트를 타겟에게 적용합니다.
  *	@param Payload : 게임플레이이벤트를 보내주는 BaseWeaponInstance에서 수신하는 데이터입니다.
  */
 void UGameplayAbility_MeleeWeapon::ApplyGameplayDamageEffect(FGameplayEventData Payload)
 {
-	UE_LOG(LogTemp,Warning,TEXT("ApplyEffect"));
 	AActor* TargetActor = const_cast<AActor*>(Payload.Target.Get());
 	UAbilitySystemComponent* TargetAbilityComp = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(TargetActor);
-	
-	ensure(TargetAbilityComp);
+
+	if(!TargetAbilityComp)
+		return;
 	//const FGameplayAbilityTargetDataHandle TargetDataHandle=UAbilitySystemBlueprintLibrary::AbilityTargetDataFromActor(TargetActor);
-	
+
 	UAbilitySystemComponent* OwnerActorAbilityComp = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwningActorFromActorInfo());
-	// ReSharper disable once CppExpressionWithoutSideEffects
-	OwnerActorAbilityComp->ApplyGameplayEffectToTarget(mDamageGameplayEffectClass.GetDefaultObject(),TargetAbilityComp,0.0f,Payload.ContextHandle);
+
+	ensure(OwnerActorAbilityComp);
+	OwnerActorAbilityComp->ApplyGameplayEffectToTarget(DamageGameplayEffectClass.GetDefaultObject(),TargetAbilityComp,0.0f,Payload.ContextHandle);
+	
 }
 
 void UGameplayAbility_MeleeWeapon::SetHitResult(const FHitResult& HitResult)

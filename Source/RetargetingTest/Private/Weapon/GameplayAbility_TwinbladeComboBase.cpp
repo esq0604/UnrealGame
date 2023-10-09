@@ -32,13 +32,7 @@ void UGameplayAbility_TwinbladeComboBase::ActivateAbility(const FGameplayAbility
 		WaitNextAttackGameplayEvent->EventReceived.AddDynamic(this,&UGameplayAbility_TwinbladeComboBase::NextAttackEventReceived);
 		WaitNextAttackGameplayEvent->Activate();	
 	}
-
-	//모션워핑이 필요하다면 모션워프를 실행합니다.(애니메이션이 루트모션이 아닌 경우 MotionWarp를 통해 이동시켜줍니다.)
-	if(DoMotionWarp)
-	{
-		MotionWarp();
-	}
-
+	
 	WaitGameplayEventForApplyDamageEffect();
 }
 
@@ -50,8 +44,4 @@ void UGameplayAbility_TwinbladeComboBase::NextAttackEventReceived(FGameplayEvent
 	ActiveMontage();
 }
 
-void UGameplayAbility_TwinbladeComboBase::MotionWarp()
-{
-	ACharacterBase* Player = Cast<ACharacterBase>(GetOwningActorFromActorInfo());
-	Player->AttackWithMotionWarp();
-}
+

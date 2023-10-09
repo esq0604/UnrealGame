@@ -6,7 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "Ability/CharacterAbilitySystemComponent.h"
 #include "Ability/CustomAbilitySystemComponent.h"
-#include "Attribute/CharacterAttributeSetBase.h"
+#include "Attribute/BaseAttributeSet.h"
 #include "Controller/MyPlayerController.h"
 #include "UI/GaugeBar.h"
 #include "UI/PlayerHUD.h"
@@ -69,7 +69,6 @@ void APlayerStateBase::HealthChange(const FOnAttributeChangeData& Data)
 {
 	const float NewHealthPercent=Data.NewValue/Attributes->GetMaxHealth();
 	const float OldHealthPercent=Data.OldValue/Attributes->GetMaxHealth();
-
 	PlayerHUD->GetGauge(EGaugeType::HP)->UpdateWidget(NewHealthPercent,OldHealthPercent);
 }
 

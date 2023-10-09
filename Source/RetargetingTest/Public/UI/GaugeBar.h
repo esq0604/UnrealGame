@@ -29,6 +29,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UProgressBar> ProgressBar;
 private:
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
 	EGaugeType mType;
 
 	UPROPERTY()

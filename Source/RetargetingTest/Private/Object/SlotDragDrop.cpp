@@ -26,6 +26,11 @@ bool USlotDragDrop::Drop(USlot* To)
 			if(To->GetSlotType()==ESlotType::SLOT_QUICK) return SwapQuickSlot(To);
 
 		}
+	case ESlotType::SLOT_EQUIP:
+		{
+			UE_LOG(LogTemp,Warning,TEXT("Slot Equip"));
+			if(To->GetSlotType()==ESlotType::SLOT_EQUIP) return MoveEquipSlot(To);
+		}
 	}
 	return false;
 }
@@ -35,7 +40,7 @@ bool USlotDragDrop::Drop(USlot* To)
  */
 bool USlotDragDrop::SwapInven(USlot* to)
 {
-	TArray<AItemBase*> Inventory=Player->GetInventoryManagerCompnent()->GetInventory();
+	TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
 	//From에 있는 ReferenceSlot을 지우고 스왑 후 To의 referenceSlot에 추가합니다.
 	//Reference 슬롯의 인덱스를 변경함으로써 퀵슬롯에서 사용할 인벤토리의 참조를 변경합니다.
 	if(!Inventory[From->GetIndex()]->ReferenceSlot.IsEmpty())
@@ -63,8 +68,8 @@ bool USlotDragDrop::SwapInven(USlot* to)
  */
 bool USlotDragDrop::SetQuickSlot(USlot* To)
 {
-	TArray<AItemBase*> Inventory=Player->GetInventoryManagerCompnent()->GetInventory();
-	if(To!=nullptr && Player!=nullptr)
+	TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
+	if(To!=nullptr && InventoryComponent!=nullptr)
 	{
 		if(Inventory[From->GetIndex()]==nullptr)
 		{
@@ -85,7 +90,7 @@ bool USlotDragDrop::SetQuickSlot(USlot* To)
  */
 bool USlotDragDrop::SwapQuickSlot(USlot* To)
 {
-	TArray<AItemBase*> Inventory=Player->GetInventoryManagerCompnent()->GetInventory();
+	TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
 
 	if(From->GetSlotType() == To->GetSlotType())
 	{
@@ -127,7 +132,7 @@ bool USlotDragDrop::SwapQuickSlot(USlot* To)
  */
 bool USlotDragDrop::MoveQuickSlot(USlot* To)
 {
-	TArray<AItemBase*> Inventory=Player->GetInventoryManagerCompnent()->GetInventory();
+	TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
 
 	int32 tempIdx = To->GetIndex();
 	To->SetIndex(From->GetIndex());
@@ -138,5 +143,36 @@ bool USlotDragDrop::MoveQuickSlot(USlot* To)
 	To->Refresh();
 	From->Refresh();
 	return true;
+}
+
+bool USlotDragDrop::MoveEquipSlot(USlot* To)
+{
+	TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
+	TArray<AEquipmentItem*> Equipment=InventoryComponent->GetEquipments();
+	const int32 tempIdx = To->GetIndex();
+	To->SetIndex(From->GetIndex());
+	From->SetIndex(tempIdx);
+
+	//Equipment.Add(Inventory[To->GetIndex()]);
+	
+	To->Refresh();
+	From->Refresh();
+	return true;
+
+}
+
+void USlotDragDrop::SetFrom(USlot* NewFrom)
+{
+	From=NewFrom;
+}
+
+void USlotDragDrop::SetInventoryComponent(UInventoryComponent* NewInventoryComponent)
+{
+	InventoryComponent=NewInventoryComponent;
+}
+
+USlot* USlotDragDrop::GetFrom() const
+{
+	return From;
 }
 

@@ -24,6 +24,7 @@ class RETARGETINGTEST_API UBaseAttributeSet : public UAttributeSet
 public:
 	UPROPERTY(BlueprintReadOnly, Category = "Health", ReplicatedUsing = OnRep_Health)
 	FGameplayAttributeData Health;
+	
 	ATTRIBUTE_ACCESSORS(UBaseAttributeSet, Health)
 	
 	UPROPERTY(BlueprintReadOnly, Category = "MaxHealth",ReplicatedUsing = OnRep_MaxHealth)
@@ -57,5 +58,7 @@ public:
 	UFUNCTION()
 	virtual void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana);
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
 };

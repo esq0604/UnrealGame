@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "PlayerHUD.generated.h"
 
+class UEquipmentUI;
 class UGaugeBar;
 class APlayerBase;
 class ACharacterBase;
@@ -13,7 +14,7 @@ class ACharacterBase;
  * 
  */
 class UQuickSlot;
-class UInventory;
+class UInventoryUI;
 enum class EGaugeType;
 
 UCLASS()
@@ -26,18 +27,16 @@ public:
 	void Init();
 
 	virtual void NativeConstruct() override;
-	UFUNCTION(BlueprintCallable)
-	void ToggleInventory();
-
 
 	UGaugeBar* GetGauge(EGaugeType Type) const;
 	UQuickSlot* GetQuickSlot() const;
-	UInventory* GetInventory() const;
-
+	
 	void SetGauge(UGaugeBar* NewGauge, EGaugeType Type);
 	void SetQuickSlot(UQuickSlot* NewQuickSlot);
-	void SetInventory(UInventory* NewInventory);
 	void SetCharacter(ACharacter* NewPlayer);
+	
+	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))
@@ -48,10 +47,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))
 	UQuickSlot* QuickSlot;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))
-	UInventory* Inventory;
-
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ACharacterBase* Player;
+
+
 };

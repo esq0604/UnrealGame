@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "Ability/CustomGameplayAbility.h"
 #include "GameplayAbility_MeleeWeapon.generated.h"
 
 class ABaseWeaponInstance;
@@ -11,7 +12,7 @@ class ABaseWeaponInstance;
  * 
  */
 UCLASS()
-class RETARGETINGTEST_API UGameplayAbility_MeleeWeapon : public UGameplayAbility
+class RETARGETINGTEST_API UGameplayAbility_MeleeWeapon : public UCustomGameplayAbility
 {
 	GENERATED_BODY()
 public:
@@ -48,7 +49,7 @@ protected:
 	TWeakObjectPtr<ACharacter> Owner;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Ability|MeleeWeapon")
-	TSubclassOf<UGameplayEffect> mDamageGameplayEffectClass;
+	TSubclassOf<UGameplayEffect> DamageGameplayEffectClass;
 
 	// Ability Active Init
 	FGameplayAbilitySpecHandle mAbilitySpecHandle;

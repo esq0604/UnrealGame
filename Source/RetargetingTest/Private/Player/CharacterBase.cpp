@@ -14,14 +14,15 @@
 #include "AbilitySystemComponent.h"
 #include "MotionWarpingComponent.h"
 #include "Ability/CharacterAbilitySystemComponent.h"
+#include "Ability/CustomGameplayAbility.h"
 #include "Camera/CameraComponent.h"
 #include "Component/WeaponCollisionComponent.h"
 #include "Component/InventoryComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Kismet/KismetMathLibrary.h"
 #include "Player/PlayerStateBase.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
-#include "Weapon/BaseWeaponInstance.h"
+#include "Object/BaseWeaponInstance.h"
+#include "Ability/CustomGameplayAbility.h"
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
 
@@ -64,9 +65,7 @@ ACharacterBase::ACharacterBase()
 
 	//사용자 정의 컴포넌트입니다.
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));
-	
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
-
 	InventoryManagerComponent =CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryManagerComponent"));
 	//TargetingComponent=CreateDefaultSubobject<UTargetingComponent>("TargetingComponent");
 	
@@ -76,17 +75,16 @@ void ACharacterBase::BeginPlay()
 {
 	// Call the base class
 	Super::BeginPlay();
-	FActorSpawnParameters SpawnInfo;
-	WeaponInstance=GetWorld()->SpawnActor<ABaseWeaponInstance>(WeaponClass,GetActorLocation(),GetActorRotation(),SpawnInfo);
-	
-	if(WeaponInstance!=nullptr)
+	if(WeaponClass)
+	{
+		const FActorSpawnParameters SpawnInfo;
+		WeaponInstance=GetWorld()->SpawnActor<ABaseWeaponInstance>(WeaponClass,GetActorLocation(),GetActorRotation(),SpawnInfo);
+	}
+	if(WeaponInstance)
 	{
 		WeaponInstance->SetOwner(this);
 		WeaponInstance->AddAbilities();
-		WeaponInstance->OnEquipped();
-	}
-	if(!Attributes)
-	{
+		WeaponInstance->OnEquipped(this);
 	}
 }
 
@@ -120,6 +118,34 @@ UAnimMontage* ACharacterBase::GetHitReaction_Implementation(EHitDirection HitDir
 	}
 }
 
+UAnimMontage* ACharacterBase::GetParryMontage_Implementation(EHitDirection HitDirection)
+{
+	switch (HitDirection)
+	{
+	case EHitDirection::Up:
+		return ParryUp;
+	case EHitDirection::Down:
+		return ParryDown;
+	case EHitDirection::Left:
+		return ParryLeft;
+	case EHitDirection::Right:
+		return ParryRight;
+	default:
+		return nullptr;
+	}
+}
+
+bool ACharacterBase::CanReceivedDamaged_Implementation()
+{
+	UE_LOG(LogTemp,Warning,TEXT("Implementation in BlueprintFunction"));
+	return false;
+}
+
+void ACharacterBase::SetIFrame_Implementation(bool bEnabled)
+{
+	bIFrame=bEnabled;
+}
+
 void ACharacterBase::FinishDying()
 {
 	Destroy();
@@ -146,6 +172,7 @@ void ACharacterBase::PossessedBy(AController* NewController)
 		Attributes = PS->GetAttributes();
 		InitializeAttributes();
 		GiveDefaultAbilities();
+		
 	}
 
 }
@@ -183,7 +210,6 @@ void ACharacterBase::OnRep_PlayerState()
 	{
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
 	}
-	//BindASCInput();
 
 	InitializeAttributes();
 }
@@ -211,9 +237,9 @@ void ACharacterBase::GiveDefaultAbilities()
 {
 	if(HasAuthority() && AbilitySystemComponent.IsValid())
 	{
-		for(TSubclassOf<UGameplayAbility>& StartupAbility : DefaultAbilities)
+		for(TSubclassOf<UCustomGameplayAbility>& StartupAbility : DefaultAbilities)
 		{
-			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility.GetDefaultObject(),1,0,this));
+			AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(StartupAbility.GetDefaultObject(),1,static_cast<int32>(StartupAbility.GetDefaultObject()->AbilityInputID),this));
 		}
 	}
 }
@@ -228,9 +254,19 @@ UBaseAttributeSet* ACharacterBase::GetAttributes() const
 	return Attributes;
 }
 
-UInventoryComponent* ACharacterBase::GetInventoryManagerCompnent() const
+UInventoryComponent* ACharacterBase::GetInventoryManagerComponent() const
 {
 	return InventoryManagerComponent;
+}
+
+void ACharacterBase::SetWeaponInstance(ABaseWeaponInstance* NewWeaponInstance)
+{
+	WeaponInstance=NewWeaponInstance;
+}
+
+E4WAYParryDirection ACharacterBase::GetParryHitDirection() const
+{
+	return ParryHitDirection;
 }
 
 void ACharacterBase::Die()
@@ -245,23 +281,6 @@ void ACharacterBase::Die()
 		AbilitySystemComponent->CancelAbilities();
 		
 	}
-}
-
-void ACharacterBase::AttackWithMotionWarp()
-{
-const FVector MovementInputVector = GetLastMovementInputVector();
-if (MovementInputVector.IsZero())
-{
-	MotionWarpComponent->RemoveWarpTarget(TEXT("Warp"));
-	return;
-}
-
-const FVector PlayerLoc = GetActorLocation();
-//const FVector ForwardDist = GetActorForwardVector() *100.f;
-const FVector TargetLoc = (MovementInputVector.GetSafeNormal() * 100.f) + PlayerLoc;
-const FRotator TargetRotator = UKismetMathLibrary::MakeRotFromX(MovementInputVector);
-
-MotionWarpComponent->AddOrUpdateWarpTargetFromLocationAndRotation(TEXT("Warp"), TargetLoc, TargetRotator);
 }
 
 void ACharacterBase::PostInitializeComponents()

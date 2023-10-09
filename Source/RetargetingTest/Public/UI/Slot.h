@@ -20,7 +20,7 @@ enum class ESlotType : uint8
 {
 	SLOT_INVENTORY,
 	SLOT_QUICK,
-	SLOT_EQUIP
+	SLOT_EQUIP,
 };
 UCLASS()
 class RETARGETINGTEST_API USlot : public UUserWidget
@@ -33,18 +33,20 @@ public:
 	void Init();
 
 	void SetType(ESlotType NewSlotType);
-	void SetCharacter(ACharacterBase* NewCharacter);
 	void SetIndex(int32 NewIndex);
 	void SetImg(UTexture2D* NewImg);
-	void SetInventoryCompnent(UInventoryComponent* InventoryComponent);
-	void Action();
+	void SetInventoryComponent(UInventoryComponent* InventoryComponent);
+	
 	ESlotType GetSlotType() const;
 	int32 GetIndex() const;
+	
+	void Action();
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
 public:
 	//드래그시 보일 SlotClass 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -59,22 +61,22 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UTexture2D* DefaultTexture;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta=(BindWidget))
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,meta=(BindWidget))
 	UTextBlock* CountText;
-
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	int32 SlotNum;
+
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	int32 Index;
 
-
 protected:
-	UPROPERTY()
-	ACharacterBase* Player;
-	UPROPERTY()
-	UInventoryComponent* InventoryComponent;
 private:
 	ESlotType SlotType;
+	
+	UPROPERTY()
+	UInventoryComponent* InventoryComponent;
+
 
 };
 

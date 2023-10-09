@@ -50,4 +50,8 @@ public:
 	UInputAction* InputRoll;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UInputAction* InputTargetLook;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	UInputAction* InputParry;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	UInputAction* InputToggleEquipment;
 };

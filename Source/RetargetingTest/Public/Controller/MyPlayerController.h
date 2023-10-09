@@ -8,12 +8,15 @@
 #include "GameFramework/PlayerController.h"
 #include "MyPlayerController.generated.h"
 
+class UEquipmentUI;
+class UAbilitySystemComponent;
 class UGaugeBar;
 struct FGameplayTagContainer;
 class UCharacterAbilitySystemComponent;
 class UInputDataAsset;
 class UInputMappingContext;
 class UBaseStateManagerComponent;
+class UInventoryUI;
 class UPlayerHUD;
 struct FInputActionValue;
 enum class EGaugeType;
@@ -29,34 +32,37 @@ public:
 	AMyPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); 
 
 public:
-	
-	void Move(const FInputActionValue& Value);
+
+	//Input Biund Function 
 	void Sprint(const FInputActionValue& Value);
-	void SprintEnd(const FInputActionValue& Value);
 	//void Attack(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Jump(const FInputActionValue& Value);
 	void JumpStop(const FInputActionValue& Value);
 	void Interact(const FInputActionValue& Value);
 	void ToggleInventory(const FInputActionValue& Value);
+	void ToggleEquipment(const FInputActionValue& Value);
 	void EquipUnEquip(const FInputActionValue& Value);
 	void Roll(const FInputActionValue& Value);
 	void Block(const FInputActionValue& Value);
 	UFUNCTION(BlueprintCallable,BlueprintImplementableEvent)
 	void BlockEnd(const FInputActionValue& Value);
-	void BlockEnd_Implementation(const FInputActionValue& Value);
 	void TargetLook(const FInputActionValue& Value);
+	
+	//Getter
 	UPlayerHUD* GetPlayerHUD() const;
 	UGaugeBar* GetGauge(EGaugeType Type) const;
+	UEquipmentUI* GetEquipmentUI() const;
+	UInventoryUI* GetInventoryUI() const;
 	//bool 변수가 아닌 나중에 EquipState, Ability에서 수정되어야합니다.
-	bool IsEquipWeapon=false;
-	
+
+	void BindInputASC();
 protected:
 	virtual void BeginPlay() override;
 
-
 private:
 	virtual void SetupInputComponent() override;
+	virtual void SendAbilityLocalInput(const FInputActionValue& Value, int32 InputID);
 	
 protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="AMyPlayerController | Enhanced Input")
@@ -72,7 +78,7 @@ protected:
 	UPlayerHUD* PlayerHUD;
 
 	UPROPERTY(EditInstanceOnly,BlueprintReadWrite,Category="AMyPlayerController | AbilitySystemComponent" , meta=(AllowPrivateAccess=true))
-	UCharacterAbilitySystemComponent* AbilitySystemComponent;
+	UAbilitySystemComponent* AbilitySystemComponent;
 
 private:
 	FGameplayTagContainer RollTagContainer;
@@ -98,5 +104,19 @@ private:
 
 	FGameplayTag TargetLookTag;
 	FGameplayTagContainer TargetLookTagContainer;
+
+	UPROPERTY()
+	UEquipmentUI* EquipmentUI;
+	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly,meta=(AllowPrivateAccess=true))
+	TSubclassOf<UEquipmentUI> EquipmentUIclass;
+
+	UPROPERTY()
+	UInventoryUI* InventoryUI;
+	
+	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly,meta=(AllowPrivateAccess=true))
+	TSubclassOf<UInventoryUI> InventoryUIClass;
+
+	bool IsEquipmentUIOpen=false;
+	bool IsInventoryUIOpen=false;
 };
 

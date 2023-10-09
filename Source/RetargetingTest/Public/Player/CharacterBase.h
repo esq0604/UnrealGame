@@ -8,15 +8,14 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayEffect.h"
 #include "Interface/Combat.h"
-#include "Weapon/EHitReaction.h"
 #include "CharacterBase.generated.h"
 
 
+class UCustomGameplayAbility;
 class ABaseWeaponInstance;
 class UCharacterGameplayAbility;
 class UCharacterAbilitySystemComponent;
 class UBaseAttributeSet;
-class UCharacterAttributeSetBase;
 class UTargetingComponent;
 class APlayerStateBase;
 class UBaseAbilityManagerComponent;
@@ -49,18 +48,18 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual int32 GetAbilityLevel() const;
 	virtual void RemoveCharacterAbilities();
-	virtual void OnRep_PlayerState() override;
+	virtual void OnRep_PlayerState() override final;
 	virtual void InitializeAttributes();
 	virtual void GiveDefaultAbilities();
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override final;
 	UBaseAttributeSet* GetAttributes() const;
-	UInventoryComponent* GetInventoryManagerCompnent() const;
+	UInventoryComponent* GetInventoryManagerComponent() const;
 
-	void Die();
-	
-	
+	void SetWeaponInstance(ABaseWeaponInstance* NewWeaponInstance);
 	UFUNCTION(BlueprintCallable)
-	void AttackWithMotionWarp();
+	E4WAYParryDirection GetParryHitDirection() const;
+	void Die();
+
 protected:
 	virtual void PostInitializeComponents() override;
 
@@ -68,14 +67,17 @@ protected:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
 
-	virtual void ToggleWeaponCollision_Implementation(bool IsEnable) override;
-	virtual UAnimMontage* GetHitReaction_Implementation(EHitDirection HitDirection) override;
+	virtual void ToggleWeaponCollision_Implementation(bool IsEnable) override final;
+	virtual UAnimMontage* GetHitReaction_Implementation(EHitDirection HitDirection) override final;
+	virtual UAnimMontage* GetParryMontage_Implementation(EHitDirection HitDirection) override;
+	virtual bool CanReceivedDamaged_Implementation() override;
+	virtual void SetIFrame_Implementation(bool bEnabled) override;
 public:
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="CharacterBase | Attributes")
 	TArray<TSubclassOf<UGameplayEffect>> DefaultAttributeEffects;
 
 	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="CharacterBase | Ability")
-	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
+	TArray<TSubclassOf<UCustomGameplayAbility>> DefaultAbilities;
 	
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"),Category="CharacterBase | Component")
@@ -91,7 +93,7 @@ public:
 	UFUNCTION(BlueprintCallable,Category="CharacterBase| Died")
 	virtual void FinishDying();
 protected:
-	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess=true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly,meta=(AllowPrivateAccess=true))
 	TObjectPtr<UFloatingCombatTextComponent> FloatingTextComponent;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Component")
@@ -110,7 +112,8 @@ protected:
 	TSubclassOf<ABaseWeaponInstance> WeaponClass;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Weapon")
 	ABaseWeaponInstance* WeaponInstance;
-	
+
+	//Hit Reaction
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Montage |HitReaction")
 	TObjectPtr<UAnimMontage> ForwardHitReaction;
 	
@@ -123,14 +126,32 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Montage |HitReaction")
 	TObjectPtr<UAnimMontage> RightHitReaction;
 
+
+	//Parry
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Montage | Parry")
+	TObjectPtr<UAnimMontage> ParryLeft;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Montage | Parry")
+	TObjectPtr<UAnimMontage> ParryRight;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Montage | Parry")
+	TObjectPtr<UAnimMontage> ParryUp;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Montage | Parry")
+	TObjectPtr<UAnimMontage> ParryDown;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Montage | Parry")
+	E4WAYParryDirection ParryHitDirection;
+
 	
 	// void BindASCInput();
 	// bool ASCInputBound=false;
 private:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category="CharacterBase | Component")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,meta=(AllowPrivateAccess=true), Category="CharacterBase | Component")
 	TObjectPtr<UMotionWarpingComponent> MotionWarpComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,meta=(AllowPrivateAccess="true"), Category="CharacterBase | Component")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,meta=(AllowPrivateAccess=true), Category="CharacterBase | Component")
 	TObjectPtr<UInventoryComponent> InventoryManagerComponent;
-};
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess=true))
+	bool bIFrame;
+};

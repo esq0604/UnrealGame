@@ -10,6 +10,7 @@
  * 
  */
 class USlot;
+class UInventoryComponent;
 
 UCLASS()
 class RETARGETINGTEST_API USlotDragDrop : public UDragDropOperation
@@ -21,9 +22,16 @@ public:
 	bool SetQuickSlot(USlot* To);
 	bool SwapQuickSlot(USlot* To);
 	bool MoveQuickSlot(USlot* To);
-public:
+	bool MoveEquipSlot(USlot* To);
+
+	void SetFrom(USlot* NewFrom);
+	void SetInventoryComponent(UInventoryComponent* NewInventoryComponent);
+	
+	USlot* GetFrom() const;
+	
+private:
 	USlot* From;
-	class ACharacterBase* Player;
+	UInventoryComponent* InventoryComponent;	
 };
 
 

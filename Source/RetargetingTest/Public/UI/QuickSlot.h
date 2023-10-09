@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "QuickSlot.generated.h"
 
+class UInventoryComponent;
 /**
  * 
  */
@@ -22,11 +23,11 @@ public:
 	void Init();
 	void Use(int index);
 
-	void SetCharacter(ACharacterBase* NewPlayer);
-	
+	void SetInventoryComponent(UInventoryComponent* NewInventoryComponent);
+
 protected:
 	TArray<USlot*> Slots;
-	ACharacterBase* Player;
 private:
+	UInventoryComponent* InventoryComponent;
 	const int MAX_QUICK_SLOT=4;
 };
