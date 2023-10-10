@@ -5,7 +5,6 @@
 
 #include "AbilitySystemComponent.h"
 #include "Ability/CharacterAbilitySystemComponent.h"
-#include "Ability/CustomAbilitySystemComponent.h"
 #include "Attribute/BaseAttributeSet.h"
 #include "Controller/MyPlayerController.h"
 #include "UI/GaugeBar.h"
@@ -40,8 +39,6 @@ UBaseAttributeSet* APlayerStateBase::GetAttributes() const
 void APlayerStateBase::SetPlayerHUD(UPlayerHUD* NewPlayerHUD)
 {
 	PlayerHUD=NewPlayerHUD;
-	
-	//PlayerHUD->Child
 }
 
 // Called when the game starts or when spawned

@@ -61,7 +61,6 @@ void AMyPlayerController::BeginPlay()
 			PlayerHUD->Init();
 			PlayerHUD->AddToViewport();
 		}
-
 		AbilitySystemComponent = Cast<UAbilitySystemComponent>(LocalPS->GetAbilitySystemComponent());
 	}
 	

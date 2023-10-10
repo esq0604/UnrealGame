@@ -13,7 +13,6 @@
 
 #include "AbilitySystemComponent.h"
 #include "MotionWarpingComponent.h"
-#include "Ability/CharacterAbilitySystemComponent.h"
 #include "Ability/CustomGameplayAbility.h"
 #include "Camera/CameraComponent.h"
 #include "Component/WeaponCollisionComponent.h"
@@ -22,7 +21,6 @@
 #include "Player/PlayerStateBase.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
 #include "Object/BaseWeaponInstance.h"
-#include "Ability/CustomGameplayAbility.h"
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
 
@@ -67,7 +65,6 @@ ACharacterBase::ACharacterBase()
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
 	InventoryManagerComponent =CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryManagerComponent"));
-	//TargetingComponent=CreateDefaultSubobject<UTargetingComponent>("TargetingComponent");
 	
 }
 
@@ -86,6 +83,8 @@ void ACharacterBase::BeginPlay()
 		WeaponInstance->AddAbilities();
 		WeaponInstance->OnEquipped(this);
 	}
+
+	
 }
 
 void ACharacterBase::Tick(float DeltaSeconds)
@@ -96,13 +95,11 @@ void ACharacterBase::Tick(float DeltaSeconds)
 
 void ACharacterBase::ToggleWeaponCollision_Implementation(bool IsEnable)
 {
-	//ICombat::ToggleWeaponCollision_Implementation(IsEnable);
 	WeaponInstance->GetCollisionComponent()->SetCollisionEnable(IsEnable);
 }
 
 UAnimMontage* ACharacterBase::GetHitReaction_Implementation(EHitDirection HitDirection)
 {
-	//ICombat::GetHitReaction_Implementation(HitDirection);
 	switch (HitDirection)
 	{
 	case EHitDirection::Forward:
@@ -151,30 +148,27 @@ void ACharacterBase::FinishDying()
 	Destroy();
 }
 
-// void ACharacterBase::BindASCInput()
-// {
-// 	FTopLevelAssetPath AbilityEnumAssetPath = FTopLevelAssetPath(FName("/Script/RetargetingTest"), FName("CustomAbilityID"));
-// 	AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, FGameplayAbilityInputBinds(FString("ConfirmTarget"),
-// 	FString("CancelTarget"), AbilityEnumAssetPath, static_cast<int32>(CustomAbilityID::Confirm), static_cast<int32>(CustomAbilityID::Cancel)));
-// 	//AbilitySystemComponent->AbilityLocalInputPressed()
-// }
-
 //Server Only
 void ACharacterBase::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	APlayerStateBase* PS = GetPlayerState<APlayerStateBase>();
+
+	APlayerStateBase* PS = dynamic_cast<APlayerStateBase*>(GetPlayerState());
 	if(PS)
 	{
-		AbilitySystemComponent=Cast<UCharacterAbilitySystemComponent>(PS->GetAbilitySystemComponent());
+		AbilitySystemComponent=(PS->GetAbilitySystemComponent());
 		//어빌리티의 OwnerActor와 InAvartActor를 설정해줍니다.
-		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
+		AbilitySystemComponent->InitAbilityActorInfo(this,this);
 		Attributes = PS->GetAttributes();
 		InitializeAttributes();
 		GiveDefaultAbilities();
 		
 	}
 
+	if(Attributes)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Attrubutes not nullptr"));
+	}
 }
 
 int32 ACharacterBase::GetAbilityLevel() const
@@ -184,7 +178,7 @@ int32 ACharacterBase::GetAbilityLevel() const
 
 void ACharacterBase::RemoveCharacterAbilities()
 {
-	if(!AbilitySystemComponent.IsValid() || !AbilitySystemComponent->CharacterAbilitiesGiven)
+	if(!AbilitySystemComponent.IsValid() )
 	{
 		return;
 	}
@@ -208,9 +202,10 @@ void ACharacterBase::OnRep_PlayerState()
 	APlayerStateBase* PS = GetPlayerState<APlayerStateBase>();
 	if(PS)
 	{
+		Attributes = PS->GetAttributes();
 		PS->GetAbilitySystemComponent()->InitAbilityActorInfo(this,this);
 	}
-
+	
 	InitializeAttributes();
 }
 
@@ -218,6 +213,7 @@ void ACharacterBase::InitializeAttributes()
 {
 	if(AbilitySystemComponent.IsValid())
 	{
+		
 		FGameplayEffectContextHandle EffectContextHandle = AbilitySystemComponent->MakeEffectContext();
 		EffectContextHandle.AddSourceObject(this);
 
@@ -251,7 +247,9 @@ UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
 
 UBaseAttributeSet* ACharacterBase::GetAttributes() const
 {
+	
 	return Attributes;
+	
 }
 
 UInventoryComponent* ACharacterBase::GetInventoryManagerComponent() const
@@ -286,6 +284,7 @@ void ACharacterBase::Die()
 void ACharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
 }
 
 

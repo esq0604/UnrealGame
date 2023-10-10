@@ -42,6 +42,7 @@ void UBaseAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UBaseAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
 }
 
+/*** @brief 어트리뷰트 속성이 최대값과 최소값을 넘지 않도록 조정합니다. */
 void UBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
 	// This is called whenever attributes d, so for max health/mana we want to scale the current totals to match
@@ -53,6 +54,14 @@ void UBaseAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 			NewValue =MaxMana.GetCurrentValue();
 		else if(NewValue <= 0.f)
 			NewValue =0.f;
+	}
+
+	else if(Attribute == GetHealthAttribute())
+	{
+		if(NewValue >= MaxHealth.GetCurrentValue())
+			NewValue = MaxHealth.GetCurrentValue();
+		else if(NewValue <=0.f)
+			NewValue=0.f;
 	}
 	
 

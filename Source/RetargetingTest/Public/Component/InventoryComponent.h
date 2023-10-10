@@ -56,7 +56,12 @@ protected:
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="InventoryComponent | Equipment")
 	TArray<AEquipmentItem*> Equipments;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="InventoryComponent")
+	TArray<TSubclassOf<AItemBase>> StartItems;
+	
 private:
+	UPROPERTY()
 	ACharacterBase* ComponentOwner;
 	TWeakObjectPtr<UInventoryUI> InventoryUI;
 	UEquipmentUI* EquipmentUI;

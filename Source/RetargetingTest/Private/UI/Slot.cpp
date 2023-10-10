@@ -7,6 +7,7 @@
 #include "Component/InventoryComponent.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
+#include "Interface/Countable.h"
 #include "Kismet/GameplayStatics.h"
 #include "Object/EquipmentItem.h"
 #include "RetargetingTest/Public/Object/ItemBase.h"
@@ -147,7 +148,16 @@ void USlot::Refresh()
 			{
 				if(Inventory[Index]!=nullptr)
 				{
-					//Count=Inventory[Index]->GetCount();
+					if(UKismetSystemLibrary::DoesImplementInterface(Inventory[Index],UCombat::StaticClass()))
+					{
+						UE_LOG(LogTemp,Warning,TEXT("DoesImplementation Countable"));
+					}
+					ICountable* Countable = Cast<ICountable>(Inventory[Index]);
+					if(Countable!=nullptr)
+					{
+						Count=Countable->GetCount_Implementation();
+						UE_LOG(LogTemp,Warning,TEXT("Count : %d"),Count);
+					}
 				}
 			
 				UTexture2D* Tex= InventoryComponent->GetThumbnailAtInventorySlot(Index);

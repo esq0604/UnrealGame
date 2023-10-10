@@ -40,8 +40,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="InteractableProperties")
 	FString InteractableHelpText;
-	UPROPERTY(EditAnywhere, Category="InteractableProperties")
-	int32 Count;
+
 
 	UPROPERTY(EditAnywhere,Category="ItemProperties")
 	UTexture2D* PickupThumbnail;

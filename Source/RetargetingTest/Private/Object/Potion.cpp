@@ -4,18 +4,24 @@
 #include "RetargetingTest/Public/Object/Potion.h"
 
 #include "Attribute/BaseAttributeSet.h"
+#include "Player/PlayerStateBase.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
 
 
 void APotion::UseItem_Implementation(ACharacterBase* Character)
 {
-	if(Count>0)
-	{
-		FGameplayAttributeData Health= Character->GetAttributes()->Health;
-		Health.SetCurrentValue(RecoveryAmount);
-		Count--;
-	}
 
+	UBaseAttributeSet* Attributes = Character->GetAttributes();
+		if(Count>0)
+		{
+			if(Attributes!=nullptr)
+			{
+				FGameplayAttributeData Health= Attributes->Health;
+				Health.SetCurrentValue(Health.GetCurrentValue()+RecoveryAmount);
+				Count--;
+			}
+		}
+	
 	return;
 }
 

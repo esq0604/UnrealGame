@@ -12,7 +12,6 @@ class UEquipmentUI;
 class UAbilitySystemComponent;
 class UGaugeBar;
 struct FGameplayTagContainer;
-class UCharacterAbilitySystemComponent;
 class UInputDataAsset;
 class UInputMappingContext;
 class UBaseStateManagerComponent;
