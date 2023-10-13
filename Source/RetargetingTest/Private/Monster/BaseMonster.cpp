@@ -11,8 +11,8 @@
 #include "Materials/Material.h"
 
 #include "RetargetingTest/Public/Monster/BaseMonsterAnimInstance.h"
-#include "UI/MonsterGauge.h"
 #include "Object/BaseWeaponInstance.h"
+#include "UI/MonsterGauge.h"
 
 ABaseMonster::ABaseMonster()
 {
@@ -120,13 +120,9 @@ void ABaseMonster::HealthChange(const FOnAttributeChangeData& Data)
 		{
 			const float NewHealthPercent=(Data.NewValue/EnemyAttributesSet->GetMaxHealth());
 			const float OldHealthPercent=Data.OldValue/EnemyAttributesSet->GetMaxHealth();
-		
+			UE_LOG(LogTemp,Warning,TEXT("Data.NewVal :%f, MaxHealth : %f, NewPercent : %f"),Data.NewValue,EnemyAttributesSet->GetMaxHealth(),NewHealthPercent);
 			HPBarWidget->UpdateHPWidget(NewHealthPercent,OldHealthPercent);
 		}
-	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Hp bar widget null in basemonster"));
 	}
 }
 

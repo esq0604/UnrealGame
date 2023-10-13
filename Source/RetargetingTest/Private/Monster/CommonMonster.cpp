@@ -4,6 +4,7 @@
 #include "Monster/CommonMonster.h"
 
 #include "Components/WidgetComponent.h"
+#include "UI/GaugeBar.h"
 #include "UI/MonsterGauge.h"
 
 
@@ -11,7 +12,7 @@
 ACommonMonster::ACommonMonster()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	HPWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPWidgetComponent"));
 	HPWidgetComponent->SetupAttachment(RootComponent);

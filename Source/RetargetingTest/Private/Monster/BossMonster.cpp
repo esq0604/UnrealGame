@@ -18,7 +18,7 @@ ABossMonster::ABossMonster()
 void ABossMonster::BeginPlay()
 {
 	Super::BeginPlay();
-	HPBarWidget = Cast<UMonsterGauge>(CreateWidget(GetWorld(),HpWidgetClass,TEXT("hpbarWidget")));
+	HPBarWidget =CreateWidget<UMonsterGauge>(GetWorld(),HpWidgetClass,TEXT("hpbarWidget"));
 	if(HPBarWidget.Get())
 	{
 		HPBarWidget->UpdateHPWidget(1.0f,1.0f);

@@ -83,6 +83,7 @@ void AMyPlayerController::BindInputASC()
 		return;
 	FTopLevelAssetPath EnumAssetPath = FTopLevelAssetPath(FName("/Script/RetargetingTest"),FName("EAbilityID"));
 	AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent,FGameplayAbilityInputBinds(FString("Confirm"),FString("Cancel"),EnumAssetPath,static_cast<int32>(EAbilityInputID::Confirm), static_cast<int32>(EAbilityInputID::Cancel)));
+	UE_LOG(LogTemp,Warning,TEXT("BindInputASC"));
 }
 void AMyPlayerController::SetupInputComponent()
 {
@@ -103,9 +104,10 @@ void AMyPlayerController::SetupInputComponent()
 	EnhancedInputComp->BindAction(InputAction->InputToggleInventory,ETriggerEvent::Started,this,&AMyPlayerController::ToggleInventory);
 	EnhancedInputComp->BindAction(InputAction->InputEquipUnEquip,ETriggerEvent::Triggered,this,&AMyPlayerController::EquipUnEquip);
 	EnhancedInputComp->BindAction(InputAction->InputRoll,ETriggerEvent::Triggered,this,&AMyPlayerController::Roll);
-	//EnhancedInputComp->BindAction(InputAction->InputBlock,ETriggerEvent::Started,this,&AMyPlayerController::Block);
+	EnhancedInputComp->BindAction(InputAction->InputBlock,ETriggerEvent::Triggered,this,&AMyPlayerController::Block);
 	EnhancedInputComp->BindAction(InputAction->InputTargetLook,ETriggerEvent::Started,this,&AMyPlayerController::TargetLook);
 	EnhancedInputComp->BindAction(InputAction->InputToggleEquipment,ETriggerEvent::Started,this,&AMyPlayerController::ToggleEquipment);
+
 	BindInputASC();
 }
 
@@ -113,6 +115,7 @@ void AMyPlayerController::SendAbilityLocalInput(const FInputActionValue& Value, 
 {
 	if(!AbilitySystemComponent)
 		return;
+	
 	if(Value.Get<bool>())
 	{
 		AbilitySystemComponent->AbilityLocalInputPressed(InputID);
@@ -247,7 +250,7 @@ UInventoryUI* AMyPlayerController::GetInventoryUI() const
 
 void AMyPlayerController::Block(const FInputActionValue& Value)
 {
-//	AbilitySystemComponent->TryActivateAbilitiesByTag(BlockTagContainer);
+	SendAbilityLocalInput(Value,static_cast<int32>(EAbilityInputID::RightClickAbility));
 }
 
 void AMyPlayerController::TargetLook(const FInputActionValue& Value)

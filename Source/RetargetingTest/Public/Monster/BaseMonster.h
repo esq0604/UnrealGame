@@ -9,6 +9,8 @@
 #include "Interface/Targeting.h"
 #include "BaseMonster.generated.h"
 
+class UMonsterGauge;
+class UGaugeBar;
 class UMotionWarpingComponent;
 class ABaseWeaponInstance;
 class UWeaponCollisionComponent;
@@ -23,7 +25,6 @@ class USkeletalMeshComponent;
 class UBaseMonsterAnimInstance;
 class UGameplayEffect;
 class UGameplayAbility;
-class UMonsterGauge;
 
 struct FOnAttributeChangeData;
 struct FDamageEvent;
