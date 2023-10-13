@@ -5,7 +5,6 @@
 
 #include "Blueprint/WidgetTree.h"
 #include "Component/InventoryComponent.h"
-#include "RetargetingTest/Public/Player/CharacterBase.h"
 #include "RetargetingTest/Public/UI/Slot.h"
 
 void UInventoryUI::NativeConstruct()
@@ -19,12 +18,11 @@ void UInventoryUI::NativeConstruct()
  */
 void UInventoryUI::Init()
 {
-	if(Player)
+	if(InventoryComponent)
 	{
-		UInventoryComponent* InventoryComp = Player->GetInventoryManagerComponent();
 		TArray<UWidget*> Widgets;
 		WidgetTree->GetAllWidgets(Widgets);
-		Slots.Init(nullptr,InventoryComp->GetInventory().Num());
+		Slots.Init(nullptr,InventoryComponent->GetInventory().Num());
 		
 		for(UWidget* widget : Widgets)
 		{
@@ -33,10 +31,9 @@ void UInventoryUI::Init()
 			if(slot != nullptr)
 			{
 				slot->SetType(ESlotType::SLOT_INVENTORY);
-				slot->SetInventoryComponent(InventoryComp);
+				slot->SetInventoryComponent(InventoryComponent);
 				slot->Init();
 				Slots[slot->GetIndex()]=slot;
-			
 			}
 		}
 	}
@@ -55,9 +52,9 @@ void UInventoryUI::RefreshSlotByIndex(int32 Index)
 	Slots[Index]->Refresh();
 }
 
-void UInventoryUI::SetCharacter(ACharacterBase* NewCharacter)
+void UInventoryUI::SetInventoryComponent(UInventoryComponent* NewInventoryComponent)
 {
-	Player= NewCharacter;
+	InventoryComponent = NewInventoryComponent;
 }
 
 USlot* UInventoryUI::GetSlot(int32 Index) const

@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "InventoryUI.generated.h"
 
+class UInventoryComponent;
 /**
  * 
  */
@@ -22,13 +23,13 @@ public:
 	
 	void RefreshAllSlot();
 	void RefreshSlotByIndex(int32 Index);
-	void SetCharacter(ACharacterBase* NewCharacter);
+	void SetInventoryComponent(UInventoryComponent* NewInventoryComponent);
 	USlot* GetSlot(int32 Index) const;
 protected:
 	virtual void NativeConstruct() override; 
 
 	UPROPERTY()
-	ACharacterBase* Player;
+	UInventoryComponent* InventoryComponent;
 
 	UPROPERTY()
 	TArray<USlot*> Slots;

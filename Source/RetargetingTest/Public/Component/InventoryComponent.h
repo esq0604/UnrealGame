@@ -30,13 +30,13 @@ public:
 	bool AddItemToInventory(AItemBase* AddedItem);
 
 	UFUNCTION(BlueprintCallable)
-	bool AddItemToEquipment(AItemBase* AddedItem);
+	bool AddItemToEquipments(AEquipmentItem* AddedItem);
 	
 	UFUNCTION(BlueprintCallable)
 	void UseItemAtInventorySlot(int32 SlotNum);
 	
 	UFUNCTION(BlueprintCallable)
-	void UseItemAtEquipmentSlot(int32 SlotNum,EEquipment_Type EquipmentType);
+	void UseItemAtEquipmentSlot(EEquipment_Type EquipmentType);
 	
 
 	//getter
@@ -57,9 +57,11 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="InventoryComponent | Equipment")
 	TArray<AEquipmentItem*> Equipments;
 
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="InventoryComponent")
-	TArray<TSubclassOf<AItemBase>> StartItems;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="InventoryComponent | StartingItems")
+	TArray<TSubclassOf<AItemBase>> StartingInventoryItems;
 	
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="InventoryComponent | StartingItems")
+	TArray<TSubclassOf<AEquipmentItem>> StartingEquipmentItems;
 private:
 	UPROPERTY()
 	ACharacterBase* ComponentOwner;

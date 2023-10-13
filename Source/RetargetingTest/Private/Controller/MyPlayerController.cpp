@@ -5,7 +5,6 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Ability/CustomAbilitySystemComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/Character.h"
 #include "Player/PlayerStateBase.h"
@@ -64,14 +63,16 @@ void AMyPlayerController::BeginPlay()
 		AbilitySystemComponent = Cast<UAbilitySystemComponent>(LocalPS->GetAbilitySystemComponent());
 	}
 	
-	ACharacterBase* OwerPlayer = Cast<ACharacterBase>(GetCharacter());
+	ACharacterBase* OwnerPlayer = Cast<ACharacterBase>(GetCharacter());
+	UInventoryComponent* InventoryComponent = OwnerPlayer->GetInventoryManagerComponent();
 	InventoryUI=Cast<UInventoryUI>(CreateWidget(this,InventoryUIClass));
 	EquipmentUI=Cast<UEquipmentUI>(CreateWidget(this,EquipmentUIclass));
-	if(ensure(OwerPlayer) && ensure(InventoryUI) && ensure(EquipmentUI))
+	
+	if( ensure(InventoryUI) && ensure(EquipmentUI))
 	{
-		InventoryUI->SetCharacter(OwerPlayer);
+		InventoryUI->SetInventoryComponent(InventoryComponent);
 		InventoryUI->Init();
-		EquipmentUI->SetCharacter(OwerPlayer);
+		EquipmentUI->SetInventoryComponent(InventoryComponent);
 		EquipmentUI->Init();
 	}
 }
@@ -177,8 +178,12 @@ void AMyPlayerController::ToggleInventory(const FInputActionValue& Value)
 		InventoryUI->RemoveFromParent();
 		IsInventoryUIOpen=false;
 	}
-	///PlayerHUD->ToggleInventory();
+
+	if(IsInventoryUIOpen || IsEquipmentUIOpen)
+		SetShowMouseCursor(true);
 	
+	else if(!IsInventoryUIOpen && !IsEquipmentUIOpen)
+		SetShowMouseCursor(false);
 }
 
 void AMyPlayerController::ToggleEquipment(const FInputActionValue& Value)
@@ -194,6 +199,13 @@ void AMyPlayerController::ToggleEquipment(const FInputActionValue& Value)
 		EquipmentUI->RemoveFromParent();
 		IsEquipmentUIOpen=false;
 	}
+	
+	if(IsInventoryUIOpen || IsEquipmentUIOpen)
+		SetShowMouseCursor(true);
+	
+	else if(!IsInventoryUIOpen && !IsEquipmentUIOpen)
+		SetShowMouseCursor(false);
+	
 }
 
 void AMyPlayerController::EquipUnEquip(const FInputActionValue& Value)
@@ -214,11 +226,8 @@ UPlayerHUD* AMyPlayerController::GetPlayerHUD() const
 	{
 		return PlayerHUD;
 	}
-	else
-	{
-		UE_LOG(LogTemp,Warning,TEXT("PlayerController GetPlayerHUD nullptr"));
-		return nullptr;
-	}
+
+	return nullptr;
 }
 
 UGaugeBar* AMyPlayerController::GetGauge(EGaugeType Type) const

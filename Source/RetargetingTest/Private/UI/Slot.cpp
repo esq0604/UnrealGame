@@ -270,7 +270,7 @@ void USlot::Action()
 		{
 			UE_LOG(LogTemp,Warning,TEXT("SlotEquip : Action"));
 			UEquipmentSlot* TempSlot = dynamic_cast<UEquipmentSlot*>(this);
-			InventoryComponent->UseItemAtEquipmentSlot(Index,TempSlot->GetEquipItemType());
+			InventoryComponent->UseItemAtEquipmentSlot(TempSlot->GetEquipItemType());
 			break;
 		}
 	default:

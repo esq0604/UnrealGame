@@ -6,10 +6,10 @@
 #include "Blueprint/UserWidget.h"
 #include "EquipmentUI.generated.h"
 
+class UInventoryComponent;
 class UEquipmentSlot;
 enum class EEquipment_Type : uint8;
 class UButton;
-class ACharacterBase;
 
 /**
  * 
@@ -28,7 +28,7 @@ public:
 	void RefreshAllSlot();
 	void RefreshSlotByIndex(int32 Index);
 	void RefreshSlotByEquipmentType(EEquipment_Type Type);
-	void SetCharacter(ACharacterBase* NewCharacter);
+	void SetInventoryComponent(UInventoryComponent* NewInventoryComponent);
 	UEquipmentSlot* GetSlot(EEquipment_Type Type);
 protected:
 	virtual void NativeConstruct() override; 
@@ -38,8 +38,8 @@ private:
 
 protected:
 	UPROPERTY()
-	ACharacterBase* Player;
-
+	UInventoryComponent* InventoryComponent;
+	
 	UPROPERTY()
 	TArray<UEquipmentSlot*> Slots;
 

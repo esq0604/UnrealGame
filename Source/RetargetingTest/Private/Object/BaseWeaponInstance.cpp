@@ -197,4 +197,3 @@ void ABaseWeaponInstance::UseItem_Implementation(ACharacterBase* Character)
 		OffEquipped(Character);
 	}
 }
-

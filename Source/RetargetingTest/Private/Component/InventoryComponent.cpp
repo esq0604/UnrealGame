@@ -35,11 +35,20 @@ void UInventoryComponent::BeginPlay()
 		EquipmentUI = PC->GetEquipmentUI();
 	}
 
-	for(TSubclassOf<AItemBase> StartItem : StartItems)
+	for(TSubclassOf<AItemBase> StartItem : StartingInventoryItems)
 	{
 		FActorSpawnParameters SpawnParameters;
-		AddItemToInventory(Cast<AItemBase>(GetWorld()->SpawnActor(StartItem,nullptr,nullptr,SpawnParameters)));
-
+		AddItemToInventory((GetWorld()->SpawnActor<AItemBase>(StartItem,FVector(0,0,0),FRotator(0,0,0),SpawnParameters)));
+	}
+	
+	for(TSubclassOf<AEquipmentItem> EquipmentItem : StartingEquipmentItems)
+	{
+		FActorSpawnParameters SpawnParameters;
+		AEquipmentItem* SpawnedItem = GetWorld()->SpawnActor<AEquipmentItem>(EquipmentItem,SpawnParameters);
+		SpawnedItem->SetOwner(ComponentOwner);
+		IUseable* UseableItem = dynamic_cast<IUseable*>(SpawnedItem);
+		UseableItem->UseItem_Implementation(ComponentOwner);
+		AddItemToEquipments(SpawnedItem);
 	}
 }
 
@@ -62,30 +71,30 @@ bool UInventoryComponent::AddItemToInventory(AItemBase* AddedItem)
 	return false;
 }
 
-bool UInventoryComponent::AddItemToEquipment(AItemBase* AddedItem)
+/**
+ * Equipments에 아이템을 넣도록 합니다(장비아이템을 장착하도록 합니다)
+ * @param AddedItem : 장착될 아이템입니다.
+ */
+bool UInventoryComponent::AddItemToEquipments(AEquipmentItem* AddedItem)
 {
-	if (AddedItem != nullptr)
+	if(AddedItem ==nullptr)
 	{
-		const int32 AvaliableSlot = Equipments.Find(nullptr);
-		if (AvaliableSlot != INDEX_NONE)
-		{
-			//Equipment[AvaliableSlot] = AddedItem;
-			//Equipment[AvaliableSlot]=AddedItem;
-
-			if(Equipments[AvaliableSlot]==nullptr)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,TEXT("You cant carry any more items"));
-				return false;
-			}
-			EquipmentUI->RefreshSlotByIndex(AvaliableSlot);
-			return true;
-		}
-		else
-		{
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red,TEXT("Item null ptr"));
-		}
+		return false;
 	}
-	return false;
+
+	const int32 AddedItemTypeToInt = static_cast<int32>(AddedItem->GetEquipItemType());
+	if(Equipments[AddedItemTypeToInt]!=nullptr)
+	{
+		AddItemToInventory(Equipments[AddedItemTypeToInt]);
+		Equipments[AddedItemTypeToInt]=nullptr;
+	}
+	else
+	{
+		Equipments[AddedItemTypeToInt]=AddedItem;
+	}
+
+	EquipmentUI->RefreshSlotByEquipmentType(AddedItem->GetEquipItemType());
+	return true;
 }
 
 /**
@@ -105,18 +114,14 @@ void UInventoryComponent::UseItemAtInventorySlot(int32 SlotNum)
 	{
 	case EItemType::ITEM_EQUIPMENT:
 		{		
-
-			if(ComponentOwner!=nullptr)
-				UseableItem->UseItem_Implementation(ComponentOwner);
-
+			UseableItem->UseItem_Implementation(ComponentOwner);
 			
 			AEquipmentItem* EquipItem = dynamic_cast<AEquipmentItem*>(Inventory[SlotNum]);
 			if(EquipItem !=nullptr)
 			{
-				Equipments[static_cast<int32>(EquipItem->GetEquipItemType())]=EquipItem;
+				AddItemToEquipments(EquipItem);
 				Inventory[SlotNum]=nullptr;
 				InventoryUI->RefreshSlotByIndex(SlotNum);
-				EquipmentUI->RefreshSlotByEquipmentType(EquipItem->GetEquipItemType());
 			}
 			break;
 		}
@@ -161,23 +166,18 @@ void UInventoryComponent::UseItemAtInventorySlot(int32 SlotNum)
 /**
  * Equipment UI의 슬롯을 사용합니다.
  * 장비장착을 해제하고 인벤토리에 넣도록합니다.
- * @param SlotNum : 사용할 슬롯의 인덱스입니다.
+ * @param EquipmentType : 사용할 EquipItem의 타입입니다.
  */
-void UInventoryComponent::UseItemAtEquipmentSlot(int32 SlotNum,EEquipment_Type EquipmentType)
+void UInventoryComponent::UseItemAtEquipmentSlot(EEquipment_Type EquipmentType)
 {
-	
 	IUseable* UseableItem= Cast<IUseable>(GetItemAtEquipments(EquipmentType));
 	if(UseableItem)
 	{
 		UseableItem->UseItem_Implementation(ComponentOwner);
-			
-		Inventory[SlotNum] = GetItemAtEquipments(EquipmentType);
+		AddItemToInventory(GetItemAtEquipments(EquipmentType));
 		Equipments[static_cast<int32>(GetItemAtEquipments(EquipmentType)->GetEquipItemType())] =nullptr;
 		EquipmentUI->RefreshSlotByEquipmentType(EquipmentType);
-		InventoryUI->RefreshSlotByIndex(SlotNum);
 	}
-	
-	
 }
 
 AItemBase* UInventoryComponent::GetItemAtInventory(int32 SlotNum) const
