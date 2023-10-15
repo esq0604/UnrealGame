@@ -15,8 +15,10 @@
 #include "MotionWarpingComponent.h"
 #include "Ability/CustomGameplayAbility.h"
 #include "Camera/CameraComponent.h"
+#include "Component/CustomSpringArmComponent.h"
 #include "Component/WeaponCollisionComponent.h"
 #include "Component/InventoryComponent.h"
+#include "Component/TargetingComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Player/PlayerStateBase.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
@@ -32,13 +34,12 @@ ACharacterBase::ACharacterBase()
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Character"));
 	
 	// Create a camera boom (pulls in towards the player if there is a collision)
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom = CreateDefaultSubobject<UCustomSpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+
 	// Create a follow camera
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	FollowCamera->SetupAttachment(CameraBoom, UCustomSpringArmComponent::SocketName);
 	// Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 	// Don't rotate when the controller rotates. Let that just affect the camera.
@@ -65,7 +66,9 @@ ACharacterBase::ACharacterBase()
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
 	InventoryManagerComponent =CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryManagerComponent"));
-	
+	// Create target component
+	TargetComponent = CreateDefaultSubobject<UTargetingComponent>(TEXT("TargetComponent"));
+	TargetComponent->SetupAttachment(GetRootComponent());
 }
 
 void ACharacterBase::BeginPlay()
@@ -90,7 +93,18 @@ void ACharacterBase::BeginPlay()
 void ACharacterBase::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	
+
+	if (CameraBoom->IsCameraLockedToTarget())
+	{
+		// Vector from player to target
+		FVector TargetVect = CameraBoom->CameraTarget->GetComponentLocation() - CameraBoom->GetComponentLocation();
+		FRotator TargetRot = TargetVect.GetSafeNormal().Rotation();
+		FRotator CurrentRot = GetControlRotation();
+		FRotator NewRot = FMath::RInterpTo(CurrentRot, TargetRot, DeltaSeconds, LockonControlRotationRate);
+
+		// Update control rotation to face target
+		GetController()->SetControlRotation(NewRot);
+	}
 }
 
 void ACharacterBase::ToggleWeaponCollision_Implementation(bool IsEnable)

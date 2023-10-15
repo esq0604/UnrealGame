@@ -8,6 +8,8 @@
 #include "GameFramework/PlayerController.h"
 #include "MyPlayerController.generated.h"
 
+class UCustomSpringArmComponent;
+class ACharacterBase;
 class UEquipmentUI;
 class UAbilitySystemComponent;
 class UGaugeBar;
@@ -31,7 +33,7 @@ public:
 	AMyPlayerController(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get()); 
 
 public:
-
+	virtual void OnPossess(APawn* InPawn) override;
 	//Input Biund Function 
 	void Sprint(const FInputActionValue& Value);
 	//void Attack(const FInputActionValue& Value);
@@ -46,8 +48,8 @@ public:
 	void Block(const FInputActionValue& Value);
 	UFUNCTION(BlueprintCallable,BlueprintImplementableEvent)
 	void BlockEnd(const FInputActionValue& Value);
-	void TargetLook(const FInputActionValue& Value);
-	
+	void TargetSoftLook(const FInputActionValue& Value);
+	void TargetHardLock(const FInputActionValue& Value);
 	//Getter
 	UPlayerHUD* GetPlayerHUD() const;
 	UGaugeBar* GetGauge(EGaugeType Type) const;
@@ -79,6 +81,8 @@ protected:
 	UPROPERTY(EditInstanceOnly,BlueprintReadWrite,Category="AMyPlayerController | AbilitySystemComponent" , meta=(AllowPrivateAccess=true))
 	UAbilitySystemComponent* AbilitySystemComponent;
 
+	UPROPERTY(BlueprintReadWrite)
+	ACharacterBase* OwnerCharacter;
 private:
 	FGameplayTagContainer RollTagContainer;
 	FGameplayTag RollTag;
@@ -115,7 +119,14 @@ private:
 	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly,meta=(AllowPrivateAccess=true))
 	TSubclassOf<UInventoryUI> InventoryUIClass;
 
+	UPROPERTY()
+	UCustomSpringArmComponent* CustomSpringArmComponent;
+	
 	bool IsEquipmentUIOpen=false;
 	bool IsInventoryUIOpen=false;
+	bool bAnalogSettledSinceLastTargetSwitch=false;
+	float TargetSwitchAnalogValue=.8f;
 };
+
+
 

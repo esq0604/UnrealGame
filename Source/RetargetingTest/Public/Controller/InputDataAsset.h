@@ -49,9 +49,11 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UInputAction* InputRoll;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	UInputAction* InputTargetLook;
+	UInputAction* InputTargetSoftLook;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UInputAction* InputParry;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UInputAction* InputToggleEquipment;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	UInputAction* InputTargetHardLock;
 };

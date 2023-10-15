@@ -11,31 +11,21 @@
 #include "CharacterBase.generated.h"
 
 
+class UCustomSpringArmComponent;
+class UTargetingComponent;
 class UCustomGameplayAbility;
 class ABaseWeaponInstance;
-class UCharacterGameplayAbility;
-class UCharacterAbilitySystemComponent;
 class UBaseAttributeSet;
-class UTargetingComponent;
-class APlayerStateBase;
-class UBaseAbilityManagerComponent;
-class UWidgetComponent;
 class UFloatingCombatTextComponent;
 class UCharaterAnimInstance;
-class UBasePlayerStatComponent;
-class UInputMappingContext;
-class UInputAction;
-struct FDamageEvent;
 class UMotionWarpingComponent;
-class UStaticMeshComponent;
 class UAbilitySystemComponent;
-class USpringArmComponent;
 class UCameraComponent;
-class AItemBase;
 class UInventoryComponent;
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterDied,ACharacterBase*,character);
+
 UCLASS(config=Game)
 class ACharacterBase : public ACharacter, public IAbilitySystemInterface, public ICombat//, public IAttackable
 {
@@ -81,7 +71,7 @@ public:
 	
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"),Category="CharacterBase | Component")
-	TObjectPtr<USpringArmComponent> CameraBoom;
+	UCustomSpringArmComponent* CameraBoom;
 
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"),Category="CharacterBase | Component")
@@ -89,6 +79,9 @@ public:
 	
 	UPROPERTY(BlueprintAssignable,Category="CharacterBase| Died")
 	FOnCharacterDied OnChracterDied;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Lock On Camera")
+	float LockonControlRotationRate=10.f;
 	
 	UFUNCTION(BlueprintCallable,Category="CharacterBase| Died")
 	virtual void FinishDying();
@@ -98,6 +91,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Component")
 	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Component")
+	TObjectPtr<UTargetingComponent> TargetComponent;
 	
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="CharacterBase | Attributes")
 	UBaseAttributeSet* Attributes;
@@ -152,6 +148,7 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly,meta=(AllowPrivateAccess=true), Category="CharacterBase | Component")
 	TObjectPtr<UInventoryComponent> InventoryManagerComponent;
 
+	
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess=true))
 	bool bIFrame;
 };

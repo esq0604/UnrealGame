@@ -6,7 +6,6 @@
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
 #include "Interface/Combat.h"
-#include "Interface/Targeting.h"
 #include "BaseMonster.generated.h"
 
 class UMonsterGauge;
@@ -30,7 +29,7 @@ struct FOnAttributeChangeData;
 struct FDamageEvent;
 
 UCLASS()
-class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface,public ICombat, public ITargeting
+class RETARGETINGTEST_API ABaseMonster : public ACharacter,public IAbilitySystemInterface,public ICombat
 {
 	GENERATED_BODY() //Generated.h생성 매크로
 
@@ -60,12 +59,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
-
-
-	// ITargeting
-	virtual void OnTargeted_Implementation(bool bIsTargeted) override;
-	virtual bool CanBeTargeted_Implementation() override;
-
+	
 	//MotionWarp
 	UFUNCTION(BlueprintCallable)
 	void MotionWarpForwardToDistance(float MoveDistance);
@@ -104,13 +98,7 @@ protected:
 	/**
 	 * 에너미 위젯
 	 */
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,Category="EnemyBase | Componnet")
-	TObjectPtr<UWidgetComponent> TargetWidgetComponent;
 	
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | UI")
-	TSubclassOf<UUserWidget> TargetWidgetClass;
-	
-
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | UI")
 	TObjectPtr<UMonsterGauge> HPBarWidget;
 

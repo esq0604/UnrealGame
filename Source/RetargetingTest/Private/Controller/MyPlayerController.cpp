@@ -3,9 +3,12 @@
 
 #include "RetargetingTest/Public/Controller/MyPlayerController.h"
 
+#include <string>
+
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Blueprint/UserWidget.h"
+#include "Component/CustomSpringArmComponent.h"
 #include "GameFramework/Character.h"
 #include "Player/PlayerStateBase.h"
 #include "RetargetingTest/RetargetingTest.h"
@@ -44,6 +47,13 @@ AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitial
 	TargetLookTagContainer.AddTag(TargetLookTag);
 }
 
+void AMyPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+
+	OwnerCharacter = Cast<ACharacterBase>(InPawn);
+}
+
 void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -64,6 +74,8 @@ void AMyPlayerController::BeginPlay()
 	}
 	
 	ACharacterBase* OwnerPlayer = Cast<ACharacterBase>(GetCharacter());
+	CustomSpringArmComponent = OwnerPlayer->CameraBoom;
+	
 	UInventoryComponent* InventoryComponent = OwnerPlayer->GetInventoryManagerComponent();
 	InventoryUI=Cast<UInventoryUI>(CreateWidget(this,InventoryUIClass));
 	EquipmentUI=Cast<UEquipmentUI>(CreateWidget(this,EquipmentUIclass));
@@ -83,7 +95,6 @@ void AMyPlayerController::BindInputASC()
 		return;
 	FTopLevelAssetPath EnumAssetPath = FTopLevelAssetPath(FName("/Script/RetargetingTest"),FName("EAbilityID"));
 	AbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent,FGameplayAbilityInputBinds(FString("Confirm"),FString("Cancel"),EnumAssetPath,static_cast<int32>(EAbilityInputID::Confirm), static_cast<int32>(EAbilityInputID::Cancel)));
-	UE_LOG(LogTemp,Warning,TEXT("BindInputASC"));
 }
 void AMyPlayerController::SetupInputComponent()
 {
@@ -105,9 +116,9 @@ void AMyPlayerController::SetupInputComponent()
 	EnhancedInputComp->BindAction(InputAction->InputEquipUnEquip,ETriggerEvent::Triggered,this,&AMyPlayerController::EquipUnEquip);
 	EnhancedInputComp->BindAction(InputAction->InputRoll,ETriggerEvent::Triggered,this,&AMyPlayerController::Roll);
 	EnhancedInputComp->BindAction(InputAction->InputBlock,ETriggerEvent::Triggered,this,&AMyPlayerController::Block);
-	EnhancedInputComp->BindAction(InputAction->InputTargetLook,ETriggerEvent::Started,this,&AMyPlayerController::TargetLook);
+	EnhancedInputComp->BindAction(InputAction->InputTargetSoftLook,ETriggerEvent::Started,this,&AMyPlayerController::TargetSoftLook);
 	EnhancedInputComp->BindAction(InputAction->InputToggleEquipment,ETriggerEvent::Started,this,&AMyPlayerController::ToggleEquipment);
-
+	EnhancedInputComp->BindAction(InputAction->InputTargetHardLock,ETriggerEvent::Started,this,&AMyPlayerController::TargetHardLock);
 	BindInputASC();
 }
 
@@ -147,8 +158,26 @@ void AMyPlayerController::Look(const FInputActionValue& Value)
 	// add yaw and pitch input to controller
 	if(GetCharacter()!=nullptr)
 	{
-		GetCharacter()->AddControllerYawInput(LookAxisVector.X);
-		GetCharacter()->AddControllerPitchInput(LookAxisVector.Y);
+		if (!CustomSpringArmComponent->IsCameraLockedToTarget())
+			GetCharacter()->AddControllerPitchInput(LookAxisVector.Y);
+
+		if (FMath::Abs(LookAxisVector.X) < .1f)
+			bAnalogSettledSinceLastTargetSwitch = true;
+
+		if (CustomSpringArmComponent->IsCameraLockedToTarget() && (FMath::Abs(LookAxisVector.X) > TargetSwitchAnalogValue) && bAnalogSettledSinceLastTargetSwitch)
+		{
+			if (LookAxisVector.X < 0)
+				CustomSpringArmComponent->SwitchTarget(EDirection::Left);
+			else
+				CustomSpringArmComponent->SwitchTarget(EDirection::Right);
+
+			bAnalogSettledSinceLastTargetSwitch = false;
+		}
+		else
+		{
+			// calculate delta for this frame from the rate information
+			GetCharacter()->AddControllerYawInput(LookAxisVector.X);
+		}
 	}
 }
 
@@ -161,7 +190,6 @@ void AMyPlayerController::JumpStop(const FInputActionValue& Value)
 {
 	GetCharacter()->StopJumping();
 }
-
 
 void AMyPlayerController::Interact(const FInputActionValue& Value)
 {
@@ -253,10 +281,14 @@ void AMyPlayerController::Block(const FInputActionValue& Value)
 	SendAbilityLocalInput(Value,static_cast<int32>(EAbilityInputID::RightClickAbility));
 }
 
-void AMyPlayerController::TargetLook(const FInputActionValue& Value)
+void AMyPlayerController::TargetSoftLook(const FInputActionValue& Value)
 {
-	//UE_LOG(LogTemp,Warning,TEXT("Target Look "));
-	//AbilitySystemComponent->TryActivateAbilitiesByTag(TargetLookTagContainer);
+	OwnerCharacter->CameraBoom->ToggleSoftLock();
+}
+
+void AMyPlayerController::TargetHardLock(const FInputActionValue& Value)
+{
+	OwnerCharacter->CameraBoom->ToggleCameraLock();
 }
 
 

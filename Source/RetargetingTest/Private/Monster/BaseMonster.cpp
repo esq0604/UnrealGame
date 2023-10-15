@@ -23,9 +23,6 @@ ABaseMonster::ABaseMonster()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	
-	TargetWidgetComponent=CreateDefaultSubobject<UWidgetComponent>(TEXT("TargetWidgetComponent"));
-	TargetWidgetComponent->SetupAttachment(GetMesh());
-
 	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComp"));
 }
 
@@ -82,16 +79,6 @@ void ABaseMonster::SetIFrame_Implementation(bool bEnabled)
 	bIFrame=bEnabled;
 }
 
-void ABaseMonster::OnTargeted_Implementation(bool bIsTargeted)
-{
-	TargetWidgetComponent->SetVisibility(bIsTargeted);
-}
-
-bool ABaseMonster::CanBeTargeted_Implementation()
-{
-	return true;
-}
-
 void ABaseMonster::MotionWarpForwardToDistance(float MoveDistance)
 {
 	const FVector CurLocation = GetActorLocation();
@@ -139,11 +126,6 @@ void ABaseMonster::BeginPlay()
 		
 	HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(EnemyAttributesSet->GetHealthAttribute()).AddUObject(this,&ABaseMonster::HealthChange);
 	mAnimInstacne=Cast<UBaseMonsterAnimInstance>(GetMesh()->GetAnimInstance());
-	
-
-	
-	TargetWidgetComponent->SetWidgetClass(TargetWidgetClass);
-	TargetWidgetComponent->SetVisibility(false);
 	
 	// Weapon 클래스로 Weapon을 스폰 및 무기가 가지고 있는 어빌리티를 추가해줍니다.
 	if(WeaponClass)
