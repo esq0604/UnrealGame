@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/WidgetComponent.h"
 #include "TargetingComponent.generated.h"
 
 /**
@@ -16,5 +17,8 @@ UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class RETARGETINGTEST_API UTargetingComponent : public USphereComponent
 {
 	GENERATED_BODY()
+public:
+
+private:
 
 };

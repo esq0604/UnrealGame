@@ -17,6 +17,7 @@
 #include "UI/EquipmentUI.h"
 #include "UI/PlayerHUD.h"
 #include "UI/InventoryUI.h"
+#include "UI/QuickSlotUI.h"
 
 AMyPlayerController::AMyPlayerController(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
@@ -85,7 +86,7 @@ void AMyPlayerController::BeginPlay()
 		InventoryUI->SetInventoryComponent(InventoryComponent);
 		InventoryUI->Init();
 		EquipmentUI->SetInventoryComponent(InventoryComponent);
-		EquipmentUI->Init();
+		EquipmentUI->Init(); 
 	}
 }
 
@@ -107,7 +108,7 @@ void AMyPlayerController::SetupInputComponent()
 	UEnhancedInputComponent* EnhancedInputComp= Cast<UEnhancedInputComponent>(InputComponent);
 
 	EnhancedInputComp->BindAction(InputAction->InputSprint,ETriggerEvent::Triggered,this,&AMyPlayerController::Sprint);
-	//EnhancedInputComp->BindAction(InputAction->InputAttack,ETriggerEvent::Triggered,this,&AMyPlayerController::Attack);
+	EnhancedInputComp->BindAction(InputAction->InputAttack,ETriggerEvent::Triggered,this,&AMyPlayerController::Attack);
 	EnhancedInputComp->BindAction(InputAction->InputLook,ETriggerEvent::Triggered,this,&AMyPlayerController::Look);
 	EnhancedInputComp->BindAction(InputAction->InputJump,ETriggerEvent::Started,this,&AMyPlayerController::Jump);
 	//EnhancedInputComp->BindAction(InputAction->InputJump,ETriggerEvent::Completed,this,&AMyPlayerController::JumpStop);
@@ -119,6 +120,8 @@ void AMyPlayerController::SetupInputComponent()
 	EnhancedInputComp->BindAction(InputAction->InputTargetSoftLook,ETriggerEvent::Started,this,&AMyPlayerController::TargetSoftLook);
 	EnhancedInputComp->BindAction(InputAction->InputToggleEquipment,ETriggerEvent::Started,this,&AMyPlayerController::ToggleEquipment);
 	EnhancedInputComp->BindAction(InputAction->InputTargetHardLock,ETriggerEvent::Started,this,&AMyPlayerController::TargetHardLock);
+	EnhancedInputComp->BindAction(InputAction->InputChangeUsingQuickSlot,ETriggerEvent::Triggered,this,&AMyPlayerController::ChangeUsingQuickSlot);
+	EnhancedInputComp->BindAction(InputAction->InputUseQuickSlot,ETriggerEvent::Started,this,&AMyPlayerController::UseQuickSlot);
 	BindInputASC();
 }
 
@@ -145,10 +148,10 @@ void AMyPlayerController::Sprint(const FInputActionValue& Value)
 /**
  * 
  */
-// void AMyPlayerController::Attack(const FInputActionValue& Value)
-// {
-// 	AbilitySystemComponent->TryActivateAbilitiesByTag(AttackTagContainer);
-// }
+void AMyPlayerController::Attack(const FInputActionValue& Value)
+{
+	SendAbilityLocalInput(Value,static_cast<int32>(EAbilityInputID::LeftClickAbility));
+}
 
 void AMyPlayerController::Look(const FInputActionValue& Value)
 {
@@ -158,9 +161,12 @@ void AMyPlayerController::Look(const FInputActionValue& Value)
 	// add yaw and pitch input to controller
 	if(GetCharacter()!=nullptr)
 	{
+		
 		if (!CustomSpringArmComponent->IsCameraLockedToTarget())
+		{
 			GetCharacter()->AddControllerPitchInput(LookAxisVector.Y);
-
+		}
+		
 		if (FMath::Abs(LookAxisVector.X) < .1f)
 			bAnalogSettledSinceLastTargetSwitch = true;
 
@@ -289,6 +295,27 @@ void AMyPlayerController::TargetSoftLook(const FInputActionValue& Value)
 void AMyPlayerController::TargetHardLock(const FInputActionValue& Value)
 {
 	OwnerCharacter->CameraBoom->ToggleCameraLock();
+}
+
+void AMyPlayerController::ChangeUsingQuickSlot(const FInputActionValue& Value)
+{
+	float InputWheelAxis = Value.Get<float>();
+
+	//Up
+	if(InputWheelAxis==1)
+	{
+		PlayerHUD->GetQuickSlot()->PlayChangeMagicSlotAnim();
+	}
+	//Down
+	else if(InputWheelAxis==-1)
+	{
+		PlayerHUD->GetQuickSlot()->PlayChangeItemSlotAnim();
+	}
+}
+
+void AMyPlayerController::UseQuickSlot(const FInputActionValue& Value)
+{
+	PlayerHUD->GetQuickSlot()->Use();
 }
 
 

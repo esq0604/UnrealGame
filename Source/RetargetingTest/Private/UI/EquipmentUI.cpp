@@ -32,13 +32,13 @@ void UEquipmentUI::Init()
 	const ACharacter* Character = GetOwningPlayer()->GetCharacter();
 	UInventoryComponent* InventoryComp = Cast<UInventoryComponent>(
 		Character->GetComponentByClass(UInventoryComponent::StaticClass()));
-	Slots.Init(nullptr, InventoryComp->GetEquipments().Num());
+	//Slots.Init(nullptr, InventoryComp->GetEquipments().Num());
 
 
-	WeaponSlot->SetEquipItemType(EEquipment_Type::Weapon);
-	HeadSlot->SetEquipItemType(EEquipment_Type::Head);
-	ArmorSlot->SetEquipItemType(EEquipment_Type::Armor);
-	PantsSlot->SetEquipItemType(EEquipment_Type::Pants);
+	WeaponSlot->SetEquipItemType();
+	HeadSlot->SetEquipItemType();
+	ArmorSlot->SetEquipItemType();
+	PantsSlot->SetEquipItemType();
 	SlotInit(WeaponSlot);
 	SlotInit(HeadSlot);
 	SlotInit(ArmorSlot);
@@ -50,7 +50,7 @@ void UEquipmentUI::SlotInit(UEquipmentSlot* EquipSlot)
 	EquipSlot->SetType(ESlotType::SLOT_EQUIP);
 	EquipSlot->SetInventoryComponent(InventoryComponent);
 	EquipSlot->Init();
-	Slots[static_cast<int32>(EquipSlot->GetEquipItemType())] = EquipSlot;
+	//Slots[static_cast<int32>(EquipSlot->GetEquipItemType())] = EquipSlot;
 }
 
 bool UEquipmentUI::Initialize()
@@ -79,24 +79,24 @@ void UEquipmentUI::RefreshSlotByIndex(int32 Index)
 	Slots[Index]->Refresh();
 }
 
-void UEquipmentUI::RefreshSlotByEquipmentType(EEquipment_Type Type)
+void UEquipmentUI::RefreshSlotByEquipmentType()
 {
 	const ACharacter* Character = GetOwningPlayer()->GetCharacter();
 	UInventoryComponent* InventoryComp = Cast<UInventoryComponent>(
 		Character->GetComponentByClass(UInventoryComponent::StaticClass()));
-	TArray<AItemBase*> Inventory = InventoryComp->GetInventory();
-	TArray<AEquipmentItem*> Equipments = InventoryComp->GetEquipments();
+	//TArray<AItemBase*> Inventory = InventoryComp->GetInventory();
+//	TArray<AEquipmentItem*> Equipments = InventoryComp->GetEquipments();
 
-	UTexture2D* Tex = InventoryComp->GetThumbnailAtEquipment(Type);
-	const UEquipmentSlot* TempSlot = GetSlot(Type);
-	if (Tex)
-	{
-		TempSlot->Img->SetBrushFromTexture(Tex);
-	}
-	else
-	{
-		TempSlot->Img->SetBrushFromTexture(TempSlot->DefaultTexture);
-	}
+//	UTexture2D* Tex = InventoryComp->GetThumbnailAtEquipment();
+	const UEquipmentSlot* TempSlot = GetSlot();
+	// if (Tex)
+	// {
+	// 	TempSlot->Img->SetBrushFromTexture(Tex);
+	// }
+	// else
+	// {
+	// 	TempSlot->Img->SetBrushFromTexture(TempSlot->DefaultTexture);
+	// }
 }
 
 void UEquipmentUI::SetInventoryComponent(UInventoryComponent* NewInventoryComponent)
@@ -105,16 +105,16 @@ void UEquipmentUI::SetInventoryComponent(UInventoryComponent* NewInventoryCompon
 }
 
 
-UEquipmentSlot* UEquipmentUI::GetSlot(EEquipment_Type Type)
+UEquipmentSlot* UEquipmentUI::GetSlot()
 {
 	for (UEquipmentSlot* TempSlot : Slots)
 	{
 		if (TempSlot != nullptr)
 		{
-			if (TempSlot->GetEquipItemType() == Type)
-			{
-				return TempSlot;
-			}
+			// if (TempSlot->GetEquipItemType())
+			// {
+			// 	return TempSlot;
+			// }
 		}
 	}
 	return nullptr;

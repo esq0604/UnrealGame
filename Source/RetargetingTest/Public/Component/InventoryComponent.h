@@ -6,9 +6,11 @@
 #include "Components/ActorComponent.h"
 #include "InventoryComponent.generated.h"
 
-
+class UItemDataAsset;
+class UEquipmentDataAsset;
+enum class EItemType : uint8;
+class UArmorDataAsset;
 enum class ESlotType : uint8;
-enum class EEquipment_Type : uint8;
 class AEquipmentItem;
 class UEquipmentUI;
 class UInventoryUI;
@@ -27,47 +29,38 @@ public:
 	UInventoryComponent();
 
 	UFUNCTION(BlueprintCallable)
-	bool AddItemToInventory(AItemBase* AddedItem);
+	bool AddItem(UItemDataAsset* AddedItem);
+	
+	UFUNCTION(BlueprintCallable)
+	void UseItem(int32 SlotNum);
+	
+	bool IsItemStackable(int32 Index);
 
-	UFUNCTION(BlueprintCallable)
-	bool AddItemToEquipments(AEquipmentItem* AddedItem);
+	int8 IndexNormalize(int32 Index);
 	
-	UFUNCTION(BlueprintCallable)
-	void UseItemAtInventorySlot(int32 SlotNum);
-	
-	UFUNCTION(BlueprintCallable)
-	void UseItemAtEquipmentSlot(EEquipment_Type EquipmentType);
-	
-
 	//getter
-	AItemBase* GetItemAtInventory(int32 SlotNum) const;
-	TArray<AItemBase*> GetInventory() const;
-	TArray<AEquipmentItem*> GetEquipments() const;
-	AEquipmentItem* GetItemAtEquipments(EEquipment_Type EquipmentType) const;
-	UTexture2D* GetThumbnailAtInventorySlot(int32 SlotIdx) const;
-	UTexture2D* GetThumbnailAtEquipment(EEquipment_Type EquipmentType) const;
+	FORCEINLINE TArray<UItemDataAsset*> GetItems() const {return Items;}
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+private:
+	void UpdateSlot(int32 Index);
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
-	TArray<AItemBase*> Inventory;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="InventoryComponent | Equipment")
-	TArray<AEquipmentItem*> Equipments;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="InventoryComponent | StartingItems")
-	TArray<TSubclassOf<AItemBase>> StartingInventoryItems;
 	
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="InventoryComponent | StartingItems")
-	TArray<TSubclassOf<AEquipmentItem>> StartingEquipmentItems;
 private:
 	UPROPERTY()
 	ACharacterBase* ComponentOwner;
-	TWeakObjectPtr<UInventoryUI> InventoryUI;
-	UEquipmentUI* EquipmentUI;
-	const int NOT_INITIALIZED_SLOT=-1;
-
 	
+	TWeakObjectPtr<UInventoryUI> InventoryUI;
+
+	UPROPERTY()
+	UEquipmentUI* EquipmentUI;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
+	TArray<UItemDataAsset*> Items;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="InventoryComponent | StartingItems")
+	TArray<UItemDataAsset*> StartingItems;
 };

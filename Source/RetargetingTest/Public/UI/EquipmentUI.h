@@ -27,9 +27,9 @@ public:
 	
 	void RefreshAllSlot();
 	void RefreshSlotByIndex(int32 Index);
-	void RefreshSlotByEquipmentType(EEquipment_Type Type);
+	void RefreshSlotByEquipmentType();
 	void SetInventoryComponent(UInventoryComponent* NewInventoryComponent);
-	UEquipmentSlot* GetSlot(EEquipment_Type Type);
+	UEquipmentSlot* GetSlot();
 protected:
 	virtual void NativeConstruct() override; 
 private:

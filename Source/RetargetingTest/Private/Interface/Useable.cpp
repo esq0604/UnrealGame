@@ -5,4 +5,6 @@
 
 
 // Add default functionality here for any IUseable functions that are not pure virtual.
-
+void IUseable::UseItem(ACharacterBase* Character)
+{
+}

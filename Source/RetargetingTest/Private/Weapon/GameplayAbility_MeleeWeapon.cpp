@@ -8,8 +8,9 @@
 #include "AbilitySystemGlobals.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Engine/HitResult.h"
-#include "Object/BaseWeaponInstance.h"
+#include "Object/BaseWeaponItem.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "GameplayCueFunctionLibrary.h"
 
 
 
@@ -18,15 +19,18 @@ UGameplayAbility_MeleeWeapon::UGameplayAbility_MeleeWeapon(const FObjectInitiali
 	
 }
 
-ABaseWeaponInstance* UGameplayAbility_MeleeWeapon::GetWeaponInstance()
+ABaseWeaponItem* UGameplayAbility_MeleeWeapon::GetWeaponInstance()
 {
 	if(const FGameplayAbilitySpec* Spec = UGameplayAbility::GetCurrentAbilitySpec())
 	{
-		return Cast<ABaseWeaponInstance>(Spec->SourceObject.Get());
+		return Cast<ABaseWeaponItem>(Spec->SourceObject.Get());
 	}
 	return nullptr;
 }
 
+/**
+ * @brief 근접무기 어빌리티 활성화시 동작입니다. 몽타주를 실행하고 데미지를 적용하도록합니다.
+ */
 void UGameplayAbility_MeleeWeapon::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
 	const FGameplayEventData* TriggerEventData)
@@ -38,10 +42,8 @@ void UGameplayAbility_MeleeWeapon::ActivateAbility(const FGameplayAbilitySpecHan
 	// mActorInfo = ActorInfo;
 	// mActivationInfo=ActivationInfo;
 	//
-	//
-	//
-	// //Play Attack Montage
-	// ActiveMontage();
+	// if(ensure(AttackMontage))
+	// 	ActiveMontage(AttackMontage);
 	//
 	// //Wait GameplayEvent 
 	// WaitGameplayEventForApplyDamageEffect();
@@ -54,29 +56,52 @@ void UGameplayAbility_MeleeWeapon::EndAbility(const FGameplayAbilitySpecHandle H
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
-void UGameplayAbility_MeleeWeapon::AbilityFinish()
+void UGameplayAbility_MeleeWeapon::MontageFinish()
 {
+	UE_LOG(LogTemp,Warning,TEXT("MontageFinish"));
 	EndAbility(mAbilitySpecHandle,mActorInfo,mActivationInfo,true,false);
 }
 
+void UGameplayAbility_MeleeWeapon::MontageCanceled()
+{
+	UE_LOG(LogTemp,Warning,TEXT("MontageCancled"));
+	EndAbility(mAbilitySpecHandle,mActorInfo,mActivationInfo,true,true);
+}
+
 /**k
- *	게임플레이이펙트를 타겟에게 적용합니다.
+ *	타겟에게 데미지 이펙트를 전달합니다. 이때 타겟의 상태에 따라 패리, 디펜스를 수행하도록 합니다.
  *	@param Payload : 게임플레이이벤트를 보내주는 BaseWeaponInstance에서 수신하는 데이터입니다.
  */
 void UGameplayAbility_MeleeWeapon::ApplyGameplayDamageEffect(FGameplayEventData Payload)
 {
 	AActor* TargetActor = const_cast<AActor*>(Payload.Target.Get());
 	UAbilitySystemComponent* TargetAbilityComp = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(TargetActor);
-
+	UAbilitySystemComponent* OwnerActorAbilityComp = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwningActorFromActorInfo());
+	FGameplayCueParameters Parameters(Payload.ContextHandle);
+	UE_LOG(LogTemp,Warning,TEXT("Event Received"));
 	if(!TargetAbilityComp)
 		return;
 	//const FGameplayAbilityTargetDataHandle TargetDataHandle=UAbilitySystemBlueprintLibrary::AbilityTargetDataFromActor(TargetActor);
-
-	UAbilitySystemComponent* OwnerActorAbilityComp = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwningActorFromActorInfo());
-
-	ensure(OwnerActorAbilityComp);
-	OwnerActorAbilityComp->ApplyGameplayEffectToTarget(DamageGameplayEffectClass.GetDefaultObject(),TargetAbilityComp,0.0f,Payload.ContextHandle);
 	
+	if(TargetAbilityComp->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Ability.Parry")))
+	{
+		//Target Do Parry;
+		FGameplayTag ParryTag = FGameplayTag::RequestGameplayTag("Ability.Parry");
+		UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(TargetActor,ParryTag,Parameters);
+		ActiveMontage(AttackFailMontage);
+	}
+	else if(TargetAbilityComp->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag("Character.IsBlocking")))
+	{
+		//Target Do Defense
+		FGameplayTag DefenseTag = FGameplayTag::RequestGameplayTag("Character.IsBlocking");
+		UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor(TargetActor,DefenseTag,Parameters);
+	}
+	else
+	{
+		//Target Get Damage;
+		UE_LOG(LogTemp,Warning,TEXT("Target Get Damage"));
+		OwnerActorAbilityComp->ApplyGameplayEffectToTarget(DamageGameplayEffectClass.GetDefaultObject(),TargetAbilityComp,0.0f,Payload.ContextHandle);
+	}
 }
 
 void UGameplayAbility_MeleeWeapon::SetHitResult(const FHitResult& HitResult)
@@ -84,14 +109,14 @@ void UGameplayAbility_MeleeWeapon::SetHitResult(const FHitResult& HitResult)
 	mHitResult=HitResult;
 }
 
-void UGameplayAbility_MeleeWeapon::ActiveMontage()
+void UGameplayAbility_MeleeWeapon::ActiveMontage(UAnimMontage* PlayMontage)
 {
-	check(MontageToPlay)
-	UAbilityTask_PlayMontageAndWait* MontageProxy=UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this,FName("None"),MontageToPlay);
-	MontageProxy->OnCancelled.AddDynamic(this,&UGameplayAbility_MeleeWeapon::AbilityFinish);
-	MontageProxy->OnCompleted.AddDynamic(this,&UGameplayAbility_MeleeWeapon::AbilityFinish);
-	MontageProxy->OnInterrupted.AddDynamic(this,&UGameplayAbility_MeleeWeapon::AbilityFinish);
-	MontageProxy->OnBlendOut.AddDynamic(this,&UGameplayAbility_MeleeWeapon::AbilityFinish);
+	check(PlayMontage)
+	UAbilityTask_PlayMontageAndWait* MontageProxy=UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this,FName("None"),PlayMontage);
+	MontageProxy->OnCancelled.AddDynamic(this,&UGameplayAbility_MeleeWeapon::MontageCanceled);
+	MontageProxy->OnCompleted.AddDynamic(this,&UGameplayAbility_MeleeWeapon::MontageFinish);
+	MontageProxy->OnInterrupted.AddDynamic(this,&UGameplayAbility_MeleeWeapon::MontageCanceled);
+	MontageProxy->OnBlendOut.AddDynamic(this,&UGameplayAbility_MeleeWeapon::MontageFinish);
 	MontageProxy->Activate();
 }
 

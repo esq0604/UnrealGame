@@ -11,7 +11,7 @@
 class UMonsterGauge;
 class UGaugeBar;
 class UMotionWarpingComponent;
-class ABaseWeaponInstance;
+class ABaseWeaponItem;
 class UWeaponCollisionComponent;
 class UBaseAttributeSet;
 class UBehaviorTree;
@@ -59,10 +59,6 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
-	
-	//MotionWarp
-	UFUNCTION(BlueprintCallable)
-	void MotionWarpForwardToDistance(float MoveDistance);
 
 private:
 	virtual void HealthChange(const FOnAttributeChangeData& Data);
@@ -76,9 +72,6 @@ protected:
 	/**
 	 * 컴포넌트
 	 */
-
-	UPROPERTY(BlueprintReadOnly,EditDefaultsOnly,Category="Enemy|Component")
-	TObjectPtr<UMotionWarpingComponent> MotionWarpingComponent;
 	/**
 	 * 어빌리티 및 어트리뷰트
 	 */
@@ -98,13 +91,14 @@ protected:
 	/**
 	 * 에너미 위젯
 	 */
-	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | UI")
 	TObjectPtr<UMonsterGauge> HPBarWidget;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | UI")
 	TSubclassOf<UUserWidget> HpWidgetClass;
 	
+	// UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true), Category="EnemeyBase |Initialize|UI ")
+	// UWidgetComponent* TargetWidgetComponent;
 	/**
 	 * 초기화
 	 */
@@ -124,9 +118,9 @@ protected:
 	
 	// Weapon
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize | Weapon")
-	TObjectPtr<ABaseWeaponInstance> WeaponInstance;
+	TObjectPtr<ABaseWeaponItem> WeaponInstance;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize | Weapon")
-	TSubclassOf<ABaseWeaponInstance> WeaponClass;
+	TSubclassOf<ABaseWeaponItem> WeaponClass;
 	
 	// AI
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="EnemyBase | Initialize | AI")
@@ -139,8 +133,6 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true), Category="EnemyBase | Combat")
 	TObjectPtr<AActor> TargetActor;
-
-
 	
 	FDelegateHandle HealthChangeDelegateHandle;
 	FDelegateHandle MaxHealthChangeDelegateHandle;
@@ -148,5 +140,7 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess=true))
 	bool bIFrame;
+
+ 
 	
 };

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "ItemBase.h"
-#include "Interface/Countable.h"
 #include "RetargetingTest/Public/Interface/Useable.h"
 #include "Potion.generated.h"
 
@@ -12,13 +11,11 @@
  * 
  */
 UCLASS()
-class RETARGETINGTEST_API APotion : public AItemBase, public IUseable, public ICountable
+class RETARGETINGTEST_API APotion : public AItemBase, public IUseable
 {
 	GENERATED_BODY()
 
 public:
-	virtual void UseItem_Implementation(ACharacterBase* Character) override;
-	virtual int32 GetCount_Implementation() override;
 private:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=ture))
 	float RecoveryAmount=10.0f;

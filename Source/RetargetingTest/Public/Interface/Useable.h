@@ -23,7 +23,6 @@ class RETARGETINGTEST_API IUseable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	UFUNCTION(BlueprintCallable,BlueprintNativeEvent,Category="Useable")
-	void UseItem(ACharacterBase* Character);
-	virtual void UseItem_Implementation(ACharacterBase* Character)=0;
+	virtual void UseItem(ACharacterBase* Character);
+	
 };

@@ -37,13 +37,7 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UInputAction* InputBlock;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	UInputAction* InputUseQuickSlot_One;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	UInputAction* InputUseQuickSlot_Two;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	UInputAction* InputUseQuickSlot_Three;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	UInputAction* InputUseQuickSlot_Four;
+	UInputAction* InputUseQuickSlot;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UInputAction* InputEquipUnEquip;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
@@ -56,4 +50,6 @@ public:
 	UInputAction* InputToggleEquipment;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	UInputAction* InputTargetHardLock;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	UInputAction* InputChangeUsingQuickSlot;
 };

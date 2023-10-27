@@ -7,7 +7,6 @@
 #include "UObject/Object.h"
 #include "EquipmentSlot.generated.h"
 
-enum class EEquipment_Type : uint8;
 /**
  * 
  */
@@ -18,11 +17,10 @@ class RETARGETINGTEST_API UEquipmentSlot : public USlot
 
 public:
 	void Renew();
-	void SetEquipItemType(EEquipment_Type Type);
-	EEquipment_Type GetEquipItemType() const;
+	void SetEquipItemType();
+	void GetEquipItemType() const;
 private:
-
 	//장비의 경우 슬롯의 넘버와 인덱스를 Enum타입으로 지정해줍니다.
-	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly,meta=(AllowPrivateAccess=true))
-	EEquipment_Type EquipItemType;
+	// UPROPERTY(BlueprintReadWrite,EditDefaultsOnly,meta=(AllowPrivateAccess=true))
+	// EEquipment_Type EquipItemType;
 };

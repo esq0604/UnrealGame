@@ -68,6 +68,7 @@ void UFloatingCombatTextComponent::TickComponent(float DeltaTime, ELevelTick Tic
 	//enemy
 	else
 	{
+		if(GetOwner()!=nullptr)
 		cameraLocation=GetOwner()->GetActorLocation();
 	}
 	//뷰포트 크기와 스케일에 따라 활성 텍스트 액터의 세로 위치를 조정하여 화면에 쌓여 보이도록 합니다.

@@ -40,21 +40,21 @@ bool USlotDragDrop::Drop(USlot* To)
  */
 bool USlotDragDrop::SwapInven(USlot* to)
 {
-	TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
+	//TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
 	//From에 있는 ReferenceSlot을 지우고 스왑 후 To의 referenceSlot에 추가합니다.
 	//Reference 슬롯의 인덱스를 변경함으로써 퀵슬롯에서 사용할 인벤토리의 참조를 변경합니다.
-	if(!Inventory[From->GetIndex()]->ReferenceSlot.IsEmpty())
-	{
-		USlot* TempSlot =Inventory[From->GetIndex()]->ReferenceSlot.Top();
-		Inventory[From->GetIndex()]->ReferenceSlot.Pop();
-		Inventory.Swap(From->GetIndex(), to->GetIndex());
-		Inventory[to->GetIndex()]->ReferenceSlot.Push(TempSlot);
-		Inventory[to->GetIndex()]->ReferenceSlot.Top()->SetIndex(to->GetIndex());
-	}
-	else
-	{
-		Inventory.Swap(From->GetIndex(), to->GetIndex());
-	}
+	// if(!Inventory[From->GetIndex()]->ReferenceSlot.IsEmpty())
+	// {
+	// 	USlot* TempSlot =Inventory[From->GetIndex()]->ReferenceSlot.Top();
+	// 	Inventory[From->GetIndex()]->ReferenceSlot.Pop();
+	// 	Inventory.Swap(From->GetIndex(), to->GetIndex());
+	// 	Inventory[to->GetIndex()]->ReferenceSlot.Push(TempSlot);
+	// 	Inventory[to->GetIndex()]->ReferenceSlot.Top()->SetIndex(to->GetIndex());
+	// }
+	// else
+	// {
+	// 	Inventory.Swap(From->GetIndex(), to->GetIndex());
+	// }
 	
 	From->Refresh();
 	to->Refresh();
@@ -68,14 +68,14 @@ bool USlotDragDrop::SwapInven(USlot* to)
  */
 bool USlotDragDrop::SetQuickSlot(USlot* To)
 {
-	TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
+//	TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
 	if(To!=nullptr && InventoryComponent!=nullptr)
 	{
-		if(Inventory[From->GetIndex()]==nullptr)
+	//	if(Inventory[From->GetIndex()]==nullptr)
 		{
 			return false;
 		}
-		Inventory[From->GetIndex()]->AddReferenceSlot(To);
+	//	Inventory[From->GetIndex()]->AddReferenceSlot(To);
 		To->SetType(ESlotType::SLOT_QUICK);
 		To->Index=From->Index;
 		To->Refresh();
@@ -90,7 +90,7 @@ bool USlotDragDrop::SetQuickSlot(USlot* To)
  */
 bool USlotDragDrop::SwapQuickSlot(USlot* To)
 {
-	TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
+//	TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
 
 	if(From->GetSlotType() == To->GetSlotType())
 	{
@@ -101,13 +101,13 @@ bool USlotDragDrop::SwapQuickSlot(USlot* To)
 		}
 		else
 		{
-			if(Inventory[To->Index]!=nullptr)
-			{
-				Inventory[To->Index]->RemoveReferenceSlot(To);
-				Inventory[To->Index]->AddReferenceSlot(From);
-			}
-			Inventory[From->GetIndex()]->RemoveReferenceSlot(From);
-			Inventory[From->GetIndex()]->AddReferenceSlot(To);
+			// if(Inventory[To->Index]!=nullptr)
+			// {
+			// 	Inventory[To->Index]->RemoveReferenceSlot(To);
+			// 	Inventory[To->Index]->AddReferenceSlot(From);
+			// }
+			// Inventory[From->GetIndex()]->RemoveReferenceSlot(From);
+			// Inventory[From->GetIndex()]->AddReferenceSlot(To);
 
 			//2. 인덱스를 바꿉니다.(인덱스를 바꾸어 슬롯의 이미지를 변경함)
 			const int TempIndex = To->Index;
@@ -132,13 +132,13 @@ bool USlotDragDrop::SwapQuickSlot(USlot* To)
  */
 bool USlotDragDrop::MoveQuickSlot(USlot* To)
 {
-	TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
+//	TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
 
 	int32 tempIdx = To->GetIndex();
 	To->SetIndex(From->GetIndex());
 	From->SetIndex(tempIdx);
 	
-	Inventory[To->GetIndex()]->AddReferenceSlot(To);
+//	Inventory[To->GetIndex()]->AddReferenceSlot(To);
 	
 	To->Refresh();
 	From->Refresh();
@@ -147,8 +147,8 @@ bool USlotDragDrop::MoveQuickSlot(USlot* To)
 
 bool USlotDragDrop::MoveEquipSlot(USlot* To)
 {
-	TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
-	TArray<AEquipmentItem*> Equipment=InventoryComponent->GetEquipments();
+//	TArray<AItemBase*> Inventory=InventoryComponent->GetInventory();
+//	TArray<AEquipmentItem*> Equipment=InventoryComponent->GetEquipments();
 	const int32 tempIdx = To->GetIndex();
 	To->SetIndex(From->GetIndex());
 	From->SetIndex(tempIdx);

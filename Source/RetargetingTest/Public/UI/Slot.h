@@ -36,7 +36,9 @@ public:
 	void SetIndex(int32 NewIndex);
 	void SetImg(UTexture2D* NewImg);
 	void SetInventoryComponent(UInventoryComponent* InventoryComponent);
-	
+	void SetAmountText(FText InText);
+
+	void HideAmountText();
 	ESlotType GetSlotType() const;
 	int32 GetIndex() const;
 	
@@ -62,7 +64,7 @@ public:
 	UTexture2D* DefaultTexture;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite,meta=(BindWidget))
-	UTextBlock* CountText;
+	UTextBlock* AmountText;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	int32 SlotNum;

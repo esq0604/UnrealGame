@@ -36,7 +36,7 @@ public:
 	virtual void OnPossess(APawn* InPawn) override;
 	//Input Biund Function 
 	void Sprint(const FInputActionValue& Value);
-	//void Attack(const FInputActionValue& Value);
+	void Attack(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Jump(const FInputActionValue& Value);
 	void JumpStop(const FInputActionValue& Value);
@@ -46,10 +46,10 @@ public:
 	void EquipUnEquip(const FInputActionValue& Value);
 	void Roll(const FInputActionValue& Value);
 	void Block(const FInputActionValue& Value);
-	UFUNCTION(BlueprintCallable,BlueprintImplementableEvent)
-	void BlockEnd(const FInputActionValue& Value);
 	void TargetSoftLook(const FInputActionValue& Value);
 	void TargetHardLock(const FInputActionValue& Value);
+	void ChangeUsingQuickSlot(const FInputActionValue& Value);
+	void UseQuickSlot(const FInputActionValue& Value);
 	//Getter
 	UPlayerHUD* GetPlayerHUD() const;
 	UGaugeBar* GetGauge(EGaugeType Type) const;

@@ -7,12 +7,8 @@
 #include "Component/InventoryComponent.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
-#include "Interface/Countable.h"
 #include "Kismet/GameplayStatics.h"
-#include "Object/EquipmentItem.h"
-#include "RetargetingTest/Public/Object/ItemBase.h"
 #include "RetargetingTest/Public/Object/SlotDragDrop.h"
-#include "RetargetingTest/Public/Player/CharacterBase.h"
 #include "UI/EquipmentSlot.h"
 
 
@@ -99,13 +95,13 @@ FReply USlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointe
 	}
 	else if(InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton)==true)
 	{
-		if(InventoryComponent->GetItemAtInventory(Index)!=nullptr)
-		{
-			if(InventoryComponent->GetItemAtInventory(Index)!=nullptr)
-			{
-				reply=UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent,this,EKeys::LeftMouseButton);
-			}
-		}
+		// if(InventoryComponent->GetItemAtInventory(Index)!=nullptr)
+		// {
+		// 	if(InventoryComponent->GetItemAtInventory(Index)!=nullptr)
+		// 	{
+		// 		reply=UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent,this,EKeys::LeftMouseButton);
+		// 	}
+		// }
 	}
 	return reply.NativeReply;
 }
@@ -120,14 +116,14 @@ void USlot::Init()
 	{
 	case ESlotType::SLOT_INVENTORY:
 		Index=SlotNum;
-		CountText->SetVisibility(ESlateVisibility::Hidden);
+		AmountText->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	case ESlotType::SLOT_QUICK:
 		Index=-1;
-		CountText->SetVisibility(ESlateVisibility::Hidden);
+		AmountText->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	case ESlotType::SLOT_EQUIP:
-		CountText->SetVisibility(ESlateVisibility::Hidden);
+		AmountText->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	}
 }
@@ -139,31 +135,25 @@ void USlot::Refresh()
 {
 	if(InventoryComponent!=nullptr)
 	{
-		TArray<AItemBase*> Inventory= InventoryComponent->GetInventory();
-		TArray<AEquipmentItem*> Equipment= InventoryComponent->GetEquipments();
+		//		TArray<AItemBase*> Inventory= InventoryComponent->GetInventory();
+		//TArray<AEquipmentItem*> Equipment= InventoryComponent->GetEquipments();
 
 		switch(SlotType)
 		{
 		case ESlotType::SLOT_INVENTORY:
 			{
-				if(Inventory[Index]!=nullptr)
-				{
-					if(UKismetSystemLibrary::DoesImplementInterface(Inventory[Index],UCombat::StaticClass()))
-					{
-						UE_LOG(LogTemp,Warning,TEXT("DoesImplementation Countable"));
-					}
-					ICountable* Countable = Cast<ICountable>(Inventory[Index]);
-					if(Countable!=nullptr)
-					{
-						Count=Countable->GetCount_Implementation();
-						UE_LOG(LogTemp,Warning,TEXT("Count : %d"),Count);
-					}
-				}
+				// if(Inventory[Index]!=nullptr)
+				// {
+				// 	if(UKismetSystemLibrary::DoesImplementInterface(Inventory[Index],UCombat::StaticClass()))
+				// 	{
+				// 		UE_LOG(LogTemp,Warning,TEXT("DoesImplementation Countable"));
+				// 	}
+				// }
 			
-				UTexture2D* Tex= InventoryComponent->GetThumbnailAtInventorySlot(Index);
-				if(Tex)
+				//			UTexture2D* Tex= InventoryComponent->GetThumbnailAtInventorySlot(Index);
+				if(false)
 				{
-					Img->SetBrushFromTexture(Tex);
+					//Img->SetBrushFromTexture(Tex);
 				}
 				else
 				{
@@ -171,12 +161,12 @@ void USlot::Refresh()
 				}
 				if(Count >1)
 				{
-					CountText->SetText(FText::FromString(FString::FromInt(Count)));
-					CountText->SetVisibility(ESlateVisibility::Visible);
+					AmountText->SetText(FText::FromString(FString::FromInt(Count)));
+					AmountText->SetVisibility(ESlateVisibility::Visible);
 				}
 				else
 				{
-					CountText->SetVisibility(ESlateVisibility::Hidden);
+					AmountText->SetVisibility(ESlateVisibility::Hidden);
 				}
 				break;
 			}
@@ -185,48 +175,51 @@ void USlot::Refresh()
 				if(Index<0)
 				{
 					Img->SetBrushFromTexture(nullptr);
-					CountText->SetVisibility(ESlateVisibility::Hidden);
+					AmountText->SetVisibility(ESlateVisibility::Hidden);
 					break;
 				}
 				else
 				{
-					if(Inventory[Index]!=nullptr)
+					//if(Inventory[Index]!=nullptr)
 					{
 						//Count= Inventory[Index]->GetCount();
+						//	}
+						//					UTexture2D* Tex=InventoryComponent->GetThumbnailAtInventorySlot(Index);
+						//					Img->SetBrushFromTexture(Tex);
+						if(Count >1)
+						{
+							AmountText->SetText(FText::FromString(FString::FromInt(Count)));
+							AmountText->SetVisibility(ESlateVisibility::Visible);
+						}
+						else
+						{
+							AmountText->SetVisibility(ESlateVisibility::Hidden);
+						}
+						break;
 					}
-					UTexture2D* Tex=InventoryComponent->GetThumbnailAtInventorySlot(Index);
-					Img->SetBrushFromTexture(Tex);
-					if(Count >1)
-					{
-						CountText->SetText(FText::FromString(FString::FromInt(Count)));
-						CountText->SetVisibility(ESlateVisibility::Visible);
-					}
-					else
-					{
-						CountText->SetVisibility(ESlateVisibility::Hidden);
-					}
-					break;
 				}
-			}
-		case ESlotType::SLOT_EQUIP:
-			{
+				case ESlotType::SLOT_EQUIP:
+					{
 				
 
 				
+					}
+				default:
+					return;
 			}
-		default:
-			return;
+
 		}
 	}
-	else
-	{
-		return;
-	}
 }
+	// else
+	// {
+	// 	return;
+	// }
+
 
 void USlot::SetType(ESlotType NewSlotType)
 {
-	SlotType=NewSlotType;
+	//SlotType=NewSlotType;
 }
 
 void USlot::SetIndex(int32 NewIndex)
@@ -236,12 +229,26 @@ void USlot::SetIndex(int32 NewIndex)
 
 void USlot::SetImg(UTexture2D* NewImg)
 {
+	if(NewImg==nullptr)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("NewImg nullptr"));
+	}
 	Img->SetBrushFromTexture(NewImg);
 }
 
 void USlot::SetInventoryComponent(UInventoryComponent* NewInventoryComponent)
 {
 	InventoryComponent=NewInventoryComponent;
+}
+
+void USlot::SetAmountText(FText InText)
+{
+	AmountText->SetText(InText);
+}
+
+void USlot::HideAmountText()
+{
+	AmountText->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 /**
@@ -254,15 +261,12 @@ void USlot::Action()
 	{
 	case ESlotType::SLOT_INVENTORY:
 		{
-			UE_LOG(LogTemp,Warning,TEXT("SlotInven : Action"));
-
-			InventoryComponent->UseItemAtInventorySlot(Index);
-			//Refresh();
+			InventoryComponent->UseItem(Index);
 			break;
 		}
 	case ESlotType::SLOT_QUICK:
 		{
-			InventoryComponent->UseItemAtInventorySlot(Index);
+			InventoryComponent->UseItem(Index);
 			Refresh();
 			break;
 		}
@@ -270,7 +274,7 @@ void USlot::Action()
 		{
 			UE_LOG(LogTemp,Warning,TEXT("SlotEquip : Action"));
 			UEquipmentSlot* TempSlot = dynamic_cast<UEquipmentSlot*>(this);
-			InventoryComponent->UseItemAtEquipmentSlot(TempSlot->GetEquipItemType());
+			//InventoryComponent->UseItemAtEquipmentSlot(TempSlot->GetEquipItemType());
 			break;
 		}
 	default:

@@ -11,7 +11,7 @@
 #include "Materials/Material.h"
 
 #include "RetargetingTest/Public/Monster/BaseMonsterAnimInstance.h"
-#include "Object/BaseWeaponInstance.h"
+#include "Object/BaseWeaponItem.h"
 #include "UI/MonsterGauge.h"
 
 ABaseMonster::ABaseMonster()
@@ -23,7 +23,8 @@ ABaseMonster::ABaseMonster()
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 	
-	MotionWarpingComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComp"));
+	//TargetWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("TargetWidget"));
+	//TargetWidgetComponent->SetupAttachment(GetMesh());
 }
 
 /**
@@ -79,17 +80,6 @@ void ABaseMonster::SetIFrame_Implementation(bool bEnabled)
 	bIFrame=bEnabled;
 }
 
-void ABaseMonster::MotionWarpForwardToDistance(float MoveDistance)
-{
-	const FVector CurLocation = GetActorLocation();
-	const FVector ForwardVec  = GetActorForwardVector();
-
-	const FVector TargetLoc = GetActorLocation() + (GetActorForwardVector() * MoveDistance);
-
-	MotionWarpingComponent->AddOrUpdateWarpTargetFromLocation(TEXT("Warp"),TargetLoc);
-}
-
-
 /**
  * 몬스터마다 HPBarWidget은 존재하나. WidgetComponent는 일반몬스터에만 존재합니다(몬스터의 위에 체력바를 보여주기 위하여). 
  */
@@ -131,9 +121,8 @@ void ABaseMonster::BeginPlay()
 	if(WeaponClass)
 	{
 		const FActorSpawnParameters SpawnInfo;
-		WeaponInstance=GetWorld()->SpawnActor<ABaseWeaponInstance>(WeaponClass,GetActorLocation(),GetActorRotation(),SpawnInfo);
+		WeaponInstance=GetWorld()->SpawnActor<ABaseWeaponItem>(WeaponClass,GetActorLocation(),GetActorRotation(),SpawnInfo);
 		WeaponInstance->SetOwner(this);
-		WeaponInstance->AddAbilities();
 		WeaponInstance->OnEquipped(this);
 	}
 }

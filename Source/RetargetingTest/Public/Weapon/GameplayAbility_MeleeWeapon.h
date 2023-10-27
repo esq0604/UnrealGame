@@ -7,7 +7,7 @@
 #include "Ability/CustomGameplayAbility.h"
 #include "GameplayAbility_MeleeWeapon.generated.h"
 
-class ABaseWeaponInstance;
+class ABaseWeaponItem;
 /**
  * 
  */
@@ -19,15 +19,17 @@ public:
 	UGameplayAbility_MeleeWeapon(const FObjectInitializer& Initializer);
 	
 	UFUNCTION(BlueprintCallable, Category="Ability|MeleeWeapon")
-	ABaseWeaponInstance* GetWeaponInstance();
+	ABaseWeaponItem* GetWeaponInstance();
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 
 	UFUNCTION(BlueprintCallable)
-	void AbilityFinish();
+	void MontageFinish();
 
+	UFUNCTION(BlueprintCallable)
+	void MontageCanceled();
 	UFUNCTION(BlueprintCallable)
 	void ApplyGameplayDamageEffect(FGameplayEventData Payload);
 
@@ -35,7 +37,7 @@ public:
 	void SetHitResult(const FHitResult& HitResult);
 protected:
 	UFUNCTION(BlueprintCallable)
-	void ActiveMontage();
+	void ActiveMontage(UAnimMontage* PlayMontage);
 	UFUNCTION(BlueprintCallable)
 	void WaitGameplayEventForApplyDamageEffect();
 protected:
@@ -43,8 +45,10 @@ protected:
 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Ability|MeleeWeapon")
-	TObjectPtr<UAnimMontage> MontageToPlay;
+	TObjectPtr<UAnimMontage> AttackMontage;
 	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Ability|MeleeWeapon")
+	TObjectPtr<UAnimMontage> AttackFailMontage;
 	UPROPERTY()
 	TWeakObjectPtr<ACharacter> Owner;
 

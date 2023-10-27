@@ -7,7 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/Public/Player/CharacterBase.h"
 #include "RetargetingTest/Public/UI/InventoryUI.h"
-#include "RetargetingTest/Public/UI/QuickSlot.h"
+#include "RetargetingTest/Public/UI/QuickSlotUI.h"
 #include "UI/EquipmentUI.h"
 #include "UI/GaugeBar.h"
 
@@ -47,7 +47,7 @@ UGaugeBar* UPlayerHUD::GetGauge(EGaugeType Type) const
 	return nullptr;
 }
 
-UQuickSlot* UPlayerHUD::GetQuickSlot() const
+UQuickSlotUI* UPlayerHUD::GetQuickSlot() const
 {
 	return QuickSlot;
 }
@@ -66,7 +66,7 @@ void UPlayerHUD::SetGauge(UGaugeBar* NewGauge,EGaugeType Type)
 	}	
 }
 
-void UPlayerHUD::SetQuickSlot(UQuickSlot* NewQuickSlot)
+void UPlayerHUD::SetQuickSlot(UQuickSlotUI* NewQuickSlot)
 {
 	QuickSlot=NewQuickSlot;
 }

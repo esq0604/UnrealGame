@@ -11,11 +11,7 @@
 
 AItemBase::AItemBase()
 {
-	//픽업을 위한 메시를 설정하고 아이템 이름, 도움말 및 아이템 값을 설정합니다.
-	// InteractableMesh = CreateDefaultSubobject<UStaticMeshComponent>("PickupMesh");
-	// InteractableMesh->SetSimulatePhysics(true);
-	ItemName = FString("Enter an item name here...");
-	//InteractableHelpText=FString("Press E to pick item up.");
+
 }
 
 void AItemBase::BeginPlay()
@@ -29,9 +25,7 @@ void AItemBase::BeginPlay()
  */
 void AItemBase::OnPickup()
 {
-	// InteractableMesh->SetVisibility(false);
-	// InteractableMesh->SetSimulatePhysics(false);
-	// InteractableMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 }
 
 void AItemBase::AddReferenceSlot(USlot*& Slot)
@@ -46,6 +40,6 @@ void AItemBase::RemoveReferenceSlot(USlot*& Slot)
 
 UTexture2D* AItemBase::GetThumbnail() const
 {
-	return PickupThumbnail;
+	return nullptr;
 }
 

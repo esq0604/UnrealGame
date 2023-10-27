@@ -13,7 +13,7 @@ class ACharacterBase;
 /**
  * 
  */
-class UQuickSlot;
+class UQuickSlotUI;
 class UInventoryUI;
 enum class EGaugeType;
 
@@ -29,10 +29,10 @@ public:
 	virtual void NativeConstruct() override;
 
 	UGaugeBar* GetGauge(EGaugeType Type) const;
-	UQuickSlot* GetQuickSlot() const;
+	UQuickSlotUI* GetQuickSlot() const;
 	
 	void SetGauge(UGaugeBar* NewGauge, EGaugeType Type);
-	void SetQuickSlot(UQuickSlot* NewQuickSlot);
+	void SetQuickSlot(UQuickSlotUI* NewQuickSlot);
 	void SetCharacter(ACharacter* NewPlayer);
 	
 	virtual FReply NativeOnKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
@@ -46,7 +46,7 @@ protected:
 	UGaugeBar* StaminaGauge;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI", meta = (BindWidget))
-	UQuickSlot* QuickSlot;
+	UQuickSlotUI* QuickSlot;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	ACharacterBase* Player;

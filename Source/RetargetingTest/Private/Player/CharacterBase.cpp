@@ -2,15 +2,16 @@
 
 #include "Player/CharacterBase.h"
 
+//engine
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
-
 #include "Components/SceneComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/EngineTypes.h"
 
+//game
 #include "AbilitySystemComponent.h"
 #include "MotionWarpingComponent.h"
 #include "Ability/CustomGameplayAbility.h"
@@ -22,7 +23,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Player/PlayerStateBase.h"
 #include "RetargetingTest/Public/Component/FloatingCombatTextComponent.h"
-#include "Object/BaseWeaponInstance.h"
+#include "Object/BaseWeaponItem.h"
+#include "Templates/NonNullPointer.h"
+#include "UI/CustomHUD.h"
 //////////////////////////////////////////////////////////////////////////
 // ARetargetingTestCharacter
 
@@ -66,9 +69,9 @@ ACharacterBase::ACharacterBase()
 	FloatingTextComponent = CreateDefaultSubobject<UFloatingCombatTextComponent>(TEXT("FloatingDamageComponent"));
 	MotionWarpComponent = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarpComponent"));
 	InventoryManagerComponent =CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryManagerComponent"));
-	// Create target component
-	TargetComponent = CreateDefaultSubobject<UTargetingComponent>(TEXT("TargetComponent"));
-	TargetComponent->SetupAttachment(GetRootComponent());
+
+	
+	BaseEyeHeight=74.0f;
 }
 
 void ACharacterBase::BeginPlay()
@@ -78,16 +81,15 @@ void ACharacterBase::BeginPlay()
 	if(WeaponClass)
 	{
 		const FActorSpawnParameters SpawnInfo;
-		WeaponInstance=GetWorld()->SpawnActor<ABaseWeaponInstance>(WeaponClass,GetActorLocation(),GetActorRotation(),SpawnInfo);
+		WeaponInstance=GetWorld()->SpawnActor<ABaseWeaponItem>(WeaponClass,GetActorLocation(),GetActorRotation(),SpawnInfo);
 	}
 	if(WeaponInstance)
 	{
 		WeaponInstance->SetOwner(this);
-		WeaponInstance->AddAbilities();
 		WeaponInstance->OnEquipped(this);
 	}
 
-	
+	HUD=Cast<ACustomHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 }
 
 void ACharacterBase::Tick(float DeltaSeconds)
@@ -104,6 +106,11 @@ void ACharacterBase::Tick(float DeltaSeconds)
 
 		// Update control rotation to face target
 		GetController()->SetControlRotation(NewRot);
+	}
+
+	if(GetWorld()->TimeSince(InteractionData.LastInteractCheckTime) > InteractionCheckFrequency)
+	{
+		PerformInteractionCheck();
 	}
 }
 
@@ -157,6 +164,133 @@ void ACharacterBase::SetIFrame_Implementation(bool bEnabled)
 	bIFrame=bEnabled;
 }
 
+void ACharacterBase::PerformInteractionCheck()
+{
+	InteractionData.LastInteractCheckTime = GetWorld()->GetTimeSeconds();
+
+	FVector TraceStart{GetActorLocation()};
+	FVector TraceEnd{TraceStart +(GetActorForwardVector()* InteractionCheckDistance)};
+
+	float LookDirection = FVector::DotProduct(GetActorForwardVector(),GetViewRotation().Vector());
+
+	if(LookDirection>0)
+	{
+		DrawDebugSphere(GetWorld(), TraceStart, 100.f, 24,FColor::Red, false, 1.0f, 1,2.0f);
+		FCollisionQueryParams QueryParams;
+		QueryParams.AddIgnoredActor(this);
+		TArray<FHitResult> TraceHits;
+		if(GetWorld()->SweepMultiByChannel(TraceHits,TraceStart,TraceEnd,FQuat::Identity,ECC_Visibility,FCollisionShape::MakeSphere(100.f),QueryParams))
+		{
+			for(FHitResult TraceHit :TraceHits)
+			{
+				if(TraceHit.GetActor()->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
+				{
+					if(TraceHit.GetActor() != InteractionData.CurrentInteractable)
+					{
+						FoundInteractable(TraceHit.GetActor());
+						return;
+					}
+
+					if(TraceHit.GetActor()==InteractionData.CurrentInteractable)
+					{
+						return;
+					}
+				}
+			}
+		}
+		NoInteractableFound();
+	}
+}
+
+
+void ACharacterBase::FoundInteractable(AActor* NewInteractable)
+{
+	UE_LOG(LogTemp,Warning,TEXT("FoundInteractable"));
+	if(IsInteracting())
+	{
+		EndInteract();
+	}
+	
+	if(InteractionData.CurrentInteractable)
+	{
+		TargetInteractable = InteractionData.CurrentInteractable;
+		TargetInteractable->EndFocus();
+	}
+
+	InteractionData.CurrentInteractable=NewInteractable;
+	TargetInteractable =NewInteractable;
+
+	HUD->UpdateInteractionWidget(&TargetInteractable->InteractableData);
+	
+	TargetInteractable->BeginFocus();
+}
+
+void ACharacterBase::NoInteractableFound()
+{
+	if(IsInteracting())
+	{
+		GetWorldTimerManager().ClearTimer(TimerHandle_Interaction);
+	}
+
+	if(InteractionData.CurrentInteractable)
+	{
+		if(IsValid(TargetInteractable.GetObject()))
+		{
+			TargetInteractable->EndFocus();
+		}
+	}
+
+	//interact 위젯을 숨깁니다.
+	InteractionData.CurrentInteractable=nullptr;
+	TargetInteractable=nullptr;
+}
+
+void ACharacterBase::BeginInteract()
+{
+	PerformInteractionCheck();
+
+	if(InteractionData.CurrentInteractable)
+	{
+		if(IsValid(TargetInteractable.GetObject()))
+		{
+			TargetInteractable->BeginInteraction();
+
+			if(FMath::IsNearlyZero(TargetInteractable->InteractableData.InterfaceDuration,0.1f))
+			{
+				Interact();
+			}
+			else
+			{
+				GetWorldTimerManager().SetTimer(TimerHandle_Interaction,
+					this,
+					&ACharacterBase::Interact,
+					TargetInteractable->InteractableData.InterfaceDuration,
+					false);
+			}
+		}
+	}
+}
+
+void ACharacterBase::EndInteract()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle_Interaction);
+
+	if(IsValid(TargetInteractable.GetObject()))
+	{
+		TargetInteractable->EndInteraction();
+	}
+}
+
+void ACharacterBase::Interact()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle_Interaction);
+
+	if(IsValid(TargetInteractable.GetObject()))
+	{
+		TargetInteractable->Interact(this);
+	}
+}
+
 void ACharacterBase::FinishDying()
 {
 	Destroy();
@@ -176,12 +310,6 @@ void ACharacterBase::PossessedBy(AController* NewController)
 		Attributes = PS->GetAttributes();
 		InitializeAttributes();
 		GiveDefaultAbilities();
-		
-	}
-
-	if(Attributes)
-	{
-		UE_LOG(LogTemp,Warning,TEXT("Attrubutes not nullptr"));
 	}
 }
 
@@ -271,7 +399,7 @@ UInventoryComponent* ACharacterBase::GetInventoryManagerComponent() const
 	return InventoryManagerComponent;
 }
 
-void ACharacterBase::SetWeaponInstance(ABaseWeaponInstance* NewWeaponInstance)
+void ACharacterBase::SetWeaponInstance(ABaseWeaponItem* NewWeaponInstance)
 {
 	WeaponInstance=NewWeaponInstance;
 }

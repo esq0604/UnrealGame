@@ -4,6 +4,7 @@
 #include "Component/CustomSpringArmComponent.h"
 
 #include "Component/TargetingComponent.h"
+#include "Components/SlateWrapperTypes.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 
@@ -32,10 +33,10 @@ void UCustomSpringArmComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 	if (IsCameraLockedToTarget())
 	{
 		DrawDebugSphere(GetWorld(), CameraTarget->GetComponentLocation(), 20.f, 16, FColor::Red); //Draw target point
-
+		UWidgetComponent* TargetWidget =Cast<UWidgetComponent>(CameraTarget->GetOwner()->GetComponentByClass(UWidgetComponent::StaticClass()));
+		TargetWidget->SetVisibility(true);
 		// Break lock if player is too far from target
-		if ((CameraTarget->GetComponentLocation() - GetComponentLocation()).Size() > MaxTargetLockDistance +
-			CameraTarget->GetScaledSphereRadius())
+		if ((CameraTarget->GetComponentLocation() - GetComponentLocation()).Size() > MaxTargetLockDistance)
 		{
 			if (bUseSoftLock)
 			{
@@ -63,7 +64,6 @@ void UCustomSpringArmComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 			{
 				if (!bSoftlockRequiresReset) // Soft-lock is reset?
 				{
-					UE_LOG(LogTemp, Warning, TEXT("DoLockToTarget"));
 					LockToTarget(NewCameraTarget);
 				}
 			}
@@ -108,7 +108,6 @@ void UCustomSpringArmComponent::ToggleCameraLock()
 	// If CameraTarget is set, unset it
 	if (IsCameraLockedToTarget())
 	{
-		UE_LOG(LogTemp,Warning,TEXT("unset cameralock"));
 		BreakTargetLock();
 		return;
 	}
@@ -117,7 +116,6 @@ void UCustomSpringArmComponent::ToggleCameraLock()
 
 	if (NewCameraTarget != nullptr)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("set cameralock"));
 		LockToTarget(NewCameraTarget);
 	}
 }
@@ -126,7 +124,6 @@ void UCustomSpringArmComponent::ToggleSoftLock()
 {
 	bUseSoftLock = !bUseSoftLock;
 
-	UE_LOG(LogTemp,Warning,TEXT("SpringArmComp : ToggleSoftLock"));
 	if (bUseSoftLock)
 	{
 		bSoftlockRequiresReset = false;
@@ -141,7 +138,6 @@ void UCustomSpringArmComponent::LockToTarget(UTargetingComponent* NewTargetCompo
 {
 	CameraTarget = NewTargetComponent;
 	bEnableCameraRotationLag = true;
-	UE_LOG(LogTemp,Warning,TEXT("LockToTarget"));
 	//GetCharacterMovement()->bOrientRotationToMovement = false;
 }
 
@@ -149,6 +145,9 @@ void UCustomSpringArmComponent::BreakTargetLock()
 {
 	if (IsCameraLockedToTarget())
 	{
+		UWidgetComponent* TargetWidget =Cast<UWidgetComponent>(CameraTarget->GetOwner()->GetComponentByClass(UWidgetComponent::StaticClass()));
+		TargetWidget->SetVisibility(false);
+
 		CameraTarget = nullptr;
 		//GetController()->SetControlRotation(FollowCamera->GetForwardVector().Rotation());
 		bEnableCameraRotationLag = false;
@@ -160,8 +159,9 @@ UTargetingComponent* UCustomSpringArmComponent::GetLockTarget()
 {
 	TArray<UTargetingComponent*> AvailableTargets = GetTargetComponents();
 	if (AvailableTargets.Num() == 0)
+	{
 		return nullptr;
-
+	}
 	// Get the target with the smallest angle difference from the camera forward vector
 	float ClosestDotToCenter = 0.f;
 	UTargetingComponent* TargetComponent = nullptr;
@@ -198,7 +198,7 @@ void UCustomSpringArmComponent::SwitchTarget(EDirection SwitchDirection)
 		FVector Cross = FVector::CrossProduct(CurrentTargetDir, TargetDir);
 
 		if ((SwitchDirection == EDirection::Left && Cross.Z < 0.f)	// Negative Z indicates left
-			|| (SwitchDirection == EDirection::Right && Cross.Z > 0.f))	// Positive Z indicates right
+			|| (SwitchDirection == EDirection::Right && Cross.Z > 0.f))	// Positive Z indicates righ
 				{
 			ViableTargets.AddUnique(Target);
 				}
@@ -206,9 +206,8 @@ void UCustomSpringArmComponent::SwitchTarget(EDirection SwitchDirection)
 
 	if (ViableTargets.Num() == 0) return;
 
-	/*
-	Select the target with the smallest angle difference to the current target
-	*/
+
+	//	현재 타겟과 각도 차이가 가장 작은 타겟을 선택합니다.
 	int32 BestDotIdx = 0;
 	for (int32 i = 1; i < ViableTargets.Num(); i++)
 	{

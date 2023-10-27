@@ -23,7 +23,7 @@ void ABossMonster::BeginPlay()
 	{
 		HPBarWidget->UpdateHPWidget(1.0f,1.0f);
 		HPBarWidget->AddToViewport();
-		ShowHpWidget(true);
+		ShowHpWidget(false);
 	}
 	else
 	{

@@ -7,12 +7,12 @@ AEquipmentItem::AEquipmentItem()
 {
 }
 
-void AEquipmentItem::SetEquipItemType(EEquipment_Type NewType)
+void AEquipmentItem::SetEquipItemType()
 {
-	EquipItemType=NewType;
+	//EquipItemType=NewType;
 }
 
-EEquipment_Type AEquipmentItem::GetEquipItemType() const
+void AEquipmentItem::GetEquipItemType() const
 {
-	return EquipItemType;
+	
 }

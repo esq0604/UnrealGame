@@ -8,12 +8,13 @@ void UEquipmentSlot::Renew()
 	
 }
 
-void UEquipmentSlot::SetEquipItemType(EEquipment_Type Type)
+void UEquipmentSlot::SetEquipItemType()
 {
-	EquipItemType=Type;
 }
 
-EEquipment_Type UEquipmentSlot::GetEquipItemType() const
+
+
+void UEquipmentSlot::GetEquipItemType() const
 {
-	return EquipItemType;
+	
 }

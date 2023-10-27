@@ -12,14 +12,3 @@
  * @param Character - 게임 플레이어 캐릭터가 들어옵니다.
  */
 
-
-void AThrowingItem::UseItem_Implementation(ACharacterBase* Character)
-{
- if(Count>0)
- {
-  Count--;
- }
- else
- {
- }
-}
