@@ -32,20 +32,22 @@ public:
 	bool AddItem(UItemDataAsset* AddedItem);
 	
 	UFUNCTION(BlueprintCallable)
-	void UseItem(int32 SlotNum);
+	bool UseItem(EItemType Type,int32 Index);
 	
 	bool IsItemStackable(int32 Index);
+	bool IsItemInSlotValid(int32 Index) const;
 
 	int8 IndexNormalize(int32 Index);
-	
+
 	//getter
-	FORCEINLINE TArray<UItemDataAsset*> GetItems() const {return Items;}
+	TArray<UItemDataAsset*>& GetItemsRef(EItemType Type); 
+	UItemDataAsset* GetItem(EItemType Type, int32 Index) ;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 private:
-	void UpdateSlot(int32 Index);
+	void UpdateSlot(EItemType Type, int32 Index);
 protected:
 
 	
@@ -58,9 +60,20 @@ private:
 	UPROPERTY()
 	UEquipmentUI* EquipmentUI;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
+	TArray<UItemDataAsset*> ArmorItems;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
+	TArray<UItemDataAsset*> WeaponItems;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
+	TArray<UItemDataAsset*> ToolItems;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
-	TArray<UItemDataAsset*> Items;
+	TArray<UItemDataAsset*> MagicItems;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
+	TArray<UItemDataAsset*> QuestItems;
+	
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="InventoryComponent | StartingItems")
 	TArray<UItemDataAsset*> StartingItems;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="InventoryComponent | StartingItems")
+	TArray<TSubclassOf<UItemDataAsset>> TestStartingItems;
 };

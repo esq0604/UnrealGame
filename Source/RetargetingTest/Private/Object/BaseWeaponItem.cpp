@@ -12,86 +12,82 @@
 #include "Abilities/GameplayAbilityTypes.h"
 #include "Attribute/BaseAttributeSet.h"
 
+#include "Data/CustomAbilitySet.h"
+
 
 // Sets default values
 ABaseWeaponItem::ABaseWeaponItem()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	//PrimaryActorTick.bCanEverTick = true;
-	WeaponStaticMeshComponent=CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
 	WeaponCollisionComp=CreateDefaultSubobject<UWeaponCollisionComponent>(TEXT("WeaponCollisionComp"));
 	WeaponCollisionComp->OnHitDelegate.BindUObject(this,&ABaseWeaponItem::OnHitDelegateFunction);
-
-
-	AbilitySystemComponent=CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComp"));
-
-	SetRootComponent(WeaponStaticMeshComponent);
+	
+	//AbilitySystemComponent=CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComp"));
 }
 
 UAbilitySystemComponent* ABaseWeaponItem::GetAbilitySystemComponent() const
 {
-	return AbilitySystemComponent;
-}
-
-/**
- * 무기가 가지고 있는 어빌리티 클래스들을 Owner에게 적용시킵니다.
- */
-void ABaseWeaponItem::AddAbilities()
-{
-	AbilitySystemComponent=UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
-
-	if(Abilities.Num()>0)
-	{
-		for (TSubclassOf<UCustomGameplayAbility>& Ability : Abilities)
-		{
-			AbilitySpecHandles.Add(AbilitySystemComponent->GiveAbility(FGameplayAbilitySpec(Ability.GetDefaultObject(),1,static_cast<int32>(Ability.GetDefaultObject()->AbilityInputID),this)));
-		}
-	}
-	
+	return 	UAbilitySystemGlobals::GetAbilitySystemComponentFromActor(GetOwner());
+;
 }
 
 void ABaseWeaponItem::RemoveAbilities()
 {
 	for(FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
 	{
-		AbilitySystemComponent->ClearAbility(SpecHandle);
+		GetAbilitySystemComponent()->ClearAbility(SpecHandle);
 	}
 }
 
-void ABaseWeaponItem::OnEquipped(ACharacter* Character)
+/**
+ * @brief 장착 및 ItemData에 있는 AbilitySet를 Character에게 적용시킵니다.
+ * @param Character 아이템을 장착할 Character입니다.
+ * @param InItemData 장착시 적용할 ItemData입니다.
+ */
+void ABaseWeaponItem::Equip(ACharacter* Character,UItemDataAsset* InItemData)
 {
-	AddAbilities();
-	WeaponStaticMeshComponent->SetVisibility(true);
-	WeaponStaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	if(Character)
+	Super::Equip(Character,InItemData);
+	const UEquipmentDataAsset* EquipData = dynamic_cast<UEquipmentDataAsset*>(InItemData);
+
+	if(GetOwner()!=nullptr)
 	{
-		AttachToComponent(Character->GetMesh(),FAttachmentTransformRules::SnapToTargetIncludingScale,WeaponData->WeaponSocketName.AttachSocketName);
-		bIsEquipped=true;
-		
-		const ACharacterBase* CharacterBase = dynamic_cast<ACharacterBase*>(Character);
-		if(CharacterBase!=nullptr)
-		{
-			FGameplayAttributeData DamageAttribute = CharacterBase->GetAttributes()->Damage;
-		}
-		
+		UE_LOG(LogTemp,Warning,TEXT("GetOwner :%s"),*GetOwner()->GetName());
 	}
-	
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("GetOwner nullptr"));
+
+	}
+	for(TObjectPtr<const UCustomAbilitySet> AbilitySet : EquipData->AbilitySetToEquip)
+	{
+		for(int Index=0; Index < AbilitySet->EquippedGameplayAbilities.Num(); Index++)
+		{
+			const FAbilitySet_GameplayAbility& AbilityToGrant = AbilitySet->EquippedGameplayAbilities[Index];
+
+			UCustomGameplayAbility* AbilityCDO = AbilityToGrant.Ability->GetDefaultObject<UCustomGameplayAbility>();	
+			FGameplayAbilitySpec AbilitySpec(AbilityCDO,1,static_cast<int32>(AbilityCDO->AbilityInputID),this);
+			AbilitySpecHandles.Add(GetAbilitySystemComponent()->GiveAbility(AbilitySpec));
+		}
+	}
+
+	ACharacterBase* CharacterBase = dynamic_cast<ACharacterBase*>(Character);
+	CharacterBase->SetWeaponInstance(this);
 }
 
-void ABaseWeaponItem::OffEquipped(ACharacter* Character)
+void ABaseWeaponItem::UnEquip(ACharacter* Character)
 {
-	RemoveAbilities();
-	DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
-	WeaponStaticMeshComponent->SetVisibility(false);
-	bIsEquipped=false;
+	Super::UnEquip(Character);
 
-	
+	RemoveAbilities();
 	const ACharacterBase* CharacterBase = dynamic_cast<ACharacterBase*>(Character);
 	if(CharacterBase!=nullptr)
 	{
 		FGameplayAttributeData DamageAttribute = CharacterBase->GetAttributes()->Damage;
 		DamageAttribute.SetCurrentValue(DamageAttribute.GetCurrentValue());
 	}
+	Destroy();
+
 }
 
 // Called when the game starts or when spawned
@@ -101,8 +97,7 @@ void ABaseWeaponItem::BeginPlay()
 
 	if(WeaponData)
 	{
-		WeaponStaticMeshComponent->SetStaticMesh(WeaponData->AssetData.Mesh);
-		WeaponCollisionComp->SetCollisionMeshComp(WeaponStaticMeshComponent);
+		WeaponCollisionComp->SetCollisionMeshComp(StaticMeshComponent);
 	}
 }
 
@@ -122,13 +117,13 @@ void ABaseWeaponItem::OnHitDelegateFunction(FGameplayEventData EventData,const F
 
 	for(const FGameplayAbilitySpecHandle SpecHandle : AbilitySpecHandles)
 	{
-		const FGameplayAbilitySpec* Spec = AbilitySystemComponent->FindAbilitySpecFromHandle(SpecHandle);
+		const FGameplayAbilitySpec* Spec = GetAbilitySystemComponent()->FindAbilitySpecFromHandle(SpecHandle);
 		//어빌리티가 공격어빌리티 태그를 가지고있다면 GameplayEffect를 적용시키기 위한 정보를 담아서 GameplayEventData로 넘겨주게됩니다. 
 		 if(Spec->Ability->AbilityTags.HasTag(AttackAbilityTag))
 		 {
 			if(Spec->IsActive())
 			{
-				FGameplayEffectContextHandle EffectContextHandle = AbilitySystemComponent->MakeEffectContext();
+				FGameplayEffectContextHandle EffectContextHandle = GetAbilitySystemComponent()->MakeEffectContext();
 				EffectContextHandle.AddHitResult(HitResult);
 				EffectContextHandle.AddInstigator(GetOwner(),GetOwner());
 				EventData.ContextHandle=EffectContextHandle;

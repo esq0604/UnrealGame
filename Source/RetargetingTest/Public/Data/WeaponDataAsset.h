@@ -5,6 +5,8 @@
 #include "Data/ItemDataAsset.h"
 #include "WeaponDataAsset.generated.h"
 
+class UCustomAbilitySet;
+
 UENUM()
 enum class EWeaponType
 {
@@ -28,14 +30,13 @@ struct FWeaponStatistics
 };
 
 USTRUCT()
-struct FWeaponSocketName
+struct FWeaponTraceSocketName
 {
 	GENERATED_BODY()
 
-	FWeaponSocketName() :
+	FWeaponTraceSocketName() :
 		TraceStartSocketName(""),
-		TraceEndSocketName(""),
-		AttachSocketName("")
+		TraceEndSocketName("")
 	{
 	}
 	
@@ -43,8 +44,6 @@ struct FWeaponSocketName
 	FName TraceStartSocketName;
 	UPROPERTY(EditAnywhere)
 	FName TraceEndSocketName;
-	UPROPERTY(EditAnywhere)
-	FName AttachSocketName;
 };
 
 UCLASS()
@@ -58,5 +57,7 @@ public:
 	UPROPERTY(EditAnywhere,Category="Weapon Data")
 	FWeaponStatistics WeaponStatistics;
 	UPROPERTY(EditAnywhere,Category="Weapon Data")
-	FWeaponSocketName WeaponSocketName;
+	FWeaponTraceSocketName WeaponSocketName;
+	UPROPERTY(EditAnywhere,Category="Weapon Data")
+	TArray<TObjectPtr<UCustomAbilitySet>> WeaponAbilitySet;
 };

@@ -6,9 +6,12 @@
 #include "Blueprint/UserWidget.h"
 #include "InventoryUI.generated.h"
 
+class UCanvasPanel;
+class UImage;
 enum class EItemType : uint8;
 class UUniformGridPanel;
 class UInventoryComponent;
+class UTextBlock;
 /**
  * 
  */
@@ -32,13 +35,19 @@ public:
 	void SetTexture(EItemType ItemType,int32 Index,UTexture2D* InTexture);
 	void SetAmountText(EItemType ItemType, int32 Index, int32 Quantity);
 	void SetInventoryComponent(UInventoryComponent* NewInventoryComponent);
+	
+	void ShowItemDescriptionPanel(EItemType Type, int32 Index);
+	void HideItemDescriptionPanel();
 
+	void TryUseItem(EItemType Type, int32 Index);
+	
 	USlot* GetSlot(EItemType Type,int32 Index) const;
+	UImage* GetImage(USlot* Slot);
 	TArray<USlot*> GetSlots(EItemType Type) const;
 	int32 GetEmptySlotIndex(EItemType Type) const;
 protected:
-	virtual void NativeConstruct() override; 
-
+	virtual void NativeConstruct() override;
+	
 	UPROPERTY()
 	UInventoryComponent* InventoryComponent;
 
@@ -50,10 +59,11 @@ protected:
 	TArray<USlot*> MagicSlots;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
 	TArray<USlot*> QuestSlots;
+	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(BindWidget))
 	TObjectPtr<UUniformGridPanel> ToolItemsPanel;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(BindWidget))
-	TObjectPtr<UUniformGridPanel> ArmorItemsPanel;
+	// UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(BindWidget))
+	// TObjectPtr<UUniformGridPanel> ArmorItemsPanel;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(BindWidget))
 	TObjectPtr<UUniformGridPanel> WeaponItemsPanel;
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(BindWidget))
@@ -61,6 +71,16 @@ protected:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(BindWidget))
 	TObjectPtr<UUniformGridPanel> MagicItemsPanel;
 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(BindWidget))
+	TObjectPtr<UCanvasPanel> ItemDescriptionPanel;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(BindWidget))
+	UImage* ItemImage;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(BindWidget))
+	UTextBlock* ItemName;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(BindWidget))
+	UTextBlock* ItemDescription;
+	UPROPERTY(VisibleAnywhere,meta=(BindWidget),Category="Interaction Widget | Interactable Data")
+	UTextBlock* QuantityText;
 private:
 	int8 MAX_SLOT_NUM=16;
 };

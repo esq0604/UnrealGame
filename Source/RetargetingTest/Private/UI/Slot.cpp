@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "RetargetingTest/Public/Object/SlotDragDrop.h"
 #include "UI/EquipmentSlot.h"
+#include "UI/InventoryUI.h"
 
 
 void USlot::NativeConstruct()
@@ -31,7 +32,7 @@ void USlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEven
 	{
 		USlotDragDrop* oper =NewObject<USlotDragDrop>();
 		oper->SetFrom(this);
-		oper->SetInventoryComponent(InventoryComponent);
+		//oper->SetInventoryComponent(InventoryComponent);
 		OutOperation=oper;
 
 		if (DragVisualClass != nullptr)
@@ -40,7 +41,7 @@ void USlot::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEven
 			if(visual!=nullptr)
 			{
 				visual->SlotType = this->SlotType;
-				visual->SetInventoryComponent(InventoryComponent);
+				//visual->SetInventoryComponent(InventoryComponent);
 				visual->Index = this->Index;
 				visual->Refresh();
 			}
@@ -83,7 +84,7 @@ FReply USlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointe
 
 	if(InMouseEvent.IsMouseButtonDown(EKeys::RightMouseButton)==true)
 	{
-		// if(InventoryComponent->GetItemAtInventory(Index) !=nullptr || )
+		//if(InventoryComponent->GetItemAtInventory(Index) !=nullptr || )
 		// {
 		// 	if(Index<0 || InventoryComponent->GetItemAtInventory(Index)!=nullptr)
 		// 	{
@@ -92,7 +93,7 @@ FReply USlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointe
 				return reply.NativeReply;
 		// 	}
 		// }
-	}
+	}	
 	else if(InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton)==true)
 	{
 		// if(InventoryComponent->GetItemAtInventory(Index)!=nullptr)
@@ -106,6 +107,28 @@ FReply USlot::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointe
 	return reply.NativeReply;
 }
 
+void USlot::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+	//InventoryUI->ShowItemDescriptionPanel(ItemType,Index);
+}
+
+void USlot::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+	InventoryUI->HideItemDescriptionPanel();
+
+}
+
+void USlot::ShowAmountText()
+{
+	AmountText->SetVisibility(ESlateVisibility::Visible);
+}
+
+void USlot::HideAmountText()
+{
+	AmountText->SetVisibility(ESlateVisibility::Collapsed);
+}
 /**
  * 슬롯의 초기화 입니다. 인벤토리의 경우 슬롯의 번호를 통해 인덱스를 지정합니다.
  * 퀵슬롯의 경우 초기값을 -1로 지정하고, 인벤토리의 아이템이 등록될시 인덱스를 변경합니다.
@@ -115,11 +138,9 @@ void USlot::Init()
 	switch (SlotType)
 	{
 	case ESlotType::SLOT_INVENTORY:
-		Index=SlotNum;
 		AmountText->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	case ESlotType::SLOT_QUICK:
-		Index=-1;
 		AmountText->SetVisibility(ESlateVisibility::Hidden);
 		break;
 	case ESlotType::SLOT_EQUIP:
@@ -133,7 +154,7 @@ void USlot::Init()
  */
 void USlot::Refresh()
 {
-	if(InventoryComponent!=nullptr)
+	if(InventoryUI!=nullptr)
 	{
 		//		TArray<AItemBase*> Inventory= InventoryComponent->GetInventory();
 		//TArray<AEquipmentItem*> Equipment= InventoryComponent->GetEquipments();
@@ -236,19 +257,32 @@ void USlot::SetImg(UTexture2D* NewImg)
 	Img->SetBrushFromTexture(NewImg);
 }
 
-void USlot::SetInventoryComponent(UInventoryComponent* NewInventoryComponent)
+void USlot::SetAmountText(int32 Amount)
 {
-	InventoryComponent=NewInventoryComponent;
+	if(Amount>1)
+	{
+		AmountText->SetText(FText::FromString(FString::FromInt(Amount)));
+		ShowAmountText();
+	}
+	else
+	{
+		HideAmountText();
+	}
 }
 
-void USlot::SetAmountText(FText InText)
+void USlot::SetItemType(EItemType Type)
 {
-	AmountText->SetText(InText);
+	ItemType=Type;
 }
 
-void USlot::HideAmountText()
+void USlot::SetInventoryUI(UInventoryUI* NewInventoryUI)
 {
-	AmountText->SetVisibility(ESlateVisibility::Collapsed);
+	InventoryUI=NewInventoryUI;
+}
+
+void USlot::SetSlotType(ESlotType Type)
+{
+	SlotType=Type;
 }
 
 /**
@@ -261,12 +295,13 @@ void USlot::Action()
 	{
 	case ESlotType::SLOT_INVENTORY:
 		{
-			InventoryComponent->UseItem(Index);
+			UE_LOG(LogTemp,Warning,TEXT("UseItem"));
+			InventoryUI->TryUseItem(ItemType,Index);
 			break;
 		}
 	case ESlotType::SLOT_QUICK:
 		{
-			InventoryComponent->UseItem(Index);
+			InventoryUI->TryUseItem(ItemType,Index);
 			Refresh();
 			break;
 		}
@@ -292,3 +327,5 @@ int32 USlot::GetIndex() const
 {
 	return Index;
 }
+
+

@@ -1,8 +1,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Interface/Useable.h"
 #include "ItemDataAsset.generated.h"
 
+class AItemBase;
 class UGameplayAbility;
 /**
  * 
@@ -42,8 +44,7 @@ struct FItemAssetData
 	
 	UPROPERTY(EditAnywhere)
 	UTexture2D* Icon;
-	UPROPERTY(EditAnywhere)
-	UStaticMesh* Mesh;
+
 };
 
 USTRUCT()
@@ -73,8 +74,8 @@ struct FItemNumericData
 	bool IsStackable;
 };
 
-UCLASS(Abstract)
-class UItemDataAsset : public UPrimaryDataAsset
+UCLASS()
+class UItemDataAsset : public UPrimaryDataAsset 
 {
 	GENERATED_BODY()
 
@@ -89,4 +90,8 @@ public:
 	FItemNumericData NumericData;
 	UPROPERTY(EditAnywhere,Category="Item Data")
 	EItemType ItemType;
+	UPROPERTY(EditAnywhere,Category="Item Data")
+	TSubclassOf<AItemBase> ActorToSpawn;
+
 };
+

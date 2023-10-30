@@ -5,12 +5,16 @@
 
 #include "Blueprint/WidgetTree.h"
 #include "Component/InventoryComponent.h"
+#include "Components/CanvasPanel.h"
+#include "Components/Image.h"
+#include "Components/TextBlock.h"
 #include "Components/UniformGridPanel.h"
 #include "Data/ItemDataAsset.h"
 #include "RetargetingTest/Public/UI/Slot.h"
 
 void UInventoryUI::NativeConstruct()
 {
+	
 	Super::NativeConstruct();
 }
 
@@ -34,33 +38,42 @@ void UInventoryUI::Init()
 		if(weaponSlot!=nullptr)
 		{
 			weaponSlot->SetIndex(i);
-			weaponSlot->SetInventoryComponent(InventoryComponent);
-			weaponSlot->HideAmountText();
+			weaponSlot->SetItemType(EItemType::Weapon);
+			weaponSlot->SetSlotType(ESlotType::SLOT_INVENTORY);
+			weaponSlot->SetInventoryUI(this);
+			weaponSlot->SetVisibility(ESlateVisibility::Collapsed);
 			WeaponSlots.Add(weaponSlot);
 		}
 		if(toolSlot!=nullptr)
 		{
 			toolSlot->SetIndex(i);
-			toolSlot->SetInventoryComponent(InventoryComponent);
-			toolSlot->HideAmountText();
+			toolSlot->SetItemType(EItemType::Tool);
+			toolSlot->SetSlotType(ESlotType::SLOT_INVENTORY);
+			toolSlot->SetInventoryUI(this);
+			toolSlot->SetVisibility(ESlateVisibility::Collapsed);
 			ToolSlots.Add(toolSlot);
 		}
 		if(questSlot!=nullptr)
 		{
 			questSlot->SetIndex(i);
-			questSlot->SetInventoryComponent(InventoryComponent);
-			questSlot->HideAmountText();
+			questSlot->SetItemType(EItemType::Quest);
+			questSlot->SetSlotType(ESlotType::SLOT_INVENTORY);
+			questSlot->SetInventoryUI(this);
+			questSlot->SetVisibility(ESlateVisibility::Collapsed);
 			QuestSlots.Add(questSlot);
 		}
 		if(magicSlot!=nullptr)
 		{
 			magicSlot->SetIndex(i);
-			magicSlot->SetInventoryComponent(InventoryComponent);
-			magicSlot->HideAmountText();
+			magicSlot->SetItemType(EItemType::Magic);
+			magicSlot->SetSlotType(ESlotType::SLOT_INVENTORY);
+			magicSlot->SetInventoryUI(this);
+			magicSlot->SetVisibility(ESlateVisibility::Collapsed);
 			MagicSlots.Add(magicSlot);
 		}
 	}
-	
+
+	ItemDescriptionPanel->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 /**
@@ -70,24 +83,25 @@ void UInventoryUI::Init()
  */
 void UInventoryUI::RemoveItem(EItemType ItemType, int32 Index)
 {
-	UE_LOG(LogTemp,Warning,TEXT("Remove Item"));
 	GetSlot(ItemType,Index)->SetImg(nullptr);
 	GetSlot(ItemType,Index)->SetToolTipText(FText::GetEmpty());
-}
-
-void UInventoryUI::HideAmountText(EItemType ItemType, int32 Index)
-{
-	GetSlot(ItemType,Index)->HideAmountText();
+	GetSlot(ItemType,Index)->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UInventoryUI::SetTexture(EItemType ItemType,int32 Index, UTexture2D* InTexture)
 {
 	GetSlot(ItemType,Index)->SetImg(InTexture);
+	GetSlot(ItemType,Index)->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UInventoryUI::SetAmountText(EItemType ItemType, int32 Index, int32 Quantity)
 {
-	GetSlot(ItemType,Index)->SetAmountText(FText::FromString(FString::FromInt(Quantity)));
+	GetSlot(ItemType,Index)->SetAmountText(Quantity);
+}
+
+void UInventoryUI::HideAmountText(EItemType ItemType, int32 Index)
+{
+	GetSlot(ItemType,Index)->SetAmountText(1);
 }
 
 void UInventoryUI::SetInventoryComponent(UInventoryComponent* NewInventoryComponent)
@@ -95,6 +109,31 @@ void UInventoryUI::SetInventoryComponent(UInventoryComponent* NewInventoryCompon
 	InventoryComponent = NewInventoryComponent;
 }
 
+/**
+ * @brief 아이템 정의 패널을 보여줍니다.
+ * @param Type 보여줄 아이템이 담긴 슬롯의 타입입니다.
+ * @param Index 보여줄 아이템이 담긴 슬롯의 인덱스입니다.
+ */
+void UInventoryUI::ShowItemDescriptionPanel(EItemType Type, int32 Index)
+{
+	UItemDataAsset* Item=InventoryComponent->GetItem(Type,Index);
+	ItemImage->SetBrushFromTexture(Item->AssetData.Icon);
+	ItemName->SetText(Item->TextData.Name);
+	ItemDescription->SetText(Item->TextData.Description);
+	QuantityText->SetText(FText::Format(NSLOCTEXT("InterationWidget", "QuantityText", "{0} / {1}"),Item->NumericData.Quantity,Item->NumericData.MaxStackSize));
+	ItemDescriptionPanel->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UInventoryUI::HideItemDescriptionPanel()
+{
+	
+	ItemDescriptionPanel->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UInventoryUI::TryUseItem(EItemType Type, int32 Index)
+{
+	InventoryComponent->UseItem(Type,Index);
+}
 
 
 USlot* UInventoryUI::GetSlot(EItemType Type,int32 Index) const
@@ -112,6 +151,7 @@ USlot* UInventoryUI::GetSlot(EItemType Type,int32 Index) const
 		default: return nullptr;
 	}
 }
+
 
 TArray<USlot*> UInventoryUI::GetSlots(EItemType Type) const
 {

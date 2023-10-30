@@ -83,12 +83,7 @@ void ACharacterBase::BeginPlay()
 		const FActorSpawnParameters SpawnInfo;
 		WeaponInstance=GetWorld()->SpawnActor<ABaseWeaponItem>(WeaponClass,GetActorLocation(),GetActorRotation(),SpawnInfo);
 	}
-	if(WeaponInstance)
-	{
-		WeaponInstance->SetOwner(this);
-		WeaponInstance->OnEquipped(this);
-	}
-
+	
 	HUD=Cast<ACustomHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 }
 

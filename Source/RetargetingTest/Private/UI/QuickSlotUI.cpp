@@ -33,7 +33,6 @@ void UQuickSlotUI::Init()
 		}
 
 		slot->SetType(ESlotType::SLOT_QUICK);
-		slot->SetInventoryComponent(InventoryComponent);
 		slot->Init();
 	}
 

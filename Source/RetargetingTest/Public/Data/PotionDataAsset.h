@@ -10,10 +10,12 @@
  * 
  */
 UCLASS()
-class RETARGETINGTEST_API UPotionDataAsset : public UToolDataAsset
+class RETARGETINGTEST_API UPotionDataAsset : public UToolDataAsset, public IUseable
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere,Category="Potion Data")
-	float RecoveryValue; 
+	float RecoveryValue;
+
+	virtual bool UseItem(ACharacterBase* Character) override;
 };

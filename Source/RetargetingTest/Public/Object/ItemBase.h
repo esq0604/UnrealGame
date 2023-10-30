@@ -23,6 +23,7 @@ public:
 	void AddReferenceSlot(class USlot*& Slot);
 	void RemoveReferenceSlot(class USlot*& Slot);
 	UTexture2D* GetThumbnail() const;
+	void SetItemData(UItemDataAsset* Data);
 protected:
 	virtual void BeginPlay() override;
 	UFUNCTION(BlueprintCallable)
@@ -34,8 +35,9 @@ public:
 	TArray<USlot*> ReferenceSlot;
 
 protected:
-	
+	UPROPERTY(EditDefaultsOnly,Category="Item | Component")
+	UStaticMeshComponent* StaticMeshComponent;
+
 private:
-	UPROPERTY(EditDefaultsOnly,Category="Item | Initialize")
-	UItemDataAsset* ItemData;
+
 };

@@ -48,7 +48,6 @@ void UEquipmentUI::Init()
 void UEquipmentUI::SlotInit(UEquipmentSlot* EquipSlot)
 {
 	EquipSlot->SetType(ESlotType::SLOT_EQUIP);
-	EquipSlot->SetInventoryComponent(InventoryComponent);
 	EquipSlot->Init();
 	//Slots[static_cast<int32>(EquipSlot->GetEquipItemType())] = EquipSlot;
 }

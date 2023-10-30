@@ -123,7 +123,7 @@ void ABaseMonster::BeginPlay()
 		const FActorSpawnParameters SpawnInfo;
 		WeaponInstance=GetWorld()->SpawnActor<ABaseWeaponItem>(WeaponClass,GetActorLocation(),GetActorRotation(),SpawnInfo);
 		WeaponInstance->SetOwner(this);
-		WeaponInstance->OnEquipped(this);
+		//WeaponInstance->Equip(this);
 	}
 }
 

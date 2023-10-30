@@ -10,6 +10,16 @@
 /**
  * 
  */
+
+class UCustomAbilitySet;
+class UCustomGameplayAbility;
+USTRUCT()
+struct FMyStruct
+{
+	GENERATED_BODY()
+	
+};
+
 UCLASS()
 class RETARGETINGTEST_API UEquipmentDataAsset : public UItemDataAsset
 {
@@ -18,4 +28,8 @@ class RETARGETINGTEST_API UEquipmentDataAsset : public UItemDataAsset
 public:
 	UPROPERTY(EditAnywhere)
 	float Durability;
+	UPROPERTY(EditAnywhere)
+	FName AttachSocketName;
+	UPROPERTY(EditAnywhere)
+	TArray<TObjectPtr<const UCustomAbilitySet>> AbilitySetToEquip;
 };

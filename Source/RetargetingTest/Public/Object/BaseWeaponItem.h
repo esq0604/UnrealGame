@@ -34,24 +34,21 @@ public:
 	ABaseWeaponItem();
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
- 
-	virtual void AddAbilities();
-
+	
 	virtual void RemoveAbilities();
 
 
 	//Equip, UnEquipped
 	UFUNCTION(BlueprintImplementableEvent)
 	void OffDetecte();
-	void OnEquipped(ACharacter* Character);
-	void OffEquipped(ACharacter* Character);
+	virtual void Equip(ACharacter* Character,UItemDataAsset* InItemData) override final;
+	virtual void UnEquip(ACharacter* Character) override final;
 	
 	//	Getter
 	FORCEINLINE FName GetWeaponTraceStartSocketName() const {return WeaponData->WeaponSocketName.TraceStartSocketName;}
 	FORCEINLINE FName GetWeaponTraceEndSocketName() const {	return WeaponData->WeaponSocketName.TraceEndSocketName;} 
 	FORCEINLINE UWeaponCollisionComponent* GetCollisionComponent() const {return WeaponCollisionComp; }
-	FORCEINLINE UStaticMesh* GetWeaponMesh() const {return WeaponData->AssetData.Mesh;}
-	FORCEINLINE UStaticMeshComponent* GetWeaponStateMeshComponent() const {return WeaponStaticMeshComponent;}
+	FORCEINLINE UStaticMesh* GetWeaponMesh() const {return StaticMeshComponent->GetStaticMesh();}
 	FORCEINLINE const UWeaponDataAsset* GetWeaponData() const { return WeaponData;}
 
 	//Protected Function
@@ -75,18 +72,11 @@ private:
 protected:
 
 private:
-	UPROPERTY(BlueprintReadOnly,meta=(AllowPrivateAccess=true) ,Category = "Weapon|")
-	TWeakObjectPtr<ACharacterBase> OwningCharacter;
+
 	// Ability 
-	UPROPERTY(BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon|Abilities")
-	UAbilitySystemComponent* AbilitySystemComponent;
-	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="Weapon|Abilities")
-	TArray<TSubclassOf<UCustomGameplayAbility>> Abilities;
 	UPROPERTY()
 	TArray<FGameplayAbilitySpecHandle> AbilitySpecHandles;
 	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true))
-	TObjectPtr<UStaticMeshComponent> WeaponStaticMeshComponent;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,meta=(AllowPrivateAccess=true),Category="Weapon|Component")
 	TObjectPtr<UWeaponCollisionComponent> WeaponCollisionComp;
 

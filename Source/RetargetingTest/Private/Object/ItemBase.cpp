@@ -11,7 +11,8 @@
 
 AItemBase::AItemBase()
 {
-
+	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComponent");
+	SetRootComponent(StaticMeshComponent);
 }
 
 void AItemBase::BeginPlay()
@@ -41,5 +42,9 @@ void AItemBase::RemoveReferenceSlot(USlot*& Slot)
 UTexture2D* AItemBase::GetThumbnail() const
 {
 	return nullptr;
+}
+
+void AItemBase::SetItemData(UItemDataAsset* Data)
+{
 }
 

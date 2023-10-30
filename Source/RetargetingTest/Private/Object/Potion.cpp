@@ -3,9 +3,10 @@
 
 #include "RetargetingTest/Public/Object/Potion.h"
 
+#include "Data/ItemDataAsset.h"
 
 
-	// UBaseAttributeSet* Attributes = Character->GetAttributes();
+// UBaseAttributeSet* Attributes = Character->GetAttributes();
 	// 	if(Count>0)
 	// 	{
 	// 		if(Attributes!=nullptr)
@@ -17,5 +18,6 @@
 	// 	}
 	//
 	// return;
+
 
 
