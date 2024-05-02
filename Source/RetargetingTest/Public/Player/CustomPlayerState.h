@@ -8,6 +8,8 @@
 #include "GameFramework/PlayerState.h"
 #include "PlayerStateBase.generated.h"
 
+class UUIManager;
+class UMySaveGame;
 class UBaseAttributeSet;
 class UAbilitySystemComponent;
 class UCharacterAbilitySystemComponent;
@@ -29,6 +31,10 @@ public:
 
 	UBaseAttributeSet* GetAttributes() const;
 	void SetPlayerHUD(UPlayerHUD* NewPlayerHUD);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerState(UMySaveGame* SaveObject);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -48,6 +54,7 @@ protected:
 	UPROPERTY()
 	UBaseAttributeSet* Attributes;
 
+	TWeakObjectPtr<UUIManager> UIManager;
 	TWeakObjectPtr<UPlayerHUD> PlayerHUD;
 
 	FDelegateHandle HealthChangeDelegateHandle;

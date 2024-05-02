@@ -4,12 +4,12 @@
 #include "Player/PlayerStateBase.h"
 
 #include "AbilitySystemComponent.h"
+#include "MyGameInstance.h"
 #include "Ability/CharacterAbilitySystemComponent.h"
 #include "Attribute/BaseAttributeSet.h"
 #include "Controller/MyPlayerController.h"
-#include "UI/GaugeBar.h"
 #include "UI/PlayerHUD.h"
-
+#include "UI/UIManager.h"
 // Sets default values
 APlayerStateBase::APlayerStateBase()
 {
@@ -41,12 +41,17 @@ void APlayerStateBase::SetPlayerHUD(UPlayerHUD* NewPlayerHUD)
 	PlayerHUD=NewPlayerHUD;
 }
 
+void APlayerStateBase::SavePlayerState_Implementation(UMySaveGame* SaveObject)
+{
+	
+}
+
 // Called when the game starts or when spawned
 void APlayerStateBase::BeginPlay()
 {
 	Super::BeginPlay();
 	const AMyPlayerController*  PC= Cast<AMyPlayerController>(GetGameInstance()->GetFirstLocalPlayerController());
-	
+	const UMyGameInstance* GameInstance = Cast<UMyGameInstance>(GetGameInstance());
 	if(AbilitySystemComponent)
 	{
 		HealthChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetHealthAttribute()).AddUObject(this,&APlayerStateBase::HealthChange);
@@ -55,7 +60,12 @@ void APlayerStateBase::BeginPlay()
 		MaxManaChangeDelegateHandle = AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attributes->GetMaxManaAttribute()).AddUObject(this,&APlayerStateBase::MaxManaChange);
 	}
 
-	PlayerHUD=PC->GetPlayerHUD();
+	if(GameInstance)
+	{
+		UIManager=GameInstance->UIManager;
+	}
+
+//	PlayerHUD=PC->GetPlayerHUD();
 }
 
 /**
@@ -66,7 +76,8 @@ void APlayerStateBase::HealthChange(const FOnAttributeChangeData& Data)
 {
 	const float NewHealthPercent=Data.NewValue/Attributes->GetMaxHealth();
 	const float OldHealthPercent=Data.OldValue/Attributes->GetMaxHealth();
-	PlayerHUD->GetGauge(EGaugeType::HP)->UpdateWidget(NewHealthPercent,OldHealthPercent);
+	//PlayerHUD->GetGauge(EGaugeType::HP)->UpdateWidget(NewHealthPercent,OldHealthPercent);
+	UIManager->UpdatePlayerHUD();
 }
 
 /**
@@ -86,7 +97,7 @@ void APlayerStateBase::StaminaChange(const FOnAttributeChangeData& Data)
 {
 	const float NewStaminaPercent =Data.NewValue/Attributes->GetMaxMana();
 	const float OldStaminaPercent =Data.OldValue/Attributes->GetMaxMana();
-	PlayerHUD->GetGauge(EGaugeType::Stamina)->UpdateWidget(NewStaminaPercent,OldStaminaPercent);
+	//PlayerHUD->GetGauge(EGaugeType::Stamina)->UpdateWidget(NewStaminaPercent,OldStaminaPercent);
 }
 
 /**

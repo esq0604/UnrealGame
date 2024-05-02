@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Weapon/GameplayAbility_TwinbladeComboBase.h"
+#include "Weapon/GameplayAbility_MeleeAttack.h"
 
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Player/CharacterBase.h"
 
 
-void UGameplayAbility_TwinbladeComboBase::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
+void UGameplayAbility_MeleeAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                                           const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                                           const FGameplayEventData* TriggerEventData)
 {
@@ -30,7 +30,7 @@ void UGameplayAbility_TwinbladeComboBase::ActivateAbility(const FGameplayAbility
 	else
 	{
 		UAbilityTask_WaitGameplayEvent* WaitNextAttackGameplayEvent=UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this,FGameplayTag::RequestGameplayTag("Ability.State.NextAttack"),nullptr,true,true);
-		WaitNextAttackGameplayEvent->EventReceived.AddDynamic(this,&UGameplayAbility_TwinbladeComboBase::NextAttackEventReceived);
+		WaitNextAttackGameplayEvent->EventReceived.AddDynamic(this,&UGameplayAbility_MeleeAttack::NextAttackEventReceived);
 		WaitNextAttackGameplayEvent->Activate();	
 	}
 	
@@ -40,7 +40,7 @@ void UGameplayAbility_TwinbladeComboBase::ActivateAbility(const FGameplayAbility
 /**
  * 
  */
-void UGameplayAbility_TwinbladeComboBase::NextAttackEventReceived(FGameplayEventData Payload)
+void UGameplayAbility_MeleeAttack::NextAttackEventReceived(FGameplayEventData Payload)
 {
 	ActiveMontage(AttackMontage);
 }

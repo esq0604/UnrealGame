@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Data/ItemDataAsset.h"
 #include "InventoryComponent.generated.h"
 
+class UQuickUI;
 class UItemDataAsset;
 class UEquipmentDataAsset;
 enum class EItemType : uint8;
 class UArmorDataAsset;
-enum class ESlotType : uint8;
 class AEquipmentItem;
 class UEquipmentUI;
 class UInventoryUI;
@@ -29,51 +30,56 @@ public:
 	UInventoryComponent();
 
 	UFUNCTION(BlueprintCallable)
-	bool AddItem(UItemDataAsset* AddedItem);
-	
+	bool AddItem(const UItemDataAsset* AddedItem);
+	bool AddStartingItem();
+	int32 HasEqualItem(FText ItemID,EItemType Type);
 	UFUNCTION(BlueprintCallable)
 	bool UseItem(EItemType Type,int32 Index);
+	bool DropItem(EItemType Type, int32 Index);
+	bool IsItemStackable(EItemType Type, int32 Index);
+	bool IsItemInSlotValid(EItemType Type, int32 Index);
 	
-	bool IsItemStackable(int32 Index);
-	bool IsItemInSlotValid(int32 Index) const;
-
-	int8 IndexNormalize(int32 Index);
-
 	//getter
-	TArray<UItemDataAsset*>& GetItemsRef(EItemType Type); 
+	TArray<UItemDataAsset*>& GetItemsContainerRef(EItemType Type); 
 	UItemDataAsset* GetItem(EItemType Type, int32 Index) ;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 private:
-	void UpdateSlot(EItemType Type, int32 Index);
+	void UpdateInventoryUI(EItemType Type, int32 Index);
+	void AddItemToIndex(UItemDataAsset* Item, int32 Index);
 protected:
 
-	
+public:
+	UPROPERTY(EditDefaultsOnly)
+	int32 InventorySize=25;
+	UPROPERTY(EditDefaultsOnly)
+	int32 SlotPerRow = 5;
+
 private:
 	UPROPERTY()
 	ACharacterBase* ComponentOwner;
 	
 	TWeakObjectPtr<UInventoryUI> InventoryUI;
 
-	UPROPERTY()
-	UEquipmentUI* EquipmentUI;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
-	TArray<UItemDataAsset*> ArmorItems;
+	TArray<UItemDataAsset*> ArmorItemsContainer;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
-	TArray<UItemDataAsset*> WeaponItems;
+	TArray<UItemDataAsset*> WeaponItemsContainer;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
-	TArray<UItemDataAsset*> ToolItems;
+	TArray<UItemDataAsset*> ToolItemsContainer;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
-	TArray<UItemDataAsset*> MagicItems;
+	TArray<UItemDataAsset*> MagicItemsContainer;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
-	TArray<UItemDataAsset*> QuestItems;
-	
+	TArray<UItemDataAsset*> QuestItemsContainer;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
+	TArray<UItemDataAsset*> RingItemsContainer;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess=true),Category="InventoryComponent | Inventory")
+	TArray<UItemDataAsset*> ShoesItemsContainer;
 	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="InventoryComponent | StartingItems")
-	TArray<UItemDataAsset*> StartingItems;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,meta=(AllowPrivateAccess=true),Category="InventoryComponent | StartingItems")
-	TArray<TSubclassOf<UItemDataAsset>> TestStartingItems;
+	TArray<UItemDataAsset*>	StartingItems;
 };
+

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayAbility_MeleeWeapon.h"
+#include "GameplayAbility_Attack.h"
 #include "UObject/Object.h"
 #include "GameplayAbility_TwinbladeComboBase.generated.h"
 
@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class RETARGETINGTEST_API UGameplayAbility_TwinbladeComboBase : public UGameplayAbility_MeleeWeapon
+class RETARGETINGTEST_API UGameplayAbility_TwinbladeComboBase : public UGameplayAbility_Attack
 {
 	GENERATED_BODY()
 

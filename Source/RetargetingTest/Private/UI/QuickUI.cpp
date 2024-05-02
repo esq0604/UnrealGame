@@ -4,8 +4,6 @@
 #include "RetargetingTest/Public/UI/QuickSlotUI.h"
 
 #include "Blueprint/WidgetTree.h"
-#include "Kismet/GameplayStatics.h"
-#include "Object/EquipmentItem.h"
 #include "RetargetingTest/Public/UI/Slot.h"
 #include "UI/EquipmentSlot.h"
 
@@ -27,16 +25,14 @@ void UQuickSlotUI::Init()
 	{
 		USlot* slot = Cast<USlot>(widget);
 
-		if(!slot)
+		if(slot)
 		{
-			continue;
+			slot->SetType(ESlotType::SLOT_QUICK);
+			slot->Init();
 		}
-
-		slot->SetType(ESlotType::SLOT_QUICK);
-		slot->Init();
 	}
 
-
+	SubItemSlot->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 /**
